@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TV Tuner API</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
+            class='remove'></script>
+    <script class="remove">
+      var respecConfig = {
+        specStatus:          "ED",
+        shortName:           "TV Tuner API",
+        publishDate:         "",
+        previousPublishDate: "",
+        previousMaturity:    "",
+        edDraftURI:          "http://airpingu.github.io/tv-tuner-api/index.html",
+        lcEnd:               "",
+        crEnd:               "",
+        editors: [{
+          name: "Gene Lian",
+          company: "Mozilla",
+          companyURL: "http://www.mozilla.org"
+        }],
+        inlineCSS:    true,
+        noIDLIn:      true,
+        noIDLSorting: true,
+        // wg:           "System Applications Working Group",
+        // wgURI:        "http://www.w3.org/2012/sysapps/",
+        // wgPublicList: "public-sysapps",
+        // wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/43696/status",
+        otherLinks: [{
+          key: "Repository",
+          data: [{
+            value: "We are on Github.",
+            href: "https://github.com/airpingu/tv-tuner-api/"
+          }, {
+            value: "File a bug.",
+            href: "https://github.com/airpingu/tv-tuner-api/issues"
+          }, {
+            value: "Commit history.",
+            href: "https://github.com/airpingu/tv-tuner-api/commits/gh-pages"
+          }]
+        }]
+      };
+    </script>
+  </head>
+
+<!-----------------------------------------------------------------------------
+Style guide to contributors:
+============================
+- this document uses ReSpec, see
+  http://dev.w3.org/2009/dap/ReSpec.js/documentation.html
+- use 80 characters wide lines, whenever possible (except long links)
+- keep sections 2 empty lines apart
+- put comments in front of sections, for better readability with syntax coloring
+  editors
+- use indentation with care: it may improve readability, but at the expense of
+  line lenght
+- when descriptions of attributes is short, use the <dd> elements even when
+  the text also contains conformance statements (e.g. MUST, SHOULD, MAY).
+  No use repeating the same information in a separate paragraph.
+------------------------------------------------------------------------------>
+ 
+  <body>
+
+<!-- - - - - - - - - - - - - - - Abstract  - - - - - - - - - - - - - - - - - -->    
+    <section id="abstract">
+      To be constructed.
+    </section>
+
+<!-- - - - - - - - - - - - - - - Status of this document - - - - - - - - - - -->   
+    <section id="sotd">
+      <p>
+        <strong style="color:red">
+          This document is just a working draft based on the W3C format, which
+          is not yet maintained and discussed by any formal W3C interest/working
+          groups. We'll push it when we think it's solid enough and worth
+          standardising.
+        </strong>
+      </p>
+    </section>
+    
+<!-- - - - - - - - - - - - - - - Introduction  - - - - - - - - - - - - - - - -->
+    <section class="informative">
+      <h2>Introduction</h2>
+      <p>
+        To be constructed.
+      </p>
+
+      <section>
+        <h3>User Cases</h3>
+        <p>
+          The TV Tuner API is aimed to cover the following user cases:
+        </p>
+        <ul>
+          <li>
+            The web content is able to control the TV channel of the TV device
+            with the TV tuner.
+          </li>
+          <li>
+            One TV can have multiple TV tuners. For example, one is for watching
+            TV and the other is for recording.
+          </li>
+          <li>
+            TV Tuner can scan broadcasting channels, where each TV tuner can
+            have its own scanning algorithm provided by the vendor.
+          </li>
+          <li>
+            Web content needs to know which broadcasting types are supported by
+            the TV tuners.
+          </li>
+          <li>
+            Web content needs to know the information of Electronic Program
+            Guide (EPG) that is being broadcasted.
+          </li>
+          <li>
+            Users can navigate through the EPG and selects a program to watch.
+          </li>
+          <li>
+            Users can watch the broadcasting program while browsing through the
+            list of other programs that are currently broadcasted.
+          </li>
+          <li>
+            Web content needs to know if the currently displayed TV channel has
+            bad or no signal. Can be covered by VideoElement?
+          </li>
+          <li>
+            One TV channel can have multiple video/audio tracks in the
+            same broadcasting stream.
+          </li>
+          <li>
+            Emergency broadcasting for earthquake, tsunami... etc.
+          </li>
+          <li>
+            In the first step, only certified apps are allowed to use the TV
+            Tuner API.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Examples</h3>
+        <p>
+          If an application has the privilege to use the TV Tuner API, it can use
+          a bunch of basic methods defined in the <a>TVTunerManager</a> to contol
+          the TV tuners, which is shown as the following example.
+        </p>
+
+        <pre class="example highlight">
+          To be constructed.
+        </pre>
+      </section>
+    </section>
+    
+<!-- - - - - - - - - - - - - - - Conformance - - - - - - - - - - - - - - - - -->
+    <section id="conformance">
+      <p>
+        This specification defines conformance criteria that apply to a single
+        product: the <dfn>user agent</dfn> that implements the interfaces that
+        it contains.
+      </p>
+    
+      <p>
+        Implementations that use ECMAScript to implement the APIs defined in
+        this specification MUST implement them in a manner consistent with the
+        ECMAScript Bindings defined in the Web IDL specification [[!WEBIDL]], as
+        this specification uses that specification and terminology.
+      </p>
+    </section>
+    
+<!-- - - - - - - - - - - - - - - Terminology  - - - - - - - - - - - - - - - -->
+    <section>
+      <h2>Terminology</h2>
+      <p>
+        The <dfn><a
+        href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler">
+        EventHandler</a></dfn> interface represents a callback used for event
+        handlers as defined in [[!HTML5]].
+      </p>
+    
+      <p>
+        The concepts <dfn><a
+        href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task"> queue
+        a task</a></dfn> and <dfn><a
+        href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+        fire an event</a></dfn> are defined in [[!HTML5]].
+      </p>
+    
+      <p>
+        The terms <a
+        href="http://dev.w3.org/html5/spec/webappapis.html#event-handlers"><dfn
+        id="dfn-eventhandler">event handler</dfn></a> and <a
+        href="http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+        <dfn id="dfn-eventtypes"> event handler event types</dfn></a> are
+        defined in [[!HTML5]].
+      </p>
+    
+      <p>
+        The <dfn><a href="http://dom.spec.whatwg.org/#promise">Promise</a></dfn>
+        interface, the concepts of a <a href=
+        "http://dom.spec.whatwg.org/#concept-resolver"><dfn>resolver</dfn></a>, a
+        <dfn id="dfn-fulfill-algorithm"><a
+        href="http://dom.spec.whatwg.org/#concept-resolver-fulfill"> resolver's
+        fulfill algorithm</a></dfn> and a <dfn id="dfn-reject-algorithm"><a
+        href="http://dom.spec.whatwg.org/#concept-resolver-reject"> resolver's
+        reject algorithm</a></dfn> are defined in [[DOM4]].
+      </p>
+    </section>
+
+<!-- - - - - - - - - - - - - Extended Interface Navigator  - - - - - - - - - -->
+    <section>
+      <h2><a>Navigator</a> Interface</h2>
+        <dl title="partial interface Navigator" class="idl">
+          <dt>readonly attribute TVTunerManager mozTVTuner</dt>
+          <dd>
+          MUST return the object that exposes the interface to the TV tuner
+          service.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - - Interface DataStore  - - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVTunerManager</a> Interface</h2>
+      <p>
+        The <a>TVTunerManager</a> interface represents a bunch of properties and
+        a set of operations that can be used to control the TV tuner.
+      </p>
+
+      <dl title="interface TVTunerManager : EventTarget" class="idl">
+
+        <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
+          <dd>
+            MUST return the TV channel that is currently displayed on the TV.
+          </dd>
+
+        <dt>readonly attribute TVChannel[] <a>channels</a></dt>
+          <dd>
+            MUST return all the TV channels that are available across TV tuners.
+          </dd>
+
+        <dt>Promise scan ()</dt>
+          <dd>
+            This method makes a request to scan all the TV channels that are
+            available across TV tuners. It returns a new <code>Promise</code>
+            that will be used to notify the caller about the result of the
+            operation.
+          </dd>
+
+        <dt>Promise setChannel ()</dt>
+          <dd>
+            This method makes a request to set the TV channel by the
+            <code>channelNumber</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
+            <dl class='parameters'>
+              <dt>DOMString channelNumber</dt>
+                <dd>
+                  Specifies the number of the TV channel that is requested to be
+                  set.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>TVProgram[] getPrograms ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV programs by the
+            <code>channelNumber</code> parameter. It returns a set of
+            <a>TVProgram</a> that belongs to the TV channel.
+            <dl class='parameters'>
+              <dt>optional DOMString channelNumber</dt>
+                <dd>
+                  Specifies the number of the TV channel that is requested to
+                  retrieve its belonging TV programs. If this parameter is
+                  absent or cannot be identified, this method will return all
+                  the TV programs that are available across TV channels.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler oncurrentchannelchange
+        </dt>
+          <dd>
+            Handles the <code>oncurrentchannelchange</code> event of type
+            <a>CurrentChannelChangeEvent</a>, fired when the
+            <code>currentChannel</code> is changed.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onchannelschange
+        </dt>
+          <dd>
+            Handles the <code>onchannelschange</code> event of type
+            <a>ChannelsChangeEvent</a>, fired when the <code>channels</code> are
+            changed.
+          </dd>
+      </dl>
+
+      <section>
+        <h3>Steps</h3>
+        <p>
+          The <dfn><code>scan</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV tunners to scan and retrieve all the TV
+            channels that are available across TV tunners.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>setChannel</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV tuner to set the TV channel with the
+            channer number equal to the <code>channelNumber</code> parameter
+            passed in the request.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>getPrograms </code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV tuners to retrieve the TV programs of a
+            TV channel with the channel number equal to the
+            <code>channelNumber</code> parameter passed in the request. If
+            the <code>channelNumber</code> is not passed, retrieve all the
+            TV programs that are available across TV channels.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>programs</var> be the array of the retrieved TV programs.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>programs</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Event handlers</h2>
+        <p>The following are the <a class="internalDFN"
+        href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
+        class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
+        supported as attributes by the <a>TVTunerManager</a> object.
+        
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Event handler</th>
+              <th>Event name</th>
+              <th>Event type</th>
+              <th>Short description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>oncurrentchannelchange</code></strong></td>
+              <td><code><dfn id="dfn-change-event">oncurrentchannelchange</dfn></code></td>
+              <td><a><code>CurrentChannelChangeEvent</code></a></td>
+              <td>
+                Handles the information of the currently displayed channel
+                changed by the TV tuner.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onchannelschange</code></strong></td>
+              <td><code><dfn id="dfn-change-event">onchannelschange</dfn></code></td>
+              <td><a><code>ChannelsChangeEvent</code></a></td>
+              <td>
+                Handles the information of the available channels changed by the
+                TV tuners.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary TVTuner  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVTuner</a> Dictionary</h2>
+      <p>
+        The <a>TVTuner</a> dictionary contains the information related to a
+        TV tuner.
+      </p>
+      <dl title="dictionary TVTuner" class="idl">
+        <dt>TVTunerType type</dt>
+          <dd>
+            MUST return the type of the TV tuner.
+          </dd>
+
+        <dt>MediaStream stream</dt>
+          <dd>
+            MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
+            object that is currently streamed by the TV tuner, which can be
+            displayed by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
+            element.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary TVChannel  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVChannel</a> Dictionary</h2>
+      <p>
+        The <a>TVChannel</a> dictionary contains the information related to a
+        TV channel.
+      </p>
+      <dl title="dictionary TVChannel" class="idl">
+        <dt>DOMString number</dt>
+          <dd>
+            MUST return the number of the TV channel. E.g., <code>"12-1"</code>,
+            <code>"12-2"</code>, <code>"12-2"</code>... etc.
+          </dd>
+
+        <dt>TVChannelType type</dt>
+          <dd>
+            MUST return the type of the TV channel.
+          </dd>
+
+        <dt>DOMString name</dt>
+          <dd>
+            MUST return the name of the TV channel. E.g., <code>"CNN"</code>,
+            <code>"NHK"</code>... etc.
+          </dd>
+
+        <dt>TVTuner tuner</dt>
+          <dd>
+            MUST return the TV tuner which the TV channel belongs to.
+          </dd>
+
+        <dt>TVProgram? currentProgram</dt>
+          <dd>
+            MUST return the TV program that is currently broadcasted by the TV
+            channel. MUST return null if the TV channel is not currently
+            displayed.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary TVProgram  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVProgram</a> Dictionary</h2>
+      <p>
+        The <a>TVProgram</a> dictionary contains the information related to a
+        TV program.
+      </p>
+      <dl title="dictionary TVProgram" class="idl">
+        <dt>DOMString title</dt>
+          <dd>
+            MUST return the title of the TV program.
+          </dd>
+
+        <dt>unsigned long long startTime</dt>
+          <dd>
+            MUST return the start time of the TV program.
+          </dd>
+
+        <dt>unsigned long long duration</dt>
+          <dd>
+            MUST return the duration of the TV program.
+          </dd>
+
+        <dt>DOMString? description</dt>
+          <dd>
+            MUST return the description of the TV program.
+          </dd>
+
+        <dt>DOMString? language</dt>
+          <dd>
+            MUST return the language of the TV program.
+          </dd>
+
+        <dt>DOMString? rating</dt>
+          <dd>
+            MUST return the rating of the TV program.
+          </dd>
+
+        <dt>TVChannel channel</dt>
+          <dd>
+            MUST return the TV channel which the TV program belongs to.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface CurrentChannelChangeEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>CurrentChannelChangeEvent</a> Interface</h2>
+      <p>
+        The <a>CurrentChannelChangeEvent</a> interface represents the event
+        related to the currently displayed channel changed by the TV tuner.
+      </p>
+      <dl title="interface CurrentChannelChangeEvent : Event" class="idl">
+        <p>
+          To be constructed.
+        </p>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface ChannelsChangeEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>ChannelsChangeEvent</a> Interface</h2>
+      <p>
+        The <a>ChannelsChangeEvent</a> interface represents the event
+        related to the available channels changed by the TV tuners.
+      </p>
+      <dl title="interface ChannelsChangeEvent : Event" class="idl">
+        <p>
+          To be constructed.
+        </p>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface Enumerations  - - - - - - - - - - - - - -->
+    <section>
+      <h2>Enumerations</h2>
+      <p>
+        The attribute <code>type</code> in a <a>TVTuner</a> can have the
+        following values:
+      </p>
+      <dl title="enum TVTunerType" class="idl">
+        <dt>dvb-t</dt>
+        <dd>
+          The TV tuner works for Digital Video Broadcasting - Terrestrial.
+        </dd>
+
+        <dt>dvb-c</dt>
+        <dd>
+          The TV tuner works for Digital Video Broadcasting - Cable.
+        </dd>
+
+        <dt>dvb-s</dt>
+        <dd>
+          The TV tuner works for Digital Video Broadcasting - Satellite.
+        </dd>
+      </dl>
+
+      <p>
+        The attribute <code>type</code> in a <a>TVChannel</a> can have the
+        following values:
+      </p>
+      <dl title="enum TVChannelType" class="idl">
+        <dt>tv</dt>
+        <dd>
+          The TV channel is broadcasted as a regular TV type.
+        </dd>
+
+        <dt>radio</dt>
+        <dd>
+          The TV channel is broadcasted as a radio type.
+        </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Acknowledgements  - - - - - - - - - - - - - - - - -->
+    <section>
+      <h2>Acknowledgements</h2>
+      <p>
+        To be constructed.
+      </p>
+    </section>
+
+  </body>
+</html>
