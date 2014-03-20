@@ -276,11 +276,13 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>TVProgram[] getAvailablePrograms ()</dt>
+        <dt>Promise getAvailablePrograms ()</dt>
           <dd>
             This method makes a request to retrieve all the TV programs that are
             available by the <code>channelNumber</code> parameter. It returns a
-            set of <a>TVProgram</a> that belongs to the TV channel.
+            new <code>Promise</code> that will be used to notify the caller
+            about the result of the operation, which is an array of
+            <a>TVProgram</a> elements that belong to the TV channel.
             <dl class='parameters'>
               <dt>optional DOMString channelNumber</dt>
                 <dd>
@@ -418,7 +420,8 @@ Style guide to contributors:
           </li>
           <ol>
             <li>
-              Let <var>programs</var> be the array of the retrieved TV programs.
+              Let <var>programs</var> be the array of the retrieved
+              <a>TVProgram</a> elements.
             </li>
             <li>
               Invoke <em>resolver</em>'s <a
