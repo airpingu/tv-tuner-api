@@ -134,6 +134,15 @@ Style guide to contributors:
             In the first step, only certified apps are allowed to use the TV
             Tuner API.
           </li>
+          <li>
+            The DTV can keep track of the multiple TV tuners that a TV channel
+            can belong to, so that web content can do more flexible services
+            like: when the user is using the TV tuner A to watch and record a
+            certain TV channel at the same time, supposing the user wants to
+            switch to other channels to watch, the DTV should use the TV tuner
+            B to switch channels so that it won't stop the original recording
+            task on the TV tuner A.
+          </li>
         </ul>
       </section>
 
@@ -495,9 +504,11 @@ Style guide to contributors:
             <code>"NHK"</code>... etc.
           </dd>
 
-        <dt>TVTuner tuner</dt>
+        <dt>TVTuner[] ownerTuners</dt>
           <dd>
-            MUST return the TV tuner which the TV channel belongs to.
+            MUST return the TV tuners which the TV channel belongs to. Note that
+            the <code>ownerTuners</code> can be more than one TV tuner because
+            different TV tuners can broadcast the same TV channel.
           </dd>
 
         <dt>TVProgram? currentProgram</dt>
