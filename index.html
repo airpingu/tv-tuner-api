@@ -237,14 +237,20 @@ Style guide to contributors:
 
       <dl title="interface TVTunerManager : EventTarget" class="idl">
 
-        <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
+        <dt>readonly attribute TVTuner[] <a>availableTuners</a></dt>
           <dd>
-            MUST return the TV channel that is currently displayed on the TV.
+            MUST return all the TV tuners that are available in the TV device.
           </dd>
 
         <dt>readonly attribute TVChannel[] <a>availableChannels</a></dt>
           <dd>
             MUST return all the TV channels that are available across TV tuners.
+          </dd>
+
+        <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
+          <dd>
+            MUST return the TV channel that is currently displayed on the TV
+            device.
           </dd>
 
         <dt>Promise scan ()</dt>
@@ -287,12 +293,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler oncurrentchannelchange
+          attribute EventHandler onavailabletunerschange
         </dt>
           <dd>
-            Handles the <code>oncurrentchannelchange</code> event of type
-            <a>CurrentChannelChangeEvent</a>, fired when the
-            <code>currentChannel</code> is changed.
+            Handles the <code>onavailabletunerschange</code> event of type
+            <a>AvailableTunersChangeEvent</a>, fired when the
+            <code>availableTuners</code> are changed.
           </dd>
 
         <dt class="no-docs">
@@ -302,6 +308,15 @@ Style guide to contributors:
             Handles the <code>onavailablechannelschange</code> event of type
             <a>AvailableChannelsChangeEvent</a>, fired when the
             <code>availableChannels</code> are changed.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler oncurrentchannelchange
+        </dt>
+          <dd>
+            Handles the <code>oncurrentchannelchange</code> event of type
+            <a>CurrentChannelChangeEvent</a>, fired when the
+            <code>currentChannel</code> is changed.
           </dd>
       </dl>
 
@@ -432,12 +447,12 @@ Style guide to contributors:
           </thead>
           <tbody>
             <tr>
-              <td><strong><code>oncurrentchannelchange</code></strong></td>
-              <td><code><dfn id="dfn-change-event">oncurrentchannelchange</dfn></code></td>
-              <td><a><code>CurrentChannelChangeEvent</code></a></td>
+              <td><strong><code>onavailabletunerschange</code></strong></td>
+              <td><code><dfn id="dfn-change-event">onavailabletunerschange</dfn></code></td>
+              <td><a><code>AvailableTunersChangeEvent</code></a></td>
               <td>
-                Handles the information of the currently displayed channel
-                changed by the TV tuner.
+                Handles the information of the available TV tuners changed by
+                the TV device.
               </td>
             </tr>
 
@@ -448,6 +463,16 @@ Style guide to contributors:
               <td>
                 Handles the information of the available channels changed by the
                 TV tuners.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>oncurrentchannelchange</code></strong></td>
+              <td><code><dfn id="dfn-change-event">oncurrentchannelchange</dfn></code></td>
+              <td><a><code>CurrentChannelChangeEvent</code></a></td>
+              <td>
+                Handles the information of the currently displayed channel
+                changed by the TV tuner.
               </td>
             </tr>
           </tbody>
@@ -565,14 +590,14 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface CurrentChannelChangeEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface AvailableTunersChangeEvent - - - - - - - - - - -->
     <section>
-      <h2><a>CurrentChannelChangeEvent</a> Interface</h2>
+      <h2><a>AvailableTunersChangeEvent</a> Interface</h2>
       <p>
-        The <a>CurrentChannelChangeEvent</a> interface represents the event
-        related to the currently displayed channel changed by the TV tuner.
+        The <a>AvailableTunersChangeEvent</a> interface represents the event
+        related to the available tuners changed by the TV device.
       </p>
-      <dl title="interface CurrentChannelChangeEvent : Event" class="idl">
+      <dl title="interface AvailableTunersChangeEvent : Event" class="idl">
         <p>
           To be constructed.
         </p>
@@ -587,6 +612,20 @@ Style guide to contributors:
         related to the available channels changed by the TV tuners.
       </p>
       <dl title="interface AvailableChannelsChangeEvent : Event" class="idl">
+        <p>
+          To be constructed.
+        </p>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface CurrentChannelChangeEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>CurrentChannelChangeEvent</a> Interface</h2>
+      <p>
+        The <a>CurrentChannelChangeEvent</a> interface represents the event
+        related to the currently displayed channel changed by the TV tuner.
+      </p>
+      <dl title="interface CurrentChannelChangeEvent : Event" class="idl">
         <p>
           To be constructed.
         </p>
