@@ -276,11 +276,11 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>TVProgram[] getPrograms ()</dt>
+        <dt>TVProgram[] getAvailablePrograms ()</dt>
           <dd>
-            This method makes a request to retrieve all the TV programs by the
-            <code>channelNumber</code> parameter. It returns a set of
-            <a>TVProgram</a> that belongs to the TV channel.
+            This method makes a request to retrieve all the TV programs that are
+            available by the <code>channelNumber</code> parameter. It returns a
+            set of <a>TVProgram</a> that belongs to the TV channel.
             <dl class='parameters'>
               <dt>optional DOMString channelNumber</dt>
                 <dd>
@@ -304,7 +304,7 @@ Style guide to contributors:
         <dt class="no-docs">
           attribute EventHandler onavailablechannelschange
         </dt>
-          <dd>
+          <dd>`
             Handles the <code>onavailablechannelschange</code> event of type
             <a>AvailableChannelsChangeEvent</a>, fired when the
             <code>availableChannels</code> are changed.
@@ -390,8 +390,8 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>getPrograms </code></dfn> method when invoked MUST run
-          the following steps:
+          The <dfn><code>getAvailablePrograms </code></dfn> method when invoked
+          MUST run the following steps:
         </p>
         <ol>
           <li>
@@ -402,8 +402,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuners to retrieve the TV programs of a
-            TV channel with the channel number equal to the
+            Make a request to the TV tuners to retrieve the TV programs that are
+            available by a TV channel with the channel number equal to the
             <code>channelNumber</code> parameter passed in the request. If
             the <code>channelNumber</code> is not passed, retrieve all the
             TV programs that are available across TV channels.
