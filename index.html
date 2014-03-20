@@ -264,14 +264,13 @@ Style guide to contributors:
         <dt>Promise setChannel ()</dt>
           <dd>
             This method makes a request to set the TV channel by the
-            <code>channelNumber</code> parameter. It returns a new
+            <code>options</code> parameter. It returns a new
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
-              <dt>DOMString channelNumber</dt>
+              <dt>SetChannelOptions options</dt>
                 <dd>
-                  Specifies the number of the TV channel that is requested to be
-                  set.
+                  Specifies the options for setting the TV channel.
                 </dd>
             </dl>
           </dd>
@@ -380,9 +379,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuner to set the TV channel with the
-            channer number equal to the <code>channelNumber</code> parameter
-            passed in the request.
+            Make a request to the TV tuner to set the TV channel according to
+            the setting options specified in the <code>options</code> parameter.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -512,6 +510,11 @@ Style guide to contributors:
         TV tuner.
       </p>
       <dl title="dictionary TVTuner" class="idl">
+        <dt>DOMString id</dt>
+          <dd>
+            MUST return the ID of the TV tuner.
+          </dd>
+
         <dt>TVTunerType type</dt>
           <dd>
             MUST return the type of the TV tuner.
@@ -609,6 +612,26 @@ Style guide to contributors:
         <dt>TVChannel ownerChannel</dt>
           <dd>
             MUST return the TV channel which the TV program belongs to.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary SetChannelOptions  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>SetChannelOptions</a> Dictionary</h2>
+      <p>
+        The <a>SetChannelOptions</a> dictionary contains the information for
+        setting the TV channel.
+      </p>
+      <dl title="dictionary SetChannelOptions" class="idl">
+        <dt>DOMString tunnerId</dt>
+          <dd>
+            Identifies the TV tunner that is requested to set the TV channel.
+          </dd>
+
+        <dt>DOMString channelNumber</dt>
+          <dd>
+            Specifies the number of the TV channel that is requested to be set.
           </dd>
       </dl>
     </section>
