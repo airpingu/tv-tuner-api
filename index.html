@@ -313,6 +313,16 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
+          attribute EventHandler onavailableprogramschange
+        </dt>
+          <dd>
+            Handles the <code>onavailableprogramschange</code> event of type
+            <a>AvailableProgramsChangeEvent</a>, fired when the available
+            TV programs are changed no matter which TV channels the TV programs
+            belong to.
+          </dd>
+
+        <dt class="no-docs">
           attribute EventHandler oncurrentchannelchange
         </dt>
           <dd>
@@ -464,8 +474,18 @@ Style guide to contributors:
               <td><code><dfn id="dfn-change-event">onavailablechannelschange</dfn></code></td>
               <td><a><code>AvailableChannelsChangeEvent</code></a></td>
               <td>
-                Handles the information of the available channels changed by the
-                TV tuners.
+                Handles the information of the available TV channels changed by
+                the TV tuners.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onavailableprogramschange</code></strong></td>
+              <td><code><dfn id="dfn-change-event">onavailableprogramschange</dfn></code></td>
+              <td><a><code>AvailableProgramsChangeEvent</code></a></td>
+              <td>
+                Handles the information of the available TV programs changed by
+                the TV channels.
               </td>
             </tr>
 
@@ -474,7 +494,7 @@ Style guide to contributors:
               <td><code><dfn id="dfn-change-event">oncurrentchannelchange</dfn></code></td>
               <td><a><code>CurrentChannelChangeEvent</code></a></td>
               <td>
-                Handles the information of the currently displayed channel
+                Handles the information of the currently displayed TV channel
                 changed by the TV tuner.
               </td>
             </tr>
@@ -598,7 +618,7 @@ Style guide to contributors:
       <h2><a>AvailableTunersChangeEvent</a> Interface</h2>
       <p>
         The <a>AvailableTunersChangeEvent</a> interface represents the event
-        related to the available tuners changed by the TV device.
+        related to the available TV tuners changed by the TV device.
       </p>
       <dl title="interface AvailableTunersChangeEvent : Event" class="idl">
         <p>
@@ -612,9 +632,23 @@ Style guide to contributors:
       <h2><a>AvailableChannelsChangeEvent</a> Interface</h2>
       <p>
         The <a>AvailableChannelsChangeEvent</a> interface represents the event
-        related to the available channels changed by the TV tuners.
+        related to the available TV channels changed by the TV tuners.
       </p>
       <dl title="interface AvailableChannelsChangeEvent : Event" class="idl">
+        <p>
+          To be constructed.
+        </p>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface AvailableProgramsChangeEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>AvailableProgramsChangeEvent</a> Interface</h2>
+      <p>
+        The <a>AvailableProgramsChangeEvent</a> interface represents the event
+        related to the available TV programs changed by the TV channels.
+      </p>
+      <dl title="interface AvailableProgramsChangeEvent : Event" class="idl">
         <p>
           To be constructed.
         </p>
@@ -626,7 +660,7 @@ Style guide to contributors:
       <h2><a>CurrentChannelChangeEvent</a> Interface</h2>
       <p>
         The <a>CurrentChannelChangeEvent</a> interface represents the event
-        related to the currently displayed channel changed by the TV tuner.
+        related to the currently displayed TV channel changed by the TV tuner.
       </p>
       <dl title="interface CurrentChannelChangeEvent : Event" class="idl">
         <p>
