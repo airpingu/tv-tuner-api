@@ -562,6 +562,13 @@ Style guide to contributors:
             different TV tuners can broadcast the same TV channel.
           </dd>
 
+        <dt>TVTuner? currentTuner</dt>
+          <dd>
+            MUST return the TV tuner that is currently broadcasting the TV
+            channel. MUST return null if the TV channel is not currently
+            displayed.
+          </dd>
+
         <dt>TVProgram? currentProgram</dt>
           <dd>
             MUST return the TV program that is currently broadcasted by the TV
