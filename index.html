@@ -30,7 +30,7 @@
         otherLinks: [{
           key: "Repository",
           data: [{
-            value: "We are on Github.",
+            value: "We are on GitHub.",
             href: "https://github.com/airpingu/tv-tuner-api/"
           }, {
             value: "File a bug.",
@@ -233,7 +233,7 @@ Style guide to contributors:
             MUST return the TV channel that is currently displayed on the TV.
           </dd>
 
-        <dt>readonly attribute TVChannel[] <a>channels</a></dt>
+        <dt>readonly attribute TVChannel[] <a>availableChannels</a></dt>
           <dd>
             MUST return all the TV channels that are available across TV tuners.
           </dd>
@@ -287,12 +287,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onchannelschange
+          attribute EventHandler onavailablechannelschange
         </dt>
           <dd>
-            Handles the <code>onchannelschange</code> event of type
-            <a>ChannelsChangeEvent</a>, fired when the <code>channels</code> are
-            changed.
+            Handles the <code>onavailablechannelschange</code> event of type
+            <a>AvailableChannelsChangeEvent</a>, fired when the
+            <code>availableChannels</code> are changed.
           </dd>
       </dl>
 
@@ -433,9 +433,9 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>onchannelschange</code></strong></td>
-              <td><code><dfn id="dfn-change-event">onchannelschange</dfn></code></td>
-              <td><a><code>ChannelsChangeEvent</code></a></td>
+              <td><strong><code>onavailablechannelschange</code></strong></td>
+              <td><code><dfn id="dfn-change-event">onavailablechannelschange</dfn></code></td>
+              <td><a><code>AvailableChannelsChangeEvent</code></a></td>
               <td>
                 Handles the information of the available channels changed by the
                 TV tuners.
@@ -568,14 +568,14 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface ChannelsChangeEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface AvailableChannelsChangeEvent - - - - - - - - - - -->
     <section>
-      <h2><a>ChannelsChangeEvent</a> Interface</h2>
+      <h2><a>AvailableChannelsChangeEvent</a> Interface</h2>
       <p>
-        The <a>ChannelsChangeEvent</a> interface represents the event
+        The <a>AvailableChannelsChangeEvent</a> interface represents the event
         related to the available channels changed by the TV tuners.
       </p>
-      <dl title="interface ChannelsChangeEvent : Event" class="idl">
+      <dl title="interface AvailableChannelsChangeEvent : Event" class="idl">
         <p>
           To be constructed.
         </p>
