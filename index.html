@@ -241,20 +241,44 @@ Style guide to contributors:
 
       <dl title="interface TVTunerManager : EventTarget" class="idl">
 
-        <dt>readonly attribute TVTuner[] <a>availableTuners</a></dt>
-          <dd>
-            MUST return all the TV tuners that are available in the TV device.
-          </dd>
-
-        <dt>readonly attribute TVChannel[] <a>availableChannels</a></dt>
-          <dd>
-            MUST return all the TV channels that are available across TV tuners.
-          </dd>
-
         <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
           <dd>
             MUST return the TV channel that is currently displayed on the TV
             device.
+          </dd>
+
+        <dt>Promise getAvailableTuners ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV tuners that are
+            available in the TV device. It returns a new <code>Promise</code>
+            that will be used to notify the caller about the result of the
+            operation, which is an array of <a>TVTuner</a> elements.
+          </dd>
+
+        <dt>Promise getAvailableChannels ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV channels that are
+            available across TV tuners. It returns a new <code>Promise</code>
+            that will be used to notify the caller about the result of the
+            operation, which is an array of <a>TVChannel</a> elements.
+          </dd>
+
+        <dt>Promise getAvailablePrograms ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV programs that are
+            available in a TV channel based on the <code>channelNumber</code>
+            parameter. It returns a new <code>Promise</code> that will be used
+            to notify the caller about the result of the operation, which is an
+            array of <a>TVProgram</a> elements that belong to the TV channel.
+            <dl class='parameters'>
+              <dt>optional DOMString channelNumber</dt>
+                <dd>
+                  Specifies the number of the TV channel that is requested to
+                  retrieve its belonging TV programs. If this parameter is
+                  absent or cannot be identified, this method will return all
+                  the TV programs that are available across TV channels.
+                </dd>
+            </dl>
           </dd>
 
         <dt>Promise scan ()</dt>
@@ -279,24 +303,6 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>Promise getAvailablePrograms ()</dt>
-          <dd>
-            This method makes a request to retrieve all the TV programs that are
-            available by the <code>channelNumber</code> parameter. It returns a
-            new <code>Promise</code> that will be used to notify the caller
-            about the result of the operation, which is an array of
-            <a>TVProgram</a> elements that belong to the TV channel.
-            <dl class='parameters'>
-              <dt>optional DOMString channelNumber</dt>
-                <dd>
-                  Specifies the number of the TV channel that is requested to
-                  retrieve its belonging TV programs. If this parameter is
-                  absent or cannot be identified, this method will return all
-                  the TV programs that are available across TV channels.
-                </dd>
-            </dl>
-          </dd>
-
         <dt class="no-docs">
           attribute EventHandler onavailabletunerschange
         </dt>
@@ -309,7 +315,7 @@ Style guide to contributors:
         <dt class="no-docs">
           attribute EventHandler onavailablechannelschange
         </dt>
-          <dd>`
+          <dd>
             Handles the <code>onavailablechannelschange</code> event of type
             <a>AvailableChannelsChangeEvent</a>, fired when the
             <code>availableChannels</code> are changed.
@@ -337,6 +343,121 @@ Style guide to contributors:
 
       <section>
         <h3>Steps</h3>
+
+        <p>
+          The <dfn><code>getAvailableTuners </code></dfn> method when invoked
+          MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV device to retrieve all the TV tuners that
+            are available in the TV device.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>tuners</var> be the array of the retrieved
+              <a>TVTuner</a> elements.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>tuners</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>getAvailableChannels </code></dfn> method when invoked
+          MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV tuners to retrieve all the TV channels that
+            are available across TV tuners.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>channels</var> be the array of the retrieved
+              <a>TVChannel</a> elements.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>channels</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>getAvailablePrograms </code></dfn> method when invoked
+          MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV tuners to retrieve all the TV programs that
+            are available in a TV channel with the channel number equal to the
+            <code>channelNumber</code> parameter passed in the request. If
+            the <code>channelNumber</code> is not passed, retrieve all the
+            TV programs that are available across TV channels.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>programs</var> be the array of the retrieved
+              <a>TVProgram</a> elements.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>programs</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
         <p>
           The <dfn><code>scan</code></dfn> method when invoked MUST run
           the following steps:
@@ -350,8 +471,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tunners to scan and retrieve all the TV
-            channels that are available across TV tunners.
+            Make a request to the TV tuners to scan and retrieve all the TV
+            channels that are available across TV tuners.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -403,45 +524,6 @@ Style guide to contributors:
           </ol>
         </ol>
 
-        <p>
-          The <dfn><code>getAvailablePrograms </code></dfn> method when invoked
-          MUST run the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV tuners to retrieve the TV programs that are
-            available by a TV channel with the channel number equal to the
-            <code>channelNumber</code> parameter passed in the request. If
-            the <code>channelNumber</code> is not passed, retrieve all the
-            TV programs that are available across TV channels.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Let <var>programs</var> be the array of the retrieved
-              <a>TVProgram</a> elements.
-            </li>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              with <em>programs</em> as the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
       </section>
 
       <section>
