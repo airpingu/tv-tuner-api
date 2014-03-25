@@ -147,6 +147,10 @@ Style guide to contributors:
             EPG can be dynamically updated by the broadcasters. We need a way
             to notify the web contents to update its EPG menu from time to time.
           </li>
+          <li>
+            It is necessary to support multiple channels that can be
+            concurrently displayed on the TV (i.e. Picture-in-Picture).
+          </li>
         </ul>
       </section>
 
@@ -243,8 +247,8 @@ Style guide to contributors:
 
         <dt>readonly attribute TVChannel[] <a>currentChannels</a></dt>
           <dd>
-            MUST return the TV channels that are currently displayed on the TV
-            device.
+            MUST return the TV channels that are concurrently displayed on the
+            TV device.
           </dd>
 
         <dt>Promise getAvailableTuners ()</dt>
@@ -849,11 +853,6 @@ Style guide to contributors:
         related to the available TV channel changed by the TV tuner.
       </p>
       <dl title="interface AvailableChannelChangedEvent : Event" class="idl">
-        <dt>readonly attribute DOMString tunerId</dt>
-          <dd>
-            MUST return the identifier of the TV tuner which changes the
-            available TV channel.
-          </dd>
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
             MUST return the available TV channel that is changed by the TV tuner.
@@ -869,11 +868,6 @@ Style guide to contributors:
         related to the available TV program changed in the TV channel.
       </p>
       <dl title="interface AvailableProgramChangedEvent : Event" class="idl">
-        <dt>readonly attribute DOMString channelNumber</dt>
-          <dd>
-            MUST return the number of the TV channel which changes the available
-            TV program.
-          </dd>
         <dt>readonly attribute TVProgram program</dt>
           <dd>
             MUST return the available TV program that is changed in the TV
