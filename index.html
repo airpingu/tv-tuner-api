@@ -244,13 +244,6 @@ Style guide to contributors:
       </p>
 
       <dl title="interface TVTunerManager : EventTarget" class="idl">
-
-        <dt>readonly attribute TVChannel[] <a>currentChannels</a></dt>
-          <dd>
-            MUST return the TV channels that are concurrently displayed on the
-            TV device.
-          </dd>
-
         <dt>Promise getAvailableTuners ()</dt>
           <dd>
             This method makes a request to retrieve all the TV tuners that are
@@ -298,9 +291,10 @@ Style guide to contributors:
         <dt>Promise scan ()</dt>
           <dd>
             This method makes a request to scan all the TV channels that are
-            available across TV tuners. It returns a new <code>Promise</code>
-            that will be used to notify the caller about the result of the
-            operation.
+            available across TV tuners. Note that the scanning algorithm should
+            be responsible for de-duplicating the common TV channels across TV
+            tuners. It returns a new <code>Promise</code> that will be used to
+            notify the caller about the result of the operation.
           </dd>
 
         <dt>Promise setChannel ()</dt>
@@ -315,6 +309,12 @@ Style guide to contributors:
                   Specifies the options for setting the TV channel.
                 </dd>
             </dl>
+          </dd>
+
+        <dt>readonly attribute TVChannel[] <a>currentChannels</a></dt>
+          <dd>
+            MUST return the TV channels that are concurrently displayed on the
+            TV device.
           </dd>
 
         <dt class="no-docs">
