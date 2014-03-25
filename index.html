@@ -318,8 +318,8 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onavailabletunerschange</code> event of type
-            <a>AvailableTunersChangeEvent</a>, fired when the
-            <code>availableTuners</code> are changed.
+            <a>AvailableTunersChangeEvent</a>, fired when the TV tuners that
+            are available in the TV device are changed.
           </dd>
 
         <dt class="no-docs">
@@ -327,8 +327,8 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onavailablechannelschange</code> event of type
-            <a>AvailableChannelsChangeEvent</a>, fired when the
-            <code>availableChannels</code> are changed.
+            <a>AvailableChannelsChangeEvent</a>, fired when the TV channels
+            that are available in a TV tuner are changed.
           </dd>
 
         <dt class="no-docs">
@@ -336,9 +336,8 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onavailableprogramschange</code> event of type
-            <a>AvailableProgramsChangeEvent</a>, fired when the available
-            TV programs are changed no matter which TV channels the TV programs
-            belong to.
+            <a>AvailableProgramsChangeEvent</a>, fired when the TV programs
+            that are available in a TV channel are changed.
           </dd>
 
         <dt class="no-docs">
@@ -572,7 +571,7 @@ Style guide to contributors:
               <td><a><code>AvailableChannelsChangeEvent</code></a></td>
               <td>
                 Handles the information of the available TV channels changed by
-                the TV tuners.
+                a TV tuner.
               </td>
             </tr>
 
@@ -582,7 +581,7 @@ Style guide to contributors:
               <td><a><code>AvailableProgramsChangeEvent</code></a></td>
               <td>
                 Handles the information of the available TV programs changed by
-                the TV channels.
+                a TV channel.
               </td>
             </tr>
 
@@ -750,9 +749,11 @@ Style guide to contributors:
         related to the available TV tuners changed by the TV device.
       </p>
       <dl title="interface AvailableTunersChangeEvent : Event" class="idl">
-        <p>
-          To be constructed.
-        </p>
+        <dt>readonly attribute TVTuner[] availableTuners</dt>
+          <dd>
+            MUST return all the TV tuners that are eventually available in the
+            TV device.
+          </dd>
       </dl>
     </section>
 
@@ -761,12 +762,19 @@ Style guide to contributors:
       <h2><a>AvailableChannelsChangeEvent</a> Interface</h2>
       <p>
         The <a>AvailableChannelsChangeEvent</a> interface represents the event
-        related to the available TV channels changed by the TV tuners.
+        related to the available TV channels changed by a TV tuner.
       </p>
       <dl title="interface AvailableChannelsChangeEvent : Event" class="idl">
-        <p>
-          To be constructed.
-        </p>
+        <dt>readonly attribute DOMString tunerId</dt>
+          <dd>
+            MUST return the identifier of the TV tuner which changes its
+            available TV channels.
+          </dd>
+        <dt>readonly attribute TVChannel[] availableChannels</dt>
+          <dd>
+            MUST return the all TV channels that are eventually available in the
+            TV tuner.
+          </dd>
       </dl>
     </section>
 
@@ -775,12 +783,19 @@ Style guide to contributors:
       <h2><a>AvailableProgramsChangeEvent</a> Interface</h2>
       <p>
         The <a>AvailableProgramsChangeEvent</a> interface represents the event
-        related to the available TV programs changed by the TV channels.
+        related to the available TV programs changed by a TV channel.
       </p>
       <dl title="interface AvailableProgramsChangeEvent : Event" class="idl">
-        <p>
-          To be constructed.
-        </p>
+        <dt>readonly attribute DOMString channelNumber</dt>
+          <dd>
+            MUST return the number of the TV channel that changes its available
+            TV programs.
+          </dd>
+        <dt>readonly attribute TVProgram[] availablePrograms</dt>
+          <dd>
+            MUST return all the TV programs that are eventually available in the
+            TV channel.
+          </dd>
       </dl>
     </section>
 
@@ -792,9 +807,11 @@ Style guide to contributors:
         related to the currently displayed TV channel changed by the TV tuner.
       </p>
       <dl title="interface CurrentChannelChangeEvent : Event" class="idl">
-        <p>
-          To be constructed.
-        </p>
+        <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
+          <dd>
+            MUST return the TV channel that is currently displayed on the TV
+            device.
+          </dd>
       </dl>
     </section>
 
