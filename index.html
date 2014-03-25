@@ -258,9 +258,19 @@ Style guide to contributors:
         <dt>Promise getAvailableChannels ()</dt>
           <dd>
             This method makes a request to retrieve all the TV channels that are
-            available across TV tuners. It returns a new <code>Promise</code>
-            that will be used to notify the caller about the result of the
-            operation, which is an array of <a>TVChannel</a> elements.
+            available in a TV tuner based on the <code>tunerId</code> parameter.
+            It returns a new <code>Promise</code> that will be used to notify
+            the caller about the result of the operation, which is an array of
+            <a>TVChannel</a> elements that belong to the TV tuner.
+            <dl class='parameters'>
+              <dt>optional DOMString tunerId</dt>
+                <dd>
+                  Identifies the TV tuner that is requested to retrieve its
+                  belonging TV channels. If this parameter is absent or cannot
+                  be identified, this method will return all the TV channels
+                  that are available across TV tuners.
+                </dd>
+            </dl>
           </dd>
 
         <dt>Promise getAvailablePrograms ()</dt>
@@ -395,7 +405,10 @@ Style guide to contributors:
           </li>
           <li>
             Make a request to the TV tuners to retrieve all the TV channels that
-            are available across TV tuners.
+            are available in a TV tuner with the tuner ID equal to the
+            <code>tunerId</code> parameter passed in the request. If the
+            <code>tunerId</code> is not passed, retrieve all the TV channels
+            that are available across TV tuners.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -717,9 +730,9 @@ Style guide to contributors:
         setting the TV channel.
       </p>
       <dl title="dictionary SetChannelOptions" class="idl">
-        <dt>DOMString tunnerId</dt>
+        <dt>DOMString tunerId</dt>
           <dd>
-            Identifies the TV tunner that is requested to set the TV channel.
+            Identifies the TV tuner that is requested to set the TV channel.
           </dd>
 
         <dt>DOMString channelNumber</dt>
