@@ -241,9 +241,9 @@ Style guide to contributors:
 
       <dl title="interface TVTunerManager : EventTarget" class="idl">
 
-        <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
+        <dt>readonly attribute TVChannel <a>currentChannels</a></dt>
           <dd>
-            MUST return the TV channel that is currently displayed on the TV
+            MUST return the TV channels that are currently displayed on the TV
             device.
           </dd>
 
@@ -341,12 +341,21 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler oncurrentchannelchange
+          attribute EventHandler oncurrentchanneladded
         </dt>
           <dd>
-            Handles the <code>oncurrentchannelchange</code> event of type
-            <a>CurrentChannelChangeEvent</a>, fired when the
-            <code>currentChannel</code> is changed.
+            Handles the <code>oncurrentchanneladded</code> event of type
+            <a>CurrentChannelChangedEvent</a>, fired when a currently displayed
+            TV channel is added.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler oncurrentchannelremoved
+        </dt>
+          <dd>
+            Handles the <code>oncurrentchannelremoved</code> event of type
+            <a>CurrentChannelChangedEvent</a>, fired when a currently displayed
+            TV channel is removed.
           </dd>
       </dl>
 
@@ -586,12 +595,22 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>oncurrentchannelchange</code></strong></td>
-              <td><code><dfn id="dfn-change-event">oncurrentchannelchange</dfn></code></td>
-              <td><a><code>CurrentChannelChangeEvent</code></a></td>
+              <td><strong><code>oncurrentchanneladded</code></strong></td>
+              <td><code><dfn id="dfn-change-event">currentchanneladded</dfn></code></td>
+              <td><a><code>CurrentChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently displayed TV channel
-                changed by the TV tuner.
+                that is added on the TV device.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>oncurrentchannelremoved</code></strong></td>
+              <td><code><dfn id="dfn-change-event">currentchannelremoved</dfn></code></td>
+              <td><a><code>CurrentChannelChangedEvent</code></a></td>
+              <td>
+                Handles the information of the currently displayed TV channel
+                that is removed on the TV device.
               </td>
             </tr>
           </tbody>
@@ -636,6 +655,13 @@ Style guide to contributors:
         TV channel.
       </p>
       <dl title="dictionary TVChannel" class="idl">
+
+        <dt>boolean displayed</dt>
+          <dd>
+            MUST return the state whether or not the channel is currently
+            displayed on the TV device.
+          </dd>
+
         <dt>DOMString number</dt>
           <dd>
             MUST return the number of the TV channel. E.g., <code>"12-1"</code>,
@@ -799,18 +825,18 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface CurrentChannelChangeEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface CurrentChannelChangedEvent - - - - - - - - - - -->
     <section>
-      <h2><a>CurrentChannelChangeEvent</a> Interface</h2>
+      <h2><a>CurrentChannelChangedEvent</a> Interface</h2>
       <p>
-        The <a>CurrentChannelChangeEvent</a> interface represents the event
-        related to the currently displayed TV channel changed by the TV tuner.
+        The <a>CurrentChannelChangedEvent</a> interface represents the event
+        related to the currently displayed TV channel changed on the TV device.
       </p>
-      <dl title="interface CurrentChannelChangeEvent : Event" class="idl">
-        <dt>readonly attribute TVChannel <a>currentChannel</a></dt>
+      <dl title="interface CurrentChannelChangedEvent : Event" class="idl">
+        <dt>readonly attribute TVChannel <a>channel</a></dt>
           <dd>
-            MUST return the TV channel that is currently displayed on the TV
-            device.
+            MUST return the currently displayed TV channel that is changed on
+            the TV device.
           </dd>
       </dl>
     </section>
