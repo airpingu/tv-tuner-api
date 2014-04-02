@@ -151,6 +151,11 @@ Style guide to contributors:
             It is necessary to support multiple channels that can be
             concurrently displayed on the TV (i.e. Picture-in-Picture).
           </li>
+          <li>
+            DTV needs to connect to the broadcasters' remote servers to provide
+            more TV services through the Web. To do this, the web content needs
+            a universal way to identify the TV program.
+          </li>
         </ul>
       </section>
 
@@ -807,6 +812,38 @@ Style guide to contributors:
             MUST return the rating of the TV program.
           </dd>
 
+        <dt>DOMString networkId</dt>
+          <dd>
+            MUST return the identification of a broadcast transmission network.
+            On satellite and IP broadband, typically one <code>network_id</code>
+            corresponds to an operator. On cable and terrestrial, where
+            different radio frequencies might be used in different regions,
+            operators typically use one <code>network_id</code> per such region.
+          </dd>
+
+        <dt>DOMString originalNetworkId</dt>
+          <dd>
+            MUST return the identification of a broadcast transmission network,
+            which is used where TV/radio programmes are taken from one network
+            and are re-transmitted on another one. The
+            <code>original_network_id</code> is therefore used by receivers as a
+            means of determining equivalence across different networks.
+          </dd>
+
+        <dt>DOMString transportStreamId</dt>
+          <dd>
+            MUST return the identification of a time-domain multiplex of several
+            programmes carried in Transport Stream (TS) packets. One or more
+            multiplexes can be transmitted on any given radio frequency in a DVB
+            network.
+          </dd>
+
+        <dt>DOMString serviceId</dt>
+          <dd>
+            MUST return the identification of a TV, radio or data programme
+            within a TS multiplex. The number of programmes is limited by the
+            capacity of the underlying physical channel.
+          </dd>
       </dl>
     </section>
 
