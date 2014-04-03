@@ -270,7 +270,7 @@ Style guide to contributors:
                   Identifies the TV tuner that is requested to retrieve its
                   belonging TV channels. If this parameter is absent or cannot
                   be identified, this method will return all the TV channels
-                  that are available across TV tuners.
+                  that are available across different TV tuners.
                 </dd>
             </dl>
           </dd>
@@ -288,18 +288,20 @@ Style guide to contributors:
                   Specifies the number of the TV channel that is requested to
                   retrieve its belonging TV programs. If this parameter is
                   absent or cannot be identified, this method will return all
-                  the TV programs that are available across TV channels.
+                  the TV programs that are available across different TV
+                  channels.
                 </dd>
             </dl>
           </dd>
 
-        <dt>Promise scan ()</dt>
+        <dt>Promise scanChannels ()</dt>
           <dd>
             This method makes a request to scan all the TV channels that are
-            available across TV tuners. Note that the scanning algorithm should
-            be responsible for de-duplicating the common TV channels across TV
-            tuners. It returns a new <code>Promise</code> that will be used to
-            notify the caller about the result of the operation.
+            available across different TV tuners. Note that the scanning
+            algorithm should be responsible for de-duplicating the common TV
+            channels across different TV tuners. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
           </dd>
 
         <dt>Promise setChannel ()</dt>
@@ -452,7 +454,7 @@ Style guide to contributors:
             are available in a TV tuner with the tuner ID equal to the
             <code>tunerId</code> parameter passed in the request. If the
             <code>tunerId</code> is not passed, retrieve all the TV channels
-            that are available across TV tuners.
+            that are available across different TV tuners.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -492,7 +494,7 @@ Style guide to contributors:
             are available in a TV channel with the channel number equal to the
             <code>channelNumber</code> parameter passed in the request. If
             the <code>channelNumber</code> is not passed, retrieve all the
-            TV programs that are available across TV channels.
+            TV programs that are available across different TV channels.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -516,7 +518,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>scan</code></dfn> method when invoked MUST run
+          The <dfn><code>scanChannels</code></dfn> method when invoked MUST run
           the following steps:
         </p>
         <ol>
@@ -529,7 +531,7 @@ Style guide to contributors:
           </li>
           <li>
             Make a request to the TV tuners to scan and retrieve all the TV
-            channels that are available across TV tuners.
+            channels that are available across different TV tuners.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -751,8 +753,8 @@ Style guide to contributors:
 
         <dt>DOMString number</dt>
           <dd>
-            MUST return the number of the TV channel. E.g., <code>"12-1"</code>,
-            <code>"12-2"</code>, <code>"12-2"</code>... etc.
+            MUST return the Logical Channel Number (LCN) of the TV channel. E.g.,
+            <code>"12-1"</code>, <code>"12-2"</code>, <code>"12-2"</code>... etc.
           </dd>
 
         <dt>TVChannelType type</dt>
