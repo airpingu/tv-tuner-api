@@ -240,16 +240,16 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - - Interface DataStore  - - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - - Interface TVTunerManager  - - - - - - - - - - - - - -->
     <section>
       <h2><a>TVTunerManager</a> Interface</h2>
       <p>
         The <a>TVTunerManager</a> interface represents a bunch of properties and
-        a set of operations that can be used to control the TV tuner.
+        a set of operations that can be used to control the TV tuners.
       </p>
 
       <dl title="interface TVTunerManager : EventTarget" class="idl">
-        <dt>Promise getAvailableTuners ()</dt>
+        <dt>Promise getTuners ()</dt>
           <dd>
             This method makes a request to retrieve all the TV tuners that are
             available in the TV device. It returns a new <code>Promise</code>
@@ -257,7 +257,7 @@ Style guide to contributors:
             operation, which is an array of <a>TVTuner</a> elements.
           </dd>
 
-        <dt>Promise getAvailableChannels ()</dt>
+        <dt>Promise getChannels ()</dt>
           <dd>
             This method makes a request to retrieve all the TV channels that are
             available in a TV tuner based on the <code>tunerId</code> parameter.
@@ -275,7 +275,7 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>Promise getAvailablePrograms ()</dt>
+        <dt>Promise getPrograms ()</dt>
           <dd>
             This method makes a request to retrieve all the TV programs that are
             available in a TV channel based on the <code>channelNumber</code>
@@ -318,82 +318,58 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>readonly attribute TVChannel[] <a>currentChannels</a></dt>
-          <dd>
-            MUST return the TV channels that are concurrently displayed on the
-            TV device.
-          </dd>
-
         <dt class="no-docs">
-          attribute EventHandler onavailabletuneradded
+          attribute EventHandler ontuneradded
         </dt>
           <dd>
-            Handles the <code>onavailabletuneradded</code> event of type
+            Handles the <code>ontuneradded</code> event of type
             <a>TunerChangedEvent</a>, fired when an available TV tuner
             is added by the TV device.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onavailabletunerremoved
+          attribute EventHandler ontunerremoved
         </dt>
           <dd>
-            Handles the <code>onavailabletunerremoved</code> event of type
+            Handles the <code>ontunerremoved</code> event of type
             <a>TunerChangedEvent</a>, fired when an available TV tuner
             is removed by the TV device.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onavailablechanneladded
+          attribute EventHandler onchanneladded
         </dt>
           <dd>
-            Handles the <code>onavailablechanneladded</code> event of type
+            Handles the <code>onchanneladded</code> event of type
             <a>ChannelChangedEvent</a>, fired when an available TV
             channel is added by the TV tunner.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onavailablechannelremoved
+          attribute EventHandler onchannelremoved
         </dt>
           <dd>
-            Handles the <code>onavailablechannelremoved</code> event of type
+            Handles the <code>onchannelremoved</code> event of type
             <a>ChannelChangedEvent</a>, fired when an available TV
             channel is removed by the TV tunner.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onavailableprogramadded
+          attribute EventHandler onprogramadded
         </dt>
           <dd>
-            Handles the <code>onavailableprogramadded</code> event of type
+            Handles the <code>onprogramadded</code> event of type
             <a>ProgramChangedEvent</a>, fired when an available TV
             program is added in the TV channel.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onavailableprogramremoved
+          attribute EventHandler onprogramremoved
         </dt>
           <dd>
-            Handles the <code>onavailableprogramremoved</code> event of type
+            Handles the <code>onprogramremoved</code> event of type
             <a>ProgramChangedEvent</a>, fired when an available TV
             program is removed in the TV channel.
-          </dd>
-
-        <dt class="no-docs">
-          attribute EventHandler oncurrentchanneladded
-        </dt>
-          <dd>
-            Handles the <code>oncurrentchanneladded</code> event of type
-            <a>ChannelChangedEvent</a>, fired when a currently displayed
-            TV channel is added on the TV device.
-          </dd>
-
-        <dt class="no-docs">
-          attribute EventHandler oncurrentchannelremoved
-        </dt>
-          <dd>
-            Handles the <code>oncurrentchannelremoved</code> event of type
-            <a>ChannelChangedEvent</a>, fired when a currently displayed
-            TV channel is removed on the TV device.
           </dd>
       </dl>
 
@@ -401,7 +377,7 @@ Style guide to contributors:
         <h3>Steps</h3>
 
         <p>
-          The <dfn><code>getAvailableTuners </code></dfn> method when invoked
+          The <dfn><code>getTuners </code></dfn> method when invoked
           MUST run the following steps:
         </p>
         <ol>
@@ -438,7 +414,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>getAvailableChannels </code></dfn> method when invoked
+          The <dfn><code>getChannels </code></dfn> method when invoked
           MUST run the following steps:
         </p>
         <ol>
@@ -478,7 +454,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>getAvailablePrograms </code></dfn> method when invoked
+          The <dfn><code>getPrograms </code></dfn> method when invoked
           MUST run the following steps:
         </p>
         <ol>
@@ -591,6 +567,131 @@ Style guide to contributors:
         href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
         class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
         supported as attributes by the <a>TVTunerManager</a> object.
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Event handler</th>
+              <th>Event name</th>
+              <th>Event type</th>
+              <th>Short description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>ontuneradded</code></strong></td>
+              <td><code><dfn id="dfn-change-event">tuneradded</dfn></code></td>
+              <td><a><code>TunerChangedEvent</code></a></td>
+              <td>
+                Handles the information of the available TV tuner that is added
+                by the TV device.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>ontunerremoved</code></strong></td>
+              <td><code><dfn id="dfn-change-event">tunerremoved</dfn></code></td>
+              <td><a><code>TunerChangedEvent</code></a></td>
+              <td>
+                Handles the information of the available TV tuner that is
+                removed by the TV device.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onchanneladded</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channeladded</dfn></code></td>
+              <td><a><code>ChannelChangedEvent</code></a></td>
+              <td>
+                Handles the information of the available TV channel that is
+                added by the TV tuner.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onchannelremoved</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channelremoved</dfn></code></td>
+              <td><a><code>ChannelChangedEvent</code></a></td>
+              <td>
+                Handles the information of the available TV channel that is
+                removed by the TV tuner.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onprogramadded</code></strong></td>
+              <td><code><dfn id="dfn-change-event">programadded</dfn></code></td>
+              <td><a><code>ProgramChangedEvent</code></a></td>
+              <td>
+                Handles the information of the available TV program that is
+                added in the TV channel.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onprogramremoved</code></strong></td>
+              <td><code><dfn id="dfn-change-event">programremoved</dfn></code></td>
+              <td><a><code>ProgramChangedEvent</code></a></td>
+              <td>
+                Handles the information of the available TV program that is
+                removed in the TV channel.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVTuner  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVTuner</a> Interface</h2>
+      <p>
+        The <a>TVTuner</a> interface represents a bunch of properties and
+        a set of operations related to the TV tuner.
+      </p>
+      <dl title="interface TVTuner" class="idl">
+        <dt>readonly attribute DOMString id</dt>
+          <dd>
+            MUST return the ID of the TV tuner.
+          </dd>
+
+        <dt>readonly attribute TVTunerType type</dt>
+          <dd>
+            MUST return the type of the TV tuner.
+          </dd>
+
+        <dt>readonly attribute MediaStream? stream</dt>
+          <dd>
+            MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
+            object that is currently streamed by the TV tuner, which can be
+            played by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
+            element or recorded by the <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST return null if the TV
+            tuner is not streaming.
+          </dd>
+
+        <dt>readonly attribute TVChannel? <a>channel</a></dt>
+          <dd>
+            MUST return the TV channel that is currently streamed by the TV
+            tuner. MUST return null if the TV tuner is not streaming.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onchannelchanged
+        </dt>
+          <dd>
+            Handles the <code>onchannelchanged</code> event of type
+            <a>ChannelChangedEvent</a>, fired when the currently streamed TV
+            channel is changed by the TV tuner.
+          </dd>
+      </dl>
+
+      <section>
+        <h2>Event handlers</h2>
+        <p>The following are the <a class="internalDFN"
+        href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
+        class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
+        supported as attributes by the <a>TVTuner</a> object.
         
         <table class="simple">
           <thead>
@@ -603,82 +704,12 @@ Style guide to contributors:
           </thead>
           <tbody>
             <tr>
-              <td><strong><code>onavailabletuneradded</code></strong></td>
-              <td><code><dfn id="dfn-change-event">availabletuneradded</dfn></code></td>
-              <td><a><code>TunerChangedEvent</code></a></td>
-              <td>
-                Handles the information of the available TV tuner that is added
-                by the TV device.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onavailabletunerremoved</code></strong></td>
-              <td><code><dfn id="dfn-change-event">availabletunerremoved</dfn></code></td>
-              <td><a><code>TunerChangedEvent</code></a></td>
-              <td>
-                Handles the information of the available TV tuner that is
-                removed by the TV device.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onavailablechanneladded</code></strong></td>
-              <td><code><dfn id="dfn-change-event">availablechanneladded</dfn></code></td>
+              <td><strong><code>onchannelchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channelchanged</dfn></code></td>
               <td><a><code>ChannelChangedEvent</code></a></td>
               <td>
-                Handles the information of the available TV channel that is
-                added by the TV tuner.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onavailablechannelremoved</code></strong></td>
-              <td><code><dfn id="dfn-change-event">availablechannelremoved</dfn></code></td>
-              <td><a><code>ChannelChangedEvent</code></a></td>
-              <td>
-                Handles the information of the available TV channel that is
-                removed by the TV tuner.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onavailableprogramadded</code></strong></td>
-              <td><code><dfn id="dfn-change-event">availableprogramadded</dfn></code></td>
-              <td><a><code>ProgramChangedEvent</code></a></td>
-              <td>
-                Handles the information of the available TV program that is
-                added in the TV channel.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onavailableprogramremoved</code></strong></td>
-              <td><code><dfn id="dfn-change-event">availableprogramremoved</dfn></code></td>
-              <td><a><code>ProgramChangedEvent</code></a></td>
-              <td>
-                Handles the information of the available TV program that is
-                removed in the TV channel.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>oncurrentchanneladded</code></strong></td>
-              <td><code><dfn id="dfn-change-event">currentchanneladded</dfn></code></td>
-              <td><a><code>ChannelChangedEvent</code></a></td>
-              <td>
-                Handles the information of the currently displayed TV channel
-                that is added on the TV device.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>oncurrentchannelremoved</code></strong></td>
-              <td><code><dfn id="dfn-change-event">currentchannelremoved</dfn></code></td>
-              <td><a><code>ChannelChangedEvent</code></a></td>
-              <td>
-                Handles the information of the currently displayed TV channel
-                that is removed on the TV device.
+                Handles the information of the currently streamed TV channel
+                that is changed by the TV tuner.
               </td>
             </tr>
           </tbody>
@@ -687,87 +718,87 @@ Style guide to contributors:
 
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVTuner  - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVChannel  - - - - - - - - - - - - -->
     <section>
-      <h2><a>TVTuner</a> Dictionary</h2>
+      <h2><a>TVChannel</a> Interface</h2>
       <p>
-        The <a>TVTuner</a> dictionary contains the information related to a
-        TV tuner.
+        The <a>TVChannel</a> interface represents a bunch of properties and
+        a set of operations related to the TV channel.
       </p>
-      <dl title="dictionary TVTuner" class="idl">
-        <dt>DOMString id</dt>
-          <dd>
-            MUST return the ID of the TV tuner.
-          </dd>
+      <dl title="interface TVChannel" class="idl">
 
-        <dt>TVTunerType type</dt>
-          <dd>
-            MUST return the type of the TV tuner.
-          </dd>
-
-        <dt>MediaStream stream</dt>
-          <dd>
-            MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
-            object that is currently streamed by the TV tuner, which can be
-            displayed by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
-            element.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Dictionary TVChannel  - - - - - - - - - - - - -->
-    <section>
-      <h2><a>TVChannel</a> Dictionary</h2>
-      <p>
-        The <a>TVChannel</a> dictionary contains the information related to a
-        TV channel.
-      </p>
-      <dl title="dictionary TVChannel" class="idl">
-
-        <dt>TVTuner[] ownerTuners</dt>
+        <dt>readonly attribute TVTuner[] tuners</dt>
           <dd>
             MUST return the TV tuners which the TV channel belongs to. Note that
-            the <code>ownerTuners</code> can be more than one TV tuner because
-            different TV tuners can broadcast the same TV channel.
+            the <code>tuners</code> can be more than one TV tuner because
+            different TV tuners can stream the same TV channel.
           </dd>
 
-        <dt>boolean displayed</dt>
-          <dd>
-            MUST return the state whether or not the channel is currently
-            displayed on the TV device.
-          </dd>
-
-        <dt>TVTuner? currentTuner</dt>
-          <dd>
-            MUST return the TV tuner that is currently broadcasting the TV
-            channel. MUST return null if the TV channel is not currently
-            displayed.
-          </dd>
-
-        <dt>TVProgram? currentProgram</dt>
-          <dd>
-            MUST return the TV program that is currently broadcasted by the TV
-            channel. MUST return null if the TV channel is not currently
-            displayed.
-          </dd>
-
-        <dt>DOMString number</dt>
+        <dt>readonly attribute DOMString number</dt>
           <dd>
             MUST return the Logical Channel Number (LCN) of the TV channel. E.g.,
             <code>"12-1"</code>, <code>"12-2"</code>, <code>"12-2"</code>... etc.
           </dd>
 
-        <dt>TVChannelType type</dt>
+        <dt>readonly attribute TVChannelType type</dt>
           <dd>
             MUST return the type of the TV channel.
           </dd>
 
-        <dt>DOMString name</dt>
+        <dt>readonly attribute DOMString name</dt>
           <dd>
             MUST return the name of the TV channel. E.g., <code>"CNN"</code>,
             <code>"NHK"</code>... etc.
           </dd>
+
+        <dt>readonly attribute TVProgram? program</dt>
+          <dd>
+            MUST return the TV program that is currently broadcasted in the TV
+            channel. MUST return null if the TV channel is not currently
+            streamed by the TV tuner.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onprogramchanged
+        </dt>
+          <dd>
+            Handles the <code>onprogramchanged</code> event of type
+            <a>ProgramChangedEvent</a>, fired when the currently broadcasted TV
+            program is changed in the TV channel.
+          </dd>
+
       </dl>
+
+      <section>
+        <h2>Event handlers</h2>
+        <p>The following are the <a class="internalDFN"
+        href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
+        class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
+        supported as attributes by the <a>TVChannel</a> object.
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Event handler</th>
+              <th>Event name</th>
+              <th>Event type</th>
+              <th>Short description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>onprogramchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">programchanged</dfn></code></td>
+              <td><a><code>ProgramChangedEvent</code></a></td>
+              <td>
+                Handles the information of the currently broadcasted TV program
+                that is changed in the TV channel.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
     </section>
 
 <!-- - - - - - - - - - - - Dictionary TVProgram  - - - - - - - - - - - - -->
@@ -779,7 +810,7 @@ Style guide to contributors:
       </p>
       <dl title="dictionary TVProgram" class="idl">
 
-        <dt>TVChannel ownerChannel</dt>
+        <dt>TVChannel channel</dt>
           <dd>
             MUST return the TV channel which the TV program belongs to.
           </dd>
