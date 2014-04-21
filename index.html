@@ -800,51 +800,51 @@ Style guide to contributors:
 
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVProgram  - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVProgram  - - - - - - - - - - - - -->
     <section>
-      <h2><a>TVProgram</a> Dictionary</h2>
+      <h2><a>TVProgram</a> Interface</h2>
       <p>
-        The <a>TVProgram</a> dictionary contains the information related to a
-        TV program.
+        The <a>TVProgram</a> interface represents a bunch of properties and
+        a set of operations related to the TV program.
       </p>
-      <dl title="dictionary TVProgram" class="idl">
+      <dl title="interface TVProgram" class="idl">
 
-        <dt>TVChannel channel</dt>
+        <dt>readonly attribute TVChannel channel</dt>
           <dd>
             MUST return the TV channel which the TV program belongs to.
           </dd>
 
-        <dt>DOMString title</dt>
+        <dt>readonly attribute DOMString title</dt>
           <dd>
             MUST return the title of the TV program.
           </dd>
 
-        <dt>unsigned long long startTime</dt>
+        <dt>readonly attribute unsigned long long startTime</dt>
           <dd>
             MUST return the start time of the TV program.
           </dd>
 
-        <dt>unsigned long long duration</dt>
+        <dt>readonly attribute unsigned long long duration</dt>
           <dd>
             MUST return the duration of the TV program.
           </dd>
 
-        <dt>DOMString? description</dt>
+        <dt>readonly attribute DOMString? description</dt>
           <dd>
             MUST return the description of the TV program.
           </dd>
 
-        <dt>DOMString? language</dt>
+        <dt>readonly attribute DOMString? language</dt>
           <dd>
             MUST return the language of the TV program.
           </dd>
 
-        <dt>DOMString? rating</dt>
+        <dt>readonly attribute DOMString? rating</dt>
           <dd>
             MUST return the rating of the TV program.
           </dd>
 
-        <dt>DOMString networkId</dt>
+        <dt>readonly attribute DOMString networkId</dt>
           <dd>
             MUST return the identification of a broadcast transmission network.
             On satellite and IP broadband, typically one <code>network_id</code>
@@ -853,7 +853,7 @@ Style guide to contributors:
             operators typically use one <code>network_id</code> per such region.
           </dd>
 
-        <dt>DOMString originalNetworkId</dt>
+        <dt>readonly attribute DOMString originalNetworkId</dt>
           <dd>
             MUST return the identification of a broadcast transmission network,
             which is used where TV/radio programmes are taken from one network
@@ -862,7 +862,7 @@ Style guide to contributors:
             means of determining equivalence across different networks.
           </dd>
 
-        <dt>DOMString transportStreamId</dt>
+        <dt>readonly attribute DOMString transportStreamId</dt>
           <dd>
             MUST return the identification of a time-domain multiplex of several
             programmes carried in Transport Stream (TS) packets. One or more
@@ -870,7 +870,7 @@ Style guide to contributors:
             network.
           </dd>
 
-        <dt>DOMString serviceId</dt>
+        <dt>readonly attribute DOMString serviceId</dt>
           <dd>
             MUST return the identification of a TV, radio or data programme
             within a TS multiplex. The number of programmes is limited by the
