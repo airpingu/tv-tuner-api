@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>TV Tuner API</title>
+    <title>TV Manager API</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
             class='remove'></script>
     <script class="remove">
       var respecConfig = {
         specStatus:          "ED",
-        shortName:           "TV Tuner API",
+        shortName:           "TV Manager API",
         publishDate:         "",
         previousPublishDate: "",
         previousMaturity:    "",
@@ -89,7 +89,7 @@ Style guide to contributors:
       <section>
         <h3>User Cases</h3>
         <p>
-          The TV Tuner API is aimed to cover the following user cases:
+          The TV Manager API is aimed to cover the following user cases:
         </p>
         <ul>
           <li>
@@ -162,9 +162,9 @@ Style guide to contributors:
       <section>
         <h3>Examples</h3>
         <p>
-          If an application has the privilege to use the TV Tuner API, it can use
-          a bunch of basic methods defined in the <a>TVTunerManager</a> to contol
-          the TV tuners, which is shown as the following example.
+          If an application has the privilege to use the TV Manager API, it can
+          use a bunch of basic methods defined in the <a>TVManager</a> to
+          control the TV device, which is shown as the following example.
         </p>
 
         <pre class="example highlight">
@@ -232,23 +232,22 @@ Style guide to contributors:
     <section>
       <h2><a>Navigator</a> Interface</h2>
         <dl title="partial interface Navigator" class="idl">
-          <dt>readonly attribute TVTunerManager mozTVTuner</dt>
+          <dt>readonly attribute TVManager mozTV</dt>
           <dd>
-          MUST return the object that exposes the interface to the TV tuner
-          service.
+          MUST return the object that exposes the interface to the TV service.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - - Interface TVTunerManager  - - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - - Interface TVManager  - - - - - - - - - - - - - -->
     <section>
-      <h2><a>TVTunerManager</a> Interface</h2>
+      <h2><a>TVManager</a> Interface</h2>
       <p>
-        The <a>TVTunerManager</a> interface represents a bunch of properties and
-        a set of operations that can be used to control the TV tuners.
+        The <a>TVManager</a> interface represents a bunch of properties and
+        a set of operations that can be used to control the TV device.
       </p>
 
-      <dl title="interface TVTunerManager : EventTarget" class="idl">
+      <dl title="interface TVManager : EventTarget" class="idl">
         <dt>Promise getTuners ()</dt>
           <dd>
             This method makes a request to retrieve all the TV tuners that are
@@ -566,7 +565,7 @@ Style guide to contributors:
         <p>The following are the <a class="internalDFN"
         href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
         class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
-        supported as attributes by the <a>TVTunerManager</a> object.
+        supported as attributes by the <a>TVManager</a> object.
 
         <table class="simple">
           <thead>
