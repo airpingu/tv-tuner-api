@@ -649,7 +649,7 @@ Style guide to contributors:
         The <a>TVTuner</a> interface represents a bunch of properties and
         a set of operations related to the TV tuner.
       </p>
-      <dl title="interface TVTuner" class="idl">
+      <dl title="interface TVTuner : EventTarget" class="idl">
         <dt>readonly attribute DOMString id</dt>
           <dd>
             MUST return the ID of the TV tuner.
@@ -724,7 +724,7 @@ Style guide to contributors:
         The <a>TVChannel</a> interface represents a bunch of properties and
         a set of operations related to the TV channel.
       </p>
-      <dl title="interface TVChannel" class="idl">
+      <dl title="interface TVChannel : EventTarget" class="idl">
 
         <dt>readonly attribute TVTuner[] tuners</dt>
           <dd>
