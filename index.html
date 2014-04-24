@@ -665,14 +665,14 @@ Style guide to contributors:
             MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
             object that is currently streamed by the TV tuner, which can be
             played by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
-            element or recorded by the <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST return null if the TV
-            tuner is not streaming.
+            element or recorded by the <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST return <em>null</em>
+            if the TV tuner is not streaming.
           </dd>
 
         <dt>readonly attribute TVChannel? <a>channel</a></dt>
           <dd>
             MUST return the TV channel that is currently streamed by the TV
-            tuner. MUST return null if the TV tuner is not streaming.
+            tuner. MUST return <em>null</em> if the TV tuner is not streaming.
           </dd>
 
         <dt class="no-docs">
@@ -753,8 +753,8 @@ Style guide to contributors:
         <dt>readonly attribute TVProgram? program</dt>
           <dd>
             MUST return the TV program that is currently broadcasted in the TV
-            channel. MUST return null if the TV channel is not currently
-            streamed by the TV tuner.
+            channel. MUST return <em>null</em> if the TV channel is not
+            currently streamed by the TV tuner.
           </dd>
 
         <dt class="no-docs">
