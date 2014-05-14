@@ -2,27 +2,25 @@
 <html>
   <head>
     <title>TV Manager API</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta charset='utf-8'>
     <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
-            class='remove'></script>
+            async class='remove'></script>
     <script class="remove">
       var respecConfig = {
-        specStatus:          "ED",
-        shortName:           "TV Manager API",
-        publishDate:         "",
-        previousPublishDate: "",
-        previousMaturity:    "",
-        edDraftURI:          "http://airpingu.github.io/tv-tuner-api/index.html",
-        lcEnd:               "",
-        crEnd:               "",
+        specStatus:          "unofficial", // "ED",
+        shortName:           "TV Manager API", // Needed for generated URLs
         editors: [{
           name: "Gene Lian",
           company: "Mozilla",
-          companyURL: "http://www.mozilla.org"
+          companyURL: "http://www.mozilla.org",
+          mailto: "clian@mozilla.com"
         }],
-        inlineCSS:    true,
-        noIDLIn:      true,
-        noIDLSorting: true,
+        publishDate:         "", // No needed for "ED" or "unofficial"
+        edDraftURI:          "http://airpingu.github.io/tv-tuner-api/index.html", // needed for "ED"
+        previousPublishDate: "", // Needed for "WD", "LC", "CR"
+        previousMaturity:    "", // Needed for "WD", "LC", "CR"
+        lcEnd:               "", // Needed for "LC"
+        crEnd:               "", // Needed for "CR"
         // wg:           "System Applications Working Group",
         // wgURI:        "http://www.w3.org/2012/sysapps/",
         // wgPublicList: "public-sysapps",
@@ -39,7 +37,10 @@
             value: "Commit history.",
             href: "https://github.com/airpingu/tv-tuner-api/commits/gh-pages"
           }]
-        }]
+        }],
+        inlineCSS:    true,
+        noIDLIn:      true,
+        noIDLSorting: true
       };
     </script>
   </head>
@@ -69,14 +70,6 @@ Style guide to contributors:
 
 <!-- - - - - - - - - - - - - - - Status of this document - - - - - - - - - - -->   
     <section id="sotd">
-      <p>
-        <strong style="color:red">
-          This document is just an Mozilla's working draft based on the W3C
-          format, which is not yet maintained and discussed by any formal W3C
-          interest/working groups. We'll push it when we think it's solid enough
-          and worth standardising.
-        </strong>
-      </p>
     </section>
     
 <!-- - - - - - - - - - - - - - - Introduction  - - - - - - - - - - - - - - - -->
