@@ -157,11 +157,240 @@ Style guide to contributors:
         <p>
           If an application has the privilege to use the TV Manager API, it can
           use a bunch of basic methods defined in the <a>TVManager</a> to
-          control the TV device, which is shown as the following example.
+          control the TV device.
+        </p>
+
+        <p>
+          The following example shows how to get all the TV tuners that are
+          currently available on the TV device and how to listen to the events
+          for the TV tuner changes.
         </p>
 
         <pre class="example highlight">
-          To be constructed.
+          // An array which saves all the currently available TV tuners.
+          var curTuners = [];
+
+          // Set the 'ontuneradded' event handler.
+          navigator.mozTV.ontuneradded = function ontuneradded(event) {
+            var addedTuner = event.data;
+
+            curTuners.push(addedTuner);
+          };
+
+          // Set the 'ontunerremoved' event handler.
+          navigator.mozTV.ontunerremoved = function ontunerremoved(event) {
+            var removedTuner = event.data;
+
+            var index = curTuners.indexOf(removedTuner);
+            if (index != -1) {
+              curTuners.splice(index, 1);
+            }
+          };
+
+          // Retrieve all the currently available TV tuners.
+          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
+            curTuners = tuners;
+          }, function onerror(error) {
+            alert(error);
+          });
+        </pre>
+
+        <p>
+          The following example shows how to get all the TV channels that are
+          currently available in a TV tuner and how to listen to the events for
+          the TV channel changes.
+        </p>
+
+        <pre class="example highlight">
+          // A matrix which maps the TV tuner ID to its corresponding TV channels.
+          var curChannelsOfTuners = {};
+
+          // Set the 'onchanneladded' event handler.
+          navigator.mozTV.onchanneladded = function onchanneladded(event) {
+            var addedChannel = event.data;
+
+            addedChannel.tuners.forEach(function addChannel(tuner) {
+              var channels = curChannelsOfTuners[tuner.id];
+              if (channels) {
+                channels.push(addedChannel);
+              }
+            });
+          };
+
+          // Set the 'onchannelremoved' event handler.
+          navigator.mozTV.onchannelremoved = function onchannelremoved(event) {
+            var removedChannel = event.data;
+
+            removedChannel.tuners.forEach(function removeChannel(tuner) {
+              var channels = curChannelsOfTuners[tuner.id];
+              if (channels) {
+                var index = channels.indexOf(removedChannel);
+                if (index != -1) {
+                  channels.splice(index, 1);
+                }
+              }
+            });
+          };
+
+          // Retrieve all the currently available TV tuners first.
+          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
+            tuners.forEach(function getChannelsByTuner(tuner) {
+              var tunerId = tuner.id;
+
+              // Retrieve all the currently available TV channels in a TV tuner.
+              navigator.mozTV.getChannels(tunerId).then(function onsuccess(channels) {
+                curChannelsOfTuners[tunerId] = channels;
+              }, function onerror(error) {
+                alert(error);
+              });
+            });
+          }, function onerror(error) {
+            alert(error);
+          });
+        </pre>
+
+        <p>
+          The following example shows how to get all the TV programs that are
+          currently available in a TV channel and how to listen to the events
+          for the TV program changes.
+        </p>
+
+        <pre class="example highlight">
+          // A matrix which maps the TV channel number to its corresponding TV programs.
+          var curProgramsOfChannels = {};
+
+          // Set the 'onprogramadded' event handler.
+          navigator.mozTV.onprogramadded = function onprogramadded(event) {
+            var addedProgram = event.data;
+
+            var programs = curProgramsOfChannels[addedProgram.channel.number];
+            if (programs) {
+              programs.push(addedProgram);
+            }
+          };
+
+          // Set the 'onprogramremoved' event handler.
+          navigator.mozTV.onprogramremoved = function onprogramremoved(event) {
+            var removedProgram = event.data;
+
+            var programs = curProgramsOfChannels[removedProgram.channel.number];
+            if (programs) {
+              var index = programs.indexOf(removedProgram);
+              if (index != -1) {
+                programs.splice(index, 1);
+              }
+            }
+          };
+
+          // Retrieve all the currently available TV channels first.
+          navigator.mozTV.getChannels().then(function onsuccess(channels) {
+            channels.forEach(function getProgramsByChannel(channel) {
+              var channelNumber = channel.number;
+
+              // Retrieve all the currently available TV programs in a TV channel.
+              navigator.mozTV.getPrograms(channelNumber).then(function onsuccess(programs) {
+                curProgramsOfChannels[channelNumber] = programs;
+              }, function onerror(error) {
+                alert(error);
+              });
+            });
+          }, function onerror(error) {
+            alert(error);
+          });
+        </pre>
+
+        <p>
+          The following example shows how to play the <code>MediaStream</code>
+          of a TV tuner by assigning the <code>MediaStream</code> to a
+          <code>HTMLMediaElement</code>.
+        </p>
+
+        <pre class="example highlight">
+          &lt;!DOCTYPE html&gt;
+          &lt;html&gt;
+            &lt;head&gt;
+              &lt;script&gt;
+                // Retrieve all the currently available TV tuners first.
+                navigator.mozTV.getTuners().then(function onsuccess(tuners) {
+                  if (tuners.length == 0) {
+                    return;
+                  }
+
+                  // Just use the first TV tuner.
+                  var tuner = tuners[0];
+
+                  var video = document.getElementById("player");
+                  video.srcObject = tuner.stream;
+                }, function onerror(error) {
+                  alert(error);
+                });
+              &lt;/script&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+              &lt;p&gt;&lt;video id="player" autoplay&gt;&lt;/video&gt;&lt;/p&gt;
+            &lt;/body&gt;
+          &lt;/html&gt;
+        </pre>
+
+        <p>
+          The following example shows how to scan and get all the TV channels
+          that are available across different TV tuners.
+        </p>
+
+        <pre class="example highlight">
+          // Ask tuners to scan the TV channels.
+          navigator.mozTV.scanChannels().then(function onsuccess() {
+            // Retrieve all the currently available TV channels.
+            navigator.mozTV.getChannels().then(function onsuccess(channels) {
+              alert("Succeeded to scan and get all the TV channels.");
+            }, function onerror(error) {
+              alert(error);
+            });
+          }, function onerror(error) {
+            alert(error);
+          });
+        </pre>
+
+        <p>
+          The following example shows how to set the TV channel by the TV tuner
+          ID and the TV channel number.
+        </p>
+
+        <pre class="example highlight">
+          // Retrieve all the currently available TV tuners first.
+          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
+            if (tuners.length == 0) {
+              return;
+            }
+
+            // Just use the first TV tuner.
+            var tunerId = tuners[0].id;
+
+            // Retrieve all the currently available TV channels in a TV tuner.
+            navigator.mozTV.getChannels(tunerId).then(function onsuccess(channels) {
+              if (channels.length == 0) {
+                return;
+              }
+
+              // Just use the first TV channel.
+              var channelNumber = channels[0].number;
+
+              // Set the TV channel base on a TV tuner.
+              navigator.mozTV.setChannel({
+                tunerId: tunerId,
+                channelNumber: channelNumber
+              }).then(function onsuccess() {
+                alert("Succeeded to set the TV channel.");
+              }, function onerror(error) {
+                alert(error);
+              });
+            }, function onerror(error) {
+              alert(error);
+            });
+
+          }, function onerror(error) {
+            alert(error);
+          });
         </pre>
       </section>
     </section>
