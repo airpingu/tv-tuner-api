@@ -261,14 +261,14 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
-          // A matrix which maps the TV channel number to its corresponding TV programs.
+          // A matrix which maps the TV channel ID to its corresponding TV programs.
           var curProgramsOfChannels = {};
 
           // Set the 'onprogramadded' event handler.
           navigator.mozTV.onprogramadded = function onprogramadded(event) {
             var addedProgram = event.data;
 
-            var programs = curProgramsOfChannels[addedProgram.channel.number];
+            var programs = curProgramsOfChannels[addedProgram.channel.id];
             if (programs) {
               programs.push(addedProgram);
             }
@@ -278,7 +278,7 @@ Style guide to contributors:
           navigator.mozTV.onprogramremoved = function onprogramremoved(event) {
             var removedProgram = event.data;
 
-            var programs = curProgramsOfChannels[removedProgram.channel.number];
+            var programs = curProgramsOfChannels[removedProgram.channel.id];
             if (programs) {
               var index = programs.indexOf(removedProgram);
               if (index != -1) {
@@ -290,11 +290,11 @@ Style guide to contributors:
           // Retrieve all the currently available TV channels first.
           navigator.mozTV.getChannels().then(function onsuccess(channels) {
             channels.forEach(function getProgramsByChannel(channel) {
-              var channelNumber = channel.number;
+              var channelId = channel.id;
 
               // Retrieve all the currently available TV programs in a TV channel.
-              navigator.mozTV.getPrograms(channelNumber).then(function onsuccess(programs) {
-                curProgramsOfChannels[channelNumber] = programs;
+              navigator.mozTV.getPrograms(channelId).then(function onsuccess(programs) {
+                curProgramsOfChannels[channelId] = programs;
               }, function onerror(error) {
                 alert(error);
               });
@@ -358,7 +358,7 @@ Style guide to contributors:
 
         <p>
           The following example shows how to set the TV channel by the TV tuner
-          ID and the TV channel number.
+          ID and the TV channel ID.
         </p>
 
         <pre class="example highlight">
@@ -378,12 +378,11 @@ Style guide to contributors:
               }
 
               // Just use the first TV channel.
-              var channelNumber = channels[0].number;
+              var channelId = channels[0].id;
 
               // Set the TV channel base on a TV tuner.
               navigator.mozTV.setChannel({
-                tunerId: tunerId,
-                channelNumber: channelNumber
+                channelId: channelId
               }).then(function onsuccess() {
                 alert("Succeeded to set the TV channel.");
               }, function onerror(error) {
@@ -504,18 +503,17 @@ Style guide to contributors:
         <dt>Promise getPrograms ()</dt>
           <dd>
             This method makes a request to retrieve all the TV programs that are
-            available in a TV channel based on the <code>channelNumber</code>
+            available in a TV channel based on the <code>channelId</code>
             parameter. It returns a new <code>Promise</code> that will be used
             to notify the caller about the result of the operation, which is an
             array of <a>TVProgram</a> elements that belong to the TV channel.
             <dl class='parameters'>
-              <dt>optional DOMString channelNumber</dt>
+              <dt>optional DOMString channelId</dt>
                 <dd>
-                  Specifies the number of the TV channel that is requested to
-                  retrieve its belonging TV programs. If this parameter is
-                  absent or cannot be identified, this method will return all
-                  the TV programs that are available across different TV
-                  channels.
+                  Identifies the TV channel that is requested to retrieve its
+                  belonging TV programs. If this parameter is absent or cannot
+                  be identified, this method will return all the TV programs
+                  that are available across different TV channels.
                 </dd>
             </dl>
           </dd>
@@ -549,7 +547,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>ontuneradded</code> event of type
-            <a>TunerChangedEvent</a>, fired when an available TV tuner
+            <a>TVTunerChangedEvent</a>, fired when an available TV tuner
             is added by the TV device.
           </dd>
 
@@ -558,7 +556,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>ontunerremoved</code> event of type
-            <a>TunerChangedEvent</a>, fired when an available TV tuner
+            <a>TVTunerChangedEvent</a>, fired when an available TV tuner
             is removed by the TV device.
           </dd>
 
@@ -567,7 +565,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onchanneladded</code> event of type
-            <a>ChannelChangedEvent</a>, fired when an available TV
+            <a>TVChannelChangedEvent</a>, fired when an available TV
             channel is added by the TV tunner.
           </dd>
 
@@ -576,7 +574,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onchannelremoved</code> event of type
-            <a>ChannelChangedEvent</a>, fired when an available TV
+            <a>TVChannelChangedEvent</a>, fired when an available TV
             channel is removed by the TV tunner.
           </dd>
 
@@ -585,7 +583,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onprogramadded</code> event of type
-            <a>ProgramChangedEvent</a>, fired when an available TV
+            <a>TVProgramChangedEvent</a>, fired when an available TV
             program is added in the TV channel.
           </dd>
 
@@ -594,7 +592,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onprogramremoved</code> event of type
-            <a>ProgramChangedEvent</a>, fired when an available TV
+            <a>TVProgramChangedEvent</a>, fired when an available TV
             program is removed in the TV channel.
           </dd>
       </dl>
@@ -693,10 +691,10 @@ Style guide to contributors:
           </li>
           <li>
             Make a request to the TV tuners to retrieve all the TV programs that
-            are available in a TV channel with the channel number equal to the
-            <code>channelNumber</code> parameter passed in the request. If
-            the <code>channelNumber</code> is not passed, retrieve all the
-            TV programs that are available across different TV channels.
+            are available in a TV channel with the channel ID equal to the
+            <code>channelId</code> parameter passed in the request. If the
+            <code>channelId</code> is not passed, retrieve all the TV programs
+            that are available across different TV channels.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -807,7 +805,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>ontuneradded</code></strong></td>
               <td><code><dfn id="dfn-change-event">tuneradded</dfn></code></td>
-              <td><a><code>TunerChangedEvent</code></a></td>
+              <td><a><code>TVTunerChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV tuner that is added
                 by the TV device.
@@ -817,7 +815,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>ontunerremoved</code></strong></td>
               <td><code><dfn id="dfn-change-event">tunerremoved</dfn></code></td>
-              <td><a><code>TunerChangedEvent</code></a></td>
+              <td><a><code>TVTunerChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV tuner that is
                 removed by the TV device.
@@ -827,7 +825,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>onchanneladded</code></strong></td>
               <td><code><dfn id="dfn-change-event">channeladded</dfn></code></td>
-              <td><a><code>ChannelChangedEvent</code></a></td>
+              <td><a><code>TVChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV channel that is
                 added by the TV tuner.
@@ -837,7 +835,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>onchannelremoved</code></strong></td>
               <td><code><dfn id="dfn-change-event">channelremoved</dfn></code></td>
-              <td><a><code>ChannelChangedEvent</code></a></td>
+              <td><a><code>TVChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV channel that is
                 removed by the TV tuner.
@@ -847,7 +845,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>onprogramadded</code></strong></td>
               <td><code><dfn id="dfn-change-event">programadded</dfn></code></td>
-              <td><a><code>ProgramChangedEvent</code></a></td>
+              <td><a><code>TVProgramChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV program that is
                 added in the TV channel.
@@ -857,7 +855,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>onprogramremoved</code></strong></td>
               <td><code><dfn id="dfn-change-event">programremoved</dfn></code></td>
-              <td><a><code>ProgramChangedEvent</code></a></td>
+              <td><a><code>TVProgramChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV program that is
                 removed in the TV channel.
@@ -909,7 +907,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onchannelchanged</code> event of type
-            <a>ChannelChangedEvent</a>, fired when the currently streamed TV
+            <a>TVChannelChangedEvent</a>, fired when the currently streamed TV
             channel is changed by the TV tuner.
           </dd>
       </dl>
@@ -934,7 +932,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>onchannelchanged</code></strong></td>
               <td><code><dfn id="dfn-change-event">channelchanged</dfn></code></td>
-              <td><a><code>ChannelChangedEvent</code></a></td>
+              <td><a><code>TVChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently streamed TV channel
                 that is changed by the TV tuner.
@@ -954,12 +952,14 @@ Style guide to contributors:
         a set of operations related to the TV channel.
       </p>
       <dl title="interface TVChannel : EventTarget" class="idl">
-
-        <dt>readonly attribute TVTuner[] tuners</dt>
+        <dt>readonly attribute DOMString id</dt>
           <dd>
-            MUST return the TV tuners which the TV channel belongs to. Note that
-            the <code>tuners</code> can be more than one TV tuner because
-            different TV tuners can stream the same TV channel.
+            MUST return the ID of the TV channel.
+          </dd>
+
+        <dt>readonly attribute TVTuner tuner</dt>
+          <dd>
+            MUST return the TV tuner which the TV channel belongs to.
           </dd>
 
         <dt>readonly attribute DOMString number</dt>
@@ -991,7 +991,7 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onprogramchanged</code> event of type
-            <a>ProgramChangedEvent</a>, fired when the currently broadcasted TV
+            <a>TVProgramChangedEvent</a>, fired when the currently broadcasted TV
             program is changed in the TV channel.
           </dd>
 
@@ -1017,7 +1017,7 @@ Style guide to contributors:
             <tr>
               <td><strong><code>onprogramchanged</code></strong></td>
               <td><code><dfn id="dfn-change-event">programchanged</dfn></code></td>
-              <td><a><code>ProgramChangedEvent</code></a></td>
+              <td><a><code>TVProgramChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently broadcasted TV program
                 that is changed in the TV channel.
@@ -1116,26 +1116,21 @@ Style guide to contributors:
         setting the TV channel.
       </p>
       <dl title="dictionary SetChannelOptions" class="idl">
-        <dt>DOMString tunerId</dt>
+        <dt>DOMString channelId</dt>
           <dd>
-            Identifies the TV tuner that is requested to set the TV channel.
-          </dd>
-
-        <dt>DOMString channelNumber</dt>
-          <dd>
-            Specifies the number of the TV channel that is requested to be set.
+            Identifies the TV channel that is requested to be set.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TunerChangedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVTunerChangedEvent - - - - - - - - - - -->
     <section>
-      <h2><a>TunerChangedEvent</a> Interface</h2>
+      <h2><a>TVTunerChangedEvent</a> Interface</h2>
       <p>
-        The <a>TunerChangedEvent</a> interface represents the event
+        The <a>TVTunerChangedEvent</a> interface represents the event
         related to the TV tuner changed by the TV device.
       </p>
-      <dl title="interface TunerChangedEvent : Event" class="idl">
+      <dl title="interface TVTunerChangedEvent : Event" class="idl">
         <dt>readonly attribute TVTuner tuner</dt>
           <dd>
             MUST return the TV tuner that is changed by the TV device.
@@ -1143,14 +1138,14 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface ChannelChangedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVChannelChangedEvent - - - - - - - - - - -->
     <section>
-      <h2><a>ChannelChangedEvent</a> Interface</h2>
+      <h2><a>TVChannelChangedEvent</a> Interface</h2>
       <p>
-        The <a>ChannelChangedEvent</a> interface represents the event
+        The <a>TVChannelChangedEvent</a> interface represents the event
         related to the TV channel changed by the TV tuner.
       </p>
-      <dl title="interface ChannelChangedEvent : Event" class="idl">
+      <dl title="interface TVChannelChangedEvent : Event" class="idl">
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
             MUST return the TV channel that is changed by the TV tuner.
@@ -1158,14 +1153,14 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface ProgramChangedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVProgramChangedEvent - - - - - - - - - - -->
     <section>
-      <h2><a>ProgramChangedEvent</a> Interface</h2>
+      <h2><a>TVProgramChangedEvent</a> Interface</h2>
       <p>
-        The <a>ProgramChangedEvent</a> interface represents the event
+        The <a>TVProgramChangedEvent</a> interface represents the event
         related to the TV program changed in the TV channel.
       </p>
-      <dl title="interface ProgramChangedEvent : Event" class="idl">
+      <dl title="interface TVProgramChangedEvent : Event" class="idl">
         <dt>readonly attribute TVProgram program</dt>
           <dd>
             MUST return the TV program that is changed in the TV channel.
