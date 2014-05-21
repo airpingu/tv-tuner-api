@@ -186,10 +186,12 @@ Style guide to contributors:
           navigator.mozTV.ontunerremoved = function ontunerremoved(event) {
             var removedTuner = event.data;
 
-            var index = curTuners.indexOf(removedTuner);
-            if (index != -1) {
-              curTuners.splice(index, 1);
-            }
+            curTuners.some(function findTuner(tuner, index) {
+              if (tuner.id == removedTuner.id) {
+                curTuners.splice(index, 1);
+                return true;
+              }
+            });
           };
 
           // Retrieve all the currently available TV tuners.
@@ -226,10 +228,12 @@ Style guide to contributors:
 
             var channels = curChannelsOfTuners[removedChannel.tuner.id];
             if (channels) {
-              var index = channels.indexOf(removedChannel);
-              if (index != -1) {
-                channels.splice(index, 1);
-              }
+              channels.some(function findChannel(channel, index) {
+                if (channel.id == removedChannel.id) {
+                  channels.splice(index, 1);
+                  return true;
+                }
+              });
             }
           };
 
@@ -276,10 +280,12 @@ Style guide to contributors:
 
             var programs = curProgramsOfChannels[removedProgram.channel.id];
             if (programs) {
-              var index = programs.indexOf(removedProgram);
-              if (index != -1) {
-                programs.splice(index, 1);
-              }
+              programs.some(function findProgram(program, index) {
+                if (program.id == removedProgram.id) {
+                  programs.splice(index, 1);
+                  return true;
+                }
+              });
             }
           };
 
