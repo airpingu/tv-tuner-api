@@ -214,27 +214,23 @@ Style guide to contributors:
           navigator.mozTV.onchanneladded = function onchanneladded(event) {
             var addedChannel = event.data;
 
-            addedChannel.tuners.forEach(function addChannel(tuner) {
-              var channels = curChannelsOfTuners[tuner.id];
-              if (channels) {
-                channels.push(addedChannel);
-              }
-            });
+            var channels = curChannelsOfTuners[addedChannel.tuner.id];
+            if (channels) {
+              channels.push(addedChannel);
+            }
           };
 
           // Set the 'onchannelremoved' event handler.
           navigator.mozTV.onchannelremoved = function onchannelremoved(event) {
             var removedChannel = event.data;
 
-            removedChannel.tuners.forEach(function removeChannel(tuner) {
-              var channels = curChannelsOfTuners[tuner.id];
-              if (channels) {
-                var index = channels.indexOf(removedChannel);
-                if (index != -1) {
-                  channels.splice(index, 1);
-                }
+            var channels = curChannelsOfTuners[removedChannel.tuner.id];
+            if (channels) {
+              var index = channels.indexOf(removedChannel);
+              if (index != -1) {
+                channels.splice(index, 1);
               }
-            });
+            }
           };
 
           // Retrieve all the currently available TV tuners first.
