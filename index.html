@@ -210,7 +210,8 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
-          // A matrix which maps the TV tuner ID to its corresponding TV channels.
+          // A matrix which maps the TV tuner ID to its corresponding array of TV channels.
+          // E.g., { "tunerId1": [...], "tunerId2": [...] }.
           var curChannelsOfTuners = {};
 
           // Set the 'onchanneladded' event handler.
@@ -263,7 +264,8 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
-          // A matrix which maps the TV channel ID to its corresponding TV programs.
+          // A matrix which maps the TV channel ID to its corresponding array of TV programs.
+          // E.g., { "channelId1": [...], "channelId2": [...] }.
           var curProgramsOfChannels = {};
 
           // Set the 'onprogramadded' event handler.
