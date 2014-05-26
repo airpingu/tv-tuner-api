@@ -331,7 +331,7 @@ Style guide to contributors:
                   // Just use the first TV tuner.
                   var tuner = tuners[0];
 
-                  var video = document.getElementById("player");
+                  var video = document.getElementById("video-player");
                   video.srcObject = tuner.stream;
                 }, function onerror(error) {
                   alert(error);
@@ -339,7 +339,7 @@ Style guide to contributors:
               &lt;/script&gt;
             &lt;/head&gt;
             &lt;body&gt;
-              &lt;p&gt;&lt;video id="player" autoplay&gt;&lt;/video&gt;&lt;/p&gt;
+              &lt;p&gt;&lt;video id="video-player" autoplay&gt;&lt;/video&gt;&lt;/p&gt;
             &lt;/body&gt;
           &lt;/html&gt;
         </pre>
