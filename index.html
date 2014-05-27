@@ -530,7 +530,8 @@ Style guide to contributors:
                   Specifies the options for retrieving the TV programs. If the
                   <code>channelId</code> in the <code>options</code> parameter
                   is not passed, this method will return all the TV programs
-                  that are available across different TV channels.
+                  that are available across different TV channels. To be
+                  constucted for other options...
                 </dd>
             </dl>
           </dd>
@@ -717,7 +718,8 @@ Style guide to contributors:
             are available in a TV channel with the channel ID equal to the
             <code>channelId</code> in the <code>options</code> parameter passed
             in the request. If the <code>channelId</code> is not passed,
-            retrieve all the TV programs that are available across different TV channels.
+            retrieve all the TV programs that are available across different TV
+            channels. To be constucted for other options...
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1157,6 +1159,26 @@ Style guide to contributors:
         <dt>DOMString channelId</dt>
           <dd>
             Identifies the TV channel that is requested to retrieve.
+          </dd>
+        <dt>unsigned long numberOfPrograms</dt>
+          <dd>
+            Specifies how many TV programs to be retrieved from the time point
+            of now. Note that this attribute is only meaningful and considered
+            when the <code>channelId</code> is passed.
+          </dd>
+        <dt>unsigned long long startTime</dt>
+          <dd>
+            Specifies the start time of a time period which bounds the time
+            slots of TV programs to be retrieved. Note that this attribute is
+            only meaningful and considered when the
+            <code>numberOfPrograms</code> is passed as <code>0</code>.
+          </dd>
+        <dt>unsigned long long duration</dt>
+          <dd>
+            Specifies the duration of a time period which bounds the time slots
+            of TV programs to be retrieved. Note that this attribute is only
+            meaningful and considered when the <code>numberOfPrograms</code> is
+            passed as <code>0</code>.
           </dd>
       </dl>
     </section>
