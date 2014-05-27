@@ -567,6 +567,13 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
+          readonly attribute boolean isParentallyLocked
+        </dt>
+          <dd>
+            MUST return the current state of the TV parental lock.
+          </dd>
+
+        <dt class="no-docs">
           attribute EventHandler ontuneradded
         </dt>
           <dd>
@@ -626,6 +633,15 @@ Style guide to contributors:
           <dd>
             Handles the <code>onnotified</code> event of type
             <a>TVNotifiedEvent</a>, fired when...
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onparentallockchanged
+        </dt>
+          <dd>
+            Handles the <code>onparentallockchanged</code> event of type
+            <a>TVParentalLockChangedEvent</a>, fired when the state of the TV
+            parental lock is changed.
           </dd>
       </dl>
 
@@ -901,6 +917,16 @@ Style guide to contributors:
               <td><a><code>TVNotifiedEvent</code></a></td>
               <td>
                 Handles the information of the TV notification.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onparentallockchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">parentallockchanged</dfn></code></td>
+              <td><a><code>TVParentalLockChangedEvent</code></a></td>
+              <td>
+                Handles the information of the changed state of the TV parental
+                lock.
               </td>
             </tr>
           </tbody>
@@ -1336,6 +1362,21 @@ Style guide to contributors:
         <dt>readonly attribute TVNotification notification</dt>
           <dd>
             MUST return the TV notification.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVParentalLockChangedEvent - - -->
+    <section>
+      <h2><a>TVParentalLockChangedEvent</a> Interface</h2>
+      <p>
+        The <a>TVParentalLockChangedEvent</a> interface represents the
+        event related to the state change of the TV parental lock.
+      </p>
+      <dl title="interface TVParentalLockChangedEvent : Event" class="idl">
+        <dt>readonly attribute boolean isParentallyLocked</dt>
+          <dd>
+            MUST return the changed state of the TV parental lock.
           </dd>
       </dl>
     </section>
