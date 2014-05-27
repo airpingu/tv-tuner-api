@@ -177,14 +177,14 @@ Style guide to contributors:
 
           // Set the 'ontuneradded' event handler.
           navigator.mozTV.ontuneradded = function ontuneradded(event) {
-            var addedTuner = event.data;
+            var addedTuner = event.tuner;
 
             curTuners.push(addedTuner);
           };
 
           // Set the 'ontunerremoved' event handler.
           navigator.mozTV.ontunerremoved = function ontunerremoved(event) {
-            var removedTuner = event.data;
+            var removedTuner = event.tuner;
 
             curTuners.some(function findTuner(tuner, index) {
               if (tuner.id == removedTuner.id) {
@@ -216,7 +216,7 @@ Style guide to contributors:
 
           // Set the 'onchanneladded' event handler.
           navigator.mozTV.onchanneladded = function onchanneladded(event) {
-            var addedChannel = event.data;
+            var addedChannel = event.channel;
 
             var channels = curChannelsOfTuners[addedChannel.tuner.id];
             if (channels) {
@@ -226,7 +226,7 @@ Style guide to contributors:
 
           // Set the 'onchannelremoved' event handler.
           navigator.mozTV.onchannelremoved = function onchannelremoved(event) {
-            var removedChannel = event.data;
+            var removedChannel = event.channel;
 
             var channels = curChannelsOfTuners[removedChannel.tuner.id];
             if (channels) {
@@ -270,7 +270,7 @@ Style guide to contributors:
 
           // Set the 'onprogramadded' event handler.
           navigator.mozTV.onprogramadded = function onprogramadded(event) {
-            var addedProgram = event.data;
+            var addedProgram = event.program;
 
             var programs = curProgramsOfChannels[addedProgram.channel.id];
             if (programs) {
@@ -280,7 +280,7 @@ Style guide to contributors:
 
           // Set the 'onprogramremoved' event handler.
           navigator.mozTV.onprogramremoved = function onprogramremoved(event) {
-            var removedProgram = event.data;
+            var removedProgram = event.program;
 
             var programs = curProgramsOfChannels[removedProgram.channel.id];
             if (programs) {
@@ -534,6 +534,11 @@ Style guide to contributors:
             first so that the <a><code>getChannels</code></a> method can then
             retrieve the channels that are successfully scanned by the TV
             tuners.
+          </dd>
+
+        <dt>Promise stopScanningChannels ()</dt>
+          <dd>
+            To be constructed.
           </dd>
 
         <dt>Promise setChannel ()</dt>
