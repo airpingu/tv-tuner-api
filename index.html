@@ -530,8 +530,8 @@ Style guide to contributors:
                   Specifies the options for retrieving the TV programs. If the
                   <code>channelId</code> in the <code>options</code> parameter
                   is not passed, this method will return all the TV programs
-                  that are available across different TV channels. To be
-                  constucted for other options...
+                  that are available across different TV channels. Need to add
+                  more descriptions for other options...
                 </dd>
             </dl>
           </dd>
@@ -549,7 +549,9 @@ Style guide to contributors:
 
         <dt>Promise stopScanningChannels ()</dt>
           <dd>
-            To be constructed.
+            This method makes a request to stop scanning the TV channels. It
+            returns a new <code>Promise</code> that will be used to notify the
+            caller about the result of the operation.
           </dd>
 
         <dt>Promise setChannel ()</dt>
@@ -628,11 +630,23 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
+          attribute EventHandler onchannelsscanned
+        </dt>
+          <dd>
+            Handles the <code>onchannelsscanned</code> event of type
+            <a>TVChannelsScannedEvent</a>, fired when the method
+            <a><code>scanChannels</code></a> or the method
+            <a><code>stopScanningChannels</code></a> completes or stops the
+            process of scanning the TV channels.
+          </dd>
+
+        <dt class="no-docs">
           attribute EventHandler onnotified
         </dt>
           <dd>
             Handles the <code>onnotified</code> event of type
-            <a>TVNotifiedEvent</a>, fired when...
+            <a>TVNotifiedEvent</a>, fired when the TV broadcaster wants to
+            notify users about some TV services.
           </dd>
 
         <dt class="no-docs">
@@ -743,7 +757,7 @@ Style guide to contributors:
             <code>channelId</code> in the <code>options</code> parameter passed
             in the request. If the <code>channelId</code> is not passed,
             retrieve all the TV programs that are available across different TV
-            channels. To be constucted for other options...
+            channels. Needs to add more descriptions for other options...
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -798,6 +812,11 @@ Style guide to contributors:
             </li>
           </ol>
         </ol>
+
+        <p>
+          The <dfn><code>stopScanningChannels</code></dfn> method when invoked
+          MUST run the following steps (to be constructed):
+        </p>
 
         <p>
           The <dfn><code>setChannel</code></dfn> method when invoked MUST run
@@ -908,6 +927,16 @@ Style guide to contributors:
               <td>
                 Handles the information of the available TV program that is
                 removed in the TV channel.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onchannelsscanned</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channelsscanned</dfn></code></td>
+              <td><a><code>TVChannelsScannedEvent</code></a></td>
+              <td>
+                Handles the information of the process of scanning the TV
+                channels.
               </td>
             </tr>
 
@@ -1082,7 +1111,7 @@ Style guide to contributors:
 
         <dt>readonly attribute boolean isEmergency</dt>
           <dd>
-            MUST indicate whether the TV channel is for emergency purpose.
+            MUST indicate whether the TV channel is for the emergency purpose.
           </dd>
 
         <dt>readonly attribute TVProgram? program</dt>
@@ -1185,6 +1214,43 @@ Style guide to contributors:
       </dl>
     </section>
 
+<!-- - - - - - - - - - - - Interface TVNotification  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVNotification</a> Interface</h2>
+      <p>
+        The <a>TVNotification</a> interface represents a bunch of properties
+        and a set of operations related to the TV notification.
+      </p>
+      <dl title="interface TVNotification" class="idl">
+        <dt>readonly attribute DOMString message</dt>
+          <dd>
+            MUST return the message of the TV notification.
+          </dd>
+
+        <dt>readonly attribute Blob data</dt>
+          <dd>
+            MUST return the BML blob data of the TV notification.
+          </dd>
+
+        <dt>Promise reply ()</dt>
+          <dd>
+            This method makes a request to reply to the TV notification. It
+            returns a new <code>Promise</code> that will be used to notify the
+            caller about the result of the operation.
+          </dd>
+      </dl>
+
+      <section>
+        <h3>Steps</h3>
+
+        <p>
+          The <dfn><code>reply</code></dfn> method when invoked
+          MUST run the following steps (to be constructed):
+        </p>
+
+      </section>
+    </section>
+
 <!-- - - - - - - - - - - - Dictionary GetChannelsOptions   - - - - - - - - - -->
     <section>
       <h2><a>GetChannelsOptions</a> Dictionary</h2>
@@ -1218,21 +1284,25 @@ Style guide to contributors:
           <dd>
             Specifies how many TV programs to be retrieved from the time point
             of now. Note that this attribute is only meaningful and considered
-            when the <code>channelId</code> is passed.
+            when the <code>channelId</code> is passed. E.g., if this attribute
+            is passed as <code>1</code>, it will return the current TV program
+            in the TV channel at this moment; if it is passed as <code>2</code>,
+            it will return the current and the next TV programs.
           </dd>
         <dt>unsigned long long startTime</dt>
           <dd>
             Specifies the start time of a time period which bounds the time
             slots of TV programs to be retrieved. Note that this attribute is
             only meaningful and considered when the
-            <code>numberOfPrograms</code> is passed as <code>0</code>.
+            <code>numberOfPrograms</code> is passed as <code>0</code> or not
+            passed
           </dd>
         <dt>unsigned long long duration</dt>
           <dd>
             Specifies the duration of a time period which bounds the time slots
             of TV programs to be retrieved. Note that this attribute is only
             meaningful and considered when the <code>numberOfPrograms</code> is
-            passed as <code>0</code>.
+            passed as <code>0</code> or not passed.
           </dd>
       </dl>
     </section>
@@ -1248,21 +1318,6 @@ Style guide to contributors:
         <dt>DOMString channelId</dt>
           <dd>
             Identifies the TV channel that is requested to be set.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Dictionary ReplyNotificationOptions - - - - - - -->
-    <section>
-      <h2><a>ReplyNotificationOptions</a> Dictionary</h2>
-      <p>
-        The <a>ReplyNotificationOptions</a> dictionary contains the information
-        for replying the TV notification.
-      </p>
-      <dl title="dictionary ReplyNotificationOptions" class="idl">
-        <dt>DOMString notificationId</dt>
-          <dd>
-            Identifies the TV notification that is requested to be replied to.
           </dd>
       </dl>
     </section>
@@ -1312,42 +1367,14 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVNotification  - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVChannelsScannedEvent - - - - - - - - -->
     <section>
-      <h2><a>TVNotification</a> Interface</h2>
+      <h2><a>TVChannelsScannedEvent</a> Interface</h2>
       <p>
-        The <a>TVNotification</a> interface represents a bunch of properties
-        and a set of operations related to the TV notification.
+        The <a>TVChannelsScannedEvent</a> interface represents the event
+        related to the process of scanning the TV channels.
       </p>
-      <dl title="interface TVNotification" class="idl">
-        <dt>readonly attribute DOMString id</dt>
-          <dd>
-            MUST return the ID of the TV notification.
-          </dd>
-
-        <dt>readonly attribute DOMString message</dt>
-          <dd>
-            MUST return the message of the TV notification.
-          </dd>
-
-        <dt>readonly attribute Blob data</dt>
-          <dd>
-            MUST return the BML data of the TV notification.
-          </dd>
-
-        <dt>Promise reply ()</dt>
-          <dd>
-            This method makes a request to reply to the TV notification by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>ReplyNotificationOptions options</dt>
-                <dd>
-                  Specifies the options for replying to the TV notification.
-                </dd>
-            </dl>
-          </dd>
+      <dl title="interface TVChannelsScannedEvent : Event" class="idl">
       </dl>
     </section>
 
