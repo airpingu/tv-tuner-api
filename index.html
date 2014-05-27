@@ -246,7 +246,9 @@ Style guide to contributors:
               var tunerId = tuner.id;
 
               // Retrieve all the currently available TV channels in a TV tuner.
-              navigator.mozTV.getChannels(tunerId).then(function onsuccess(channels) {
+              navigator.mozTV.getChannels({
+                tunerId: tunerId;
+              }).then(function onsuccess(channels) {
                 curChannelsOfTuners[tunerId] = channels;
               }, function onerror(error) {
                 alert(error);
@@ -295,12 +297,16 @@ Style guide to contributors:
           };
 
           // Retrieve all the currently available TV channels first.
-          navigator.mozTV.getChannels().then(function onsuccess(channels) {
+          navigator.mozTV.getChannels({
+            tunerId: tunerId;
+          }).then(function onsuccess(channels) {
             channels.forEach(function getProgramsByChannel(channel) {
               var channelId = channel.id;
 
               // Retrieve all the currently available TV programs in a TV channel.
-              navigator.mozTV.getPrograms(channelId).then(function onsuccess(programs) {
+              navigator.mozTV.getPrograms({
+                channelId: channelId;
+              }).then(function onsuccess(programs) {
                 curProgramsOfChannels[channelId] = programs;
               }, function onerror(error) {
                 alert(error);
@@ -353,7 +359,9 @@ Style guide to contributors:
           // Ask tuners to scan the TV channels.
           navigator.mozTV.scanChannels().then(function onsuccess() {
             // Retrieve all the currently available TV channels.
-            navigator.mozTV.getChannels().then(function onsuccess(channels) {
+            navigator.mozTV.getChannels({
+              tunerId: tunerId;
+            }).then(function onsuccess(channels) {
               alert("Succeeded to scan and get all the TV channels.");
             }, function onerror(error) {
               alert(error);
@@ -379,7 +387,9 @@ Style guide to contributors:
             var tunerId = tuners[0].id;
 
             // Retrieve all the currently available TV channels in a TV tuner.
-            navigator.mozTV.getChannels(tunerId).then(function onsuccess(channels) {
+            navigator.mozTV.getChannels({
+              tunerId: tunerId;
+            }).then(function onsuccess(channels) {
               if (channels.length == 0) {
                 return;
               }
@@ -492,16 +502,16 @@ Style guide to contributors:
         <dt>Promise getChannels ()</dt>
           <dd>
             This method makes a request to retrieve all the TV channels that are
-            available in a TV tuner based on the <code>tunerId</code> parameter.
+            available in a TV tuner by the <code>options</code> parameter.
             It returns a new <code>Promise</code> that will be used to notify
             the caller about the result of the operation, which is an array of
             <a>TVChannel</a> elements that belong to the TV tuner.
             <dl class='parameters'>
-              <dt>optional DOMString tunerId</dt>
+              <dt>GetChannelsOptions options</dt>
                 <dd>
-                  Identifies the TV tuner that is requested to retrieve its
-                  belonging TV channels. If this parameter is absent or cannot
-                  be identified, this method will return all the TV channels
+                  Specifies the options for retrieving the TV channels. If the
+                  <code>tunerId</code> in the <code>options</code> parameter
+                  is not passed, this method will return all the TV channels
                   that are available across different TV tuners.
                 </dd>
             </dl>
@@ -510,16 +520,16 @@ Style guide to contributors:
         <dt>Promise getPrograms ()</dt>
           <dd>
             This method makes a request to retrieve all the TV programs that are
-            available in a TV channel based on the <code>channelId</code>
-            parameter. It returns a new <code>Promise</code> that will be used
-            to notify the caller about the result of the operation, which is an
-            array of <a>TVProgram</a> elements that belong to the TV channel.
+            available in a TV channel by the <code>options</code> parameter. It
+            returns a new <code>Promise</code> that will be used to notify the
+            caller about the result of the operation, which is an array of
+            <a>TVProgram</a> elements that belong to the TV channel.
             <dl class='parameters'>
-              <dt>optional DOMString channelId</dt>
+              <dt>GetProgramsOptions options</dt>
                 <dd>
-                  Identifies the TV channel that is requested to retrieve its
-                  belonging TV programs. If this parameter is absent or cannot
-                  be identified, this method will return all the TV programs
+                  Specifies the options for retrieving the TV programs. If the
+                  <code>channelId</code> in the <code>options</code> parameter
+                  is not passed, this method will return all the TV programs
                   that are available across different TV channels.
                 </dd>
             </dl>
@@ -665,9 +675,9 @@ Style guide to contributors:
           <li>
             Make a request to the TV tuners to retrieve all the TV channels that
             are available in a TV tuner with the tuner ID equal to the
-            <code>tunerId</code> parameter passed in the request. If the
-            <code>tunerId</code> is not passed, retrieve all the TV channels
-            that are available across different TV tuners.
+            <code>tunerId</code> in the <code>options</code> parameter passed in
+            the request. If the <code>tunerId</code> is not passed, retrieve all
+            the TV channels that are available across different TV tuners.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -705,9 +715,9 @@ Style guide to contributors:
           <li>
             Make a request to the TV tuners to retrieve all the TV programs that
             are available in a TV channel with the channel ID equal to the
-            <code>channelId</code> parameter passed in the request. If the
-            <code>channelId</code> is not passed, retrieve all the TV programs
-            that are available across different TV channels.
+            <code>channelId</code> in the <code>options</code> parameter passed
+            in the request. If the <code>channelId</code> is not passed,
+            retrieve all the TV programs that are available across different TV channels.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1121,7 +1131,37 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary SetChannelOptions  - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary GetChannelsOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>GetChannelsOptions</a> Dictionary</h2>
+      <p>
+        The <a>GetChannelsOptions</a> dictionary contains the information for
+        retrieving the TV channels.
+      </p>
+      <dl title="dictionary GetChannelsOptions" class="idl">
+        <dt>DOMString tunerId</dt>
+          <dd>
+            Identifies the TV tuner that is requested to retrieve.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary GetProgramsOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>GetProgramsOptions</a> Dictionary</h2>
+      <p>
+        The <a>GetProgramsOptions</a> dictionary contains the information for
+        retrieving the TV programs.
+      </p>
+      <dl title="dictionary GetProgramsOptions" class="idl">
+        <dt>DOMString channelId</dt>
+          <dd>
+            Identifies the TV channel that is requested to retrieve.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary SetChannelOptions   - - - - - - - - - -->
     <section>
       <h2><a>SetChannelOptions</a> Dictionary</h2>
       <p>
@@ -1131,7 +1171,7 @@ Style guide to contributors:
       <dl title="dictionary SetChannelOptions" class="idl">
         <dt>DOMString channelId</dt>
           <dd>
-            Identifies the TV channel that is requested to be set.
+            Identifies the TV channel that is requested to set.
           </dd>
       </dl>
     </section>
