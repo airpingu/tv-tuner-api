@@ -624,11 +624,17 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt class="no-docs">
-          readonly attribute boolean isParentallyLocked
-        </dt>
+        <dt>Promise unlockParentalControl ()</dt>
           <dd>
-            MUST return the current state of the TV parental lock.
+            This method makes a request to unlock the parental control. It
+            returns a new <code>Promise</code> that will be used to notify the
+            caller about the result of the operation.
+          </dd>
+
+        <dt>readonly attribute boolean isParentalControlLocked</dt>
+          <dd>
+            MUST return the current lock state of the TV parental control, which
+            is system-widely applied to the TV device.
           </dd>
 
         <dt class="no-docs">
@@ -670,12 +676,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onparentallockchanged
+          attribute EventHandler onparentalcontrolchanged
         </dt>
           <dd>
-            Handles the <code>onparentallockchanged</code> event of type
-            <a>TVParentalLockChangedEvent</a>, fired when the state of the TV
-            parental lock is changed.
+            Handles the <code>onparentalcontrolchanged</code> event of type
+            <a>TVParentalControlChangedEvent</a>, fired when the state of the TV
+            parental control is changed.
           </dd>
       </dl>
 
@@ -874,6 +880,41 @@ Style guide to contributors:
           </ol>
         </ol>
 
+        <p>
+          The <dfn><code>unlockParentalControl</code></dfn> method when invoked
+          MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV device to unlock the parental control. The
+            <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
+            pop up a prompt to ask users to input the password to unlock the
+            parental control.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
       </section>
 
       <section>
@@ -934,12 +975,12 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>onparentallockchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">parentallockchanged</dfn></code></td>
-              <td><a><code>TVParentalLockChangedEvent</code></a></td>
+              <td><strong><code>onparentalcontrolchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">parentalcontrolchanged</dfn></code></td>
+              <td><a><code>TVParentalControlChangedEvent</code></a></td>
               <td>
                 Handles the information of the changed state of the TV parental
-                lock.
+                control.
               </td>
             </tr>
           </tbody>
@@ -1079,6 +1120,14 @@ Style guide to contributors:
             <code>"NHK"</code>... etc.
           </dd>
 
+        <dt>readonly attribute boolean isParentalControlProtected</dt>
+          <dd>
+            MUST return the current protection state of the TV parental control
+            on the TV channel. The value is hooked up to the system settings
+            to decide whether or not the TV channel is protected from being
+            watched by the children.
+          </dd>
+
         <dt>readonly attribute boolean isEmergency</dt>
           <dd>
             MUST indicate whether the TV channel is for the emergency purpose.
@@ -1180,6 +1229,14 @@ Style guide to contributors:
         <dt>readonly attribute DOMString? rating</dt>
           <dd>
             MUST return the rating of the TV program.
+          </dd>
+
+        <dt>readonly attribute boolean isParentalControlProtected</dt>
+          <dd>
+            MUST return the current protection state of the TV parental control
+            on the TV program. The value is hooked up to the system settings to
+            decide whether or not the TV program is protected from being watched
+            by the children.
           </dd>
       </dl>
     </section>
@@ -1354,17 +1411,17 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVParentalLockChangedEvent - - -->
+<!-- - - - - - - - - - - - Interface TVParentalControlChangedEvent - - -->
     <section>
-      <h2><a>TVParentalLockChangedEvent</a> Interface</h2>
+      <h2><a>TVParentalControlChangedEvent</a> Interface</h2>
       <p>
-        The <a>TVParentalLockChangedEvent</a> interface represents the
-        event related to the state change of the TV parental lock.
+        The <a>TVParentalControlChangedEvent</a> interface represents the
+        event related to the state change of the TV parental control.
       </p>
-      <dl title="interface TVParentalLockChangedEvent : Event" class="idl">
-        <dt>readonly attribute boolean isParentallyLocked</dt>
+      <dl title="interface TVParentalControlChangedEvent : Event" class="idl">
+        <dt>readonly attribute boolean isParentalControlLocked</dt>
           <dd>
-            MUST return the changed state of the TV parental lock.
+            MUST return the changed lock state of the TV parental control.
           </dd>
       </dl>
     </section>
