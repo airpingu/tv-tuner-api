@@ -670,15 +670,6 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onnotified
-        </dt>
-          <dd>
-            Handles the <code>onnotified</code> event of type
-            <a>TVNotifiedEvent</a>, fired when the TV broadcaster wants to
-            notify users about some TV services.
-          </dd>
-
-        <dt class="no-docs">
           attribute EventHandler onparentallockchanged
         </dt>
           <dd>
@@ -943,15 +934,6 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>onnotified</code></strong></td>
-              <td><code><dfn id="dfn-change-event">notified</dfn></code></td>
-              <td><a><code>TVNotifiedEvent</code></a></td>
-              <td>
-                Handles the information of the TV notification.
-              </td>
-            </tr>
-
-            <tr>
               <td><strong><code>onparentallockchanged</code></strong></td>
               <td><code><dfn id="dfn-change-event">parentallockchanged</dfn></code></td>
               <td><a><code>TVParentalLockChangedEvent</code></a></td>
@@ -1202,43 +1184,6 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVNotification  - - - - - - - - - - - - -->
-    <section>
-      <h2><a>TVNotification</a> Interface</h2>
-      <p>
-        The <a>TVNotification</a> interface represents a bunch of properties
-        and a set of operations related to the TV notification.
-      </p>
-      <dl title="interface TVNotification" class="idl">
-        <dt>readonly attribute DOMString message</dt>
-          <dd>
-            MUST return the message of the TV notification.
-          </dd>
-
-        <dt>readonly attribute Blob data</dt>
-          <dd>
-            MUST return the BML blob data of the TV notification.
-          </dd>
-
-        <dt>Promise reply ()</dt>
-          <dd>
-            This method makes a request to reply to the TV notification. It
-            returns a new <code>Promise</code> that will be used to notify the
-            caller about the result of the operation.
-          </dd>
-      </dl>
-
-      <section>
-        <h3>Steps</h3>
-
-        <p>
-          The <dfn><code>reply</code></dfn> method when invoked
-          MUST run the following steps (to be constructed):
-        </p>
-
-      </section>
-    </section>
-
 <!-- - - - - - - - - - - - Dictionary TVChannelId   - - - - - - - - - -->
     <section>
       <h2><a>TVChannelId</a> Dictionary</h2>
@@ -1406,21 +1351,6 @@ Style guide to contributors:
         related to the process of scanning the TV channels.
       </p>
       <dl title="interface TVChannelsScannedEvent : Event" class="idl">
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Interface TVNotifiedEvent - - - - - - - - - - -->
-    <section>
-      <h2><a>TVNotifiedEvent</a> Interface</h2>
-      <p>
-        The <a>TVNotifiedEvent</a> interface represents the event related to
-        the TV notification.
-      </p>
-      <dl title="interface TVNotifiedEvent : Event" class="idl">
-        <dt>readonly attribute TVNotification notification</dt>
-          <dd>
-            MUST return the TV notification.
-          </dd>
       </dl>
     </section>
 
