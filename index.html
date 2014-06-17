@@ -478,7 +478,78 @@ Style guide to contributors:
             }, function onerror(error) {
               alert(error);
             });
+          }, function onerror(error) {
+            alert(error);
+          });
+        </pre>
 
+        <p>
+          The following example shows how to unlock the parental control.
+        </p>
+
+        <pre class="example highlight">
+          // Retrieve all the currently available TV tuners first.
+          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
+            if (tuners.length == 0) {
+              return;
+            }
+
+            // Just use the first TV tuner.
+            var tuner = tuners[0];
+
+            // This event handler will we triggered when a TV channel is set.
+            tuner.onchannelchanged = function onchannelchanged(event) {
+              var operation = event.operation;
+              var changedChannel = event.channel;
+
+              if (operation != "updated") {
+                alert("The operation type must be 'updated'.");
+                return;
+              }
+
+              if (navigator.mozTV.isParentalControlLocked &&
+                  changedChannel.isParentalControlProtected) {
+                // If the parental control is locked and the TV channel we're
+                // setting is protected, the |tuner.stream|'s media tracks will
+                // be disabled (i.e. black screen). The UA can pop up a prompt
+                // to ask the user to enter the password to unlock it.
+                alert("Parental lock is active. Please enter the password.");
+
+                // Unlock the parental control which will be applied system-wisely.
+                navigator.mozTV.unlockParentalControl().then(function onsuccess() {
+                  alert("The parental control is unlocked until the reboot.");
+                }, function onerror(error) {
+                  alert(error);
+                });
+              }
+            };
+
+            // Retrieve all the currently available TV channels in a TV tuner.
+            navigator.mozTV.getChannels({
+              tunerId: tuner.id;
+            }).then(function onsuccess(channels) {
+              if (channels.length == 0) {
+                return;
+              }
+
+              // Just use the first TV channel.
+              var channel = channels[0];
+
+              // Set the TV channel base on a TV tuner.
+              navigator.mozTV.setChannel({
+                channelId: {
+                  networkId: channel.networkId,
+                  transportStreamId: channel.transportStreamId,
+                  serviceId: channel.serviceId
+                }
+              }).then(function onsuccess() {
+                alert("Succeeded to set the TV channel.");
+              }, function onerror(error) {
+                alert(error);
+              });
+            }, function onerror(error) {
+              alert(error);
+            });
           }, function onerror(error) {
             alert(error);
           });
