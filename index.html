@@ -231,6 +231,11 @@ Style guide to contributors:
             var operation = event.operation;
             var changedChannel = event.channel;
 
+            // A simple way to composite the key for the TV channel.
+            var changedChannelId = changedChannel.networkId +
+                                   changedChannel.transportStreamId +
+                                   changedChannel.serviceId;
+
             switch (operation) {
               case "added":
                 var channels = curChannelsOfTuners[changedChannel.tuner.id];
@@ -242,7 +247,12 @@ Style guide to contributors:
                 var channels = curChannelsOfTuners[changedChannel.tuner.id];
                 if (channels) {
                   channels.some(function findChannel(channel, index) {
-                    if (channel.id == changedChannel.id) {
+                    // A simple way to composite the key for the TV channel.
+                    var channelId = channel.networkId +
+                                    channel.transportStreamId +
+                                    channel.serviceId;
+
+                    if (channelId == changedChannelId) {
                       channels.splice(index, 1);
                       return true;
                     }
@@ -254,7 +264,12 @@ Style guide to contributors:
                 var channels = curChannelsOfTuners[changedChannel.tuner.id];
                 if (channels) {
                   channels.some(function findChannel(channel, index) {
-                    if (channel.id == changedChannel.id) {
+                    // A simple way to composite the key for the TV channel.
+                    var channelId = channel.networkId +
+                                    channel.transportStreamId +
+                                    channel.serviceId;
+
+                    if (channelId == changedChannelId) {
                       channels[index] = changedChannel;
                       return true;
                     }
