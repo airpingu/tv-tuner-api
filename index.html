@@ -650,10 +650,9 @@ Style guide to contributors:
               <dt>optional TVGetChannelsOptions options</dt>
                 <dd>
                   Specifies the options for retrieving the TV channels. If the
-                  the <code>options</code> parameter or the <code>sourceId</code>
-                  option in the <code>options</code> parameter is not passed,
-                  this method will return all the TV channels that are available
-                  across different TV sources.
+                  <code>sourceId</code> option in the <code>options</code>
+                  parameter is not passed, this method will return all the TV
+                  channels that are available across different TV sources.
                 </dd>
             </dl>
           </dd>
@@ -669,7 +668,6 @@ Style guide to contributors:
               <dt>optional TVGetProgramsOptions options</dt>
                 <dd>
                   Specifies the options for retrieving the TV programs. If the
-                  the <code>options</code> parameter or the
                   <code>channelId</code> option in the <code>options</code>
                   parameter is not passed, this method will return all the TV
                   programs that are available across different TV channels.
@@ -752,12 +750,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler oneitbroadcast
+          attribute EventHandler oneitbroadcasted
         </dt>
           <dd>
-            Handles the <code>oneitbroadcast</code> event of type
-            <a>TVEITBroadcastEvent</a>, fired when the Event Information Table
-            (EIT) is broadcast by the TV source.
+            Handles the <code>oneitbroadcasted</code> event of type
+            <a>TVEITBroadcastedEvent</a>, fired when the Event Information Table
+            (EIT) is broadcasted by the TV source.
           </dd>
 
         <dt class="no-docs">
@@ -838,10 +836,9 @@ Style guide to contributors:
             Make a request to the TV sources to retrieve all the TV channels
             that are available in a TV source according to the retrieving
             options specified in the <code>options</code> parameter. If the
-            <code>options</code> parameter is not passed or the
-            <code>sourceId</code> option in the <code>options</code> parameter
-            is not passed, retrieve all the TV channels that are available
-            across different TV sources.
+            the <code>sourceId</code> option in the <code>options</code>
+            parameter is not passed, retrieve all the TV channels that are
+            available across different TV sources.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -879,11 +876,10 @@ Style guide to contributors:
           <li>
             Make a request to the TV sources to retrieve all the TV programs
             according to the retrieving options specified in the
-            <code>options</code> parameter. If the <code>options</code>
-            parameter is not passed or the <code>channelId</code> option in the
-            <code>options</code> parameter is not passed, retrieve all the TV
-            programs that are available across different TV channels. Needs to
-            add more descriptions about other options...
+            <code>options</code> parameter. If the <code>channelId</code> option
+            in the <code>options</code> parameter is not passed, retrieve all
+            the TV programs that are available across different TV channels.
+            Needs to add more descriptions about other options...
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1087,12 +1083,12 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>oneitbroadcast</code></strong></td>
+              <td><strong><code>oneitbroadcasted</code></strong></td>
               <td><code><dfn id="dfn-change-event">eitchanged</dfn></code></td>
-              <td><a><code>TVEITBroadcastEvent</code></a></td>
+              <td><a><code>TVEITBroadcastedEvent</code></a></td>
               <td>
                 Handles the information of the available TV programs in the EIT
-                broadcast by the TV source.
+                that is broadcasted by the TV source.
               </td>
             </tr>
 
@@ -1329,7 +1325,7 @@ Style guide to contributors:
 
         <dt>readonly attribute TVProgram? program</dt>
           <dd>
-            MUST return the TV program that is currently broadcasted in the TV
+            MUST return the TV program that is currently broadcasted by the TV
             channel. MUST return <em>null</em> if the TV channel is not
             currently streamed by the TV source.
           </dd>
@@ -1340,7 +1336,7 @@ Style guide to contributors:
           <dd>
             Handles the <code>onprogramchanged</code> event of type
             <a>TVProgramChangedEvent</a>, fired when the currently broadcasted
-            TV program is updated in the TV channel.
+            TV program is updated by the TV channel.
           </dd>
 
       </dl>
@@ -1368,7 +1364,7 @@ Style guide to contributors:
               <td><a><code>TVProgramChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently broadcasted TV program
-                that is updated in the TV channel.
+                that is updated by the TV channel.
               </td>
             </tr>
           </tbody>
@@ -1574,28 +1570,12 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVEITBroadcastEvent - - - - - - - - - - -->
-    <section>
-      <h2><a>TVEITBroadcastEvent</a> Interface</h2>
-      <p>
-        The <a>TVEITBroadcastEvent</a> interface represents the event related to
-        the available TV programs in the EIT broadcast by the TV source.
-      </p>
-      <dl title="interface TVEITBroadcastEvent : Event" class="idl">
-        <dt>readonly attribute TVProgram[] programs</dt>
-          <dd>
-            MUST return the available TV programs in the EIT broadcast by the TV
-            source.
-          </dd>
-      </dl>
-    </section>
-
 <!-- - - - - - - - - - - - Interface TVProgramChangedEvent - - - - - - - - - - -->
     <section>
       <h2><a>TVProgramChangedEvent</a> Interface</h2>
       <p>
         The <a>TVProgramChangedEvent</a> interface represents the event
-        related to the TV program changed in the TV channel.
+        related to the TV program changed by the TV channel.
       </p>
       <dl title="interface TVProgramChangedEvent : Event" class="idl">
         <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
@@ -1605,7 +1585,24 @@ Style guide to contributors:
 
         <dt>readonly attribute TVProgram program</dt>
           <dd>
-            MUST return the TV program that is changed in the TV channel.
+            MUST return the TV program that is changed by the TV channel.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVEITBroadcastedEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>TVEITBroadcastedEvent</a> Interface</h2>
+      <p>
+        The <a>TVEITBroadcastedEvent</a> interface represents the event related
+        to the available TV programs in the EIT that is broadcasted by the TV
+        source.
+      </p>
+      <dl title="interface TVEITBroadcastedEvent : Event" class="idl">
+        <dt>readonly attribute TVProgram[] programs</dt>
+          <dd>
+            MUST return the available TV programs in the EIT that is broadcasted
+            by the TV source.
           </dd>
       </dl>
     </section>
