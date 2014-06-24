@@ -78,10 +78,9 @@ Style guide to contributors:
       <h2>Introduction</h2>
       <p>
         The TV Manager API interfaces provide a bunch of properties and a set of
-        operations to allow applications to acquire the information of TV tuners,
-        TV channels and TV programs as well as to control and manage the native
-        TV hardwares (i.e., TV tuners), including scanning and switching the TV
-        channels.
+        operations to allow applications to acquire the information of TV
+        sources, TV channels and TV programs as well as to control and manage
+        the native TV hardwares (i.e., TV tuners) or the TV Web services.
       </p>
 
       <section>
@@ -130,7 +129,7 @@ Style guide to contributors:
           </li>
           <li>
             In the first step, only certified apps are allowed to use the TV
-            Tuner API.
+            Manager API.
           </li>
           <li>
             The DTV can keep track of the multiple TV tuners that a TV channel
@@ -166,37 +165,37 @@ Style guide to contributors:
         </p>
 
         <p>
-          The following example shows how to get all the TV tuners that are
+          The following example shows how to get all the TV sources that are
           currently available on the TV device and how to listen to the events
-          for the TV tuner changes.
+          for the TV source changes.
         </p>
 
         <pre class="example highlight">
-          // An array which saves all the currently available TV tuners.
-          var curTuners = [];
+          // An array which saves all the currently available TV sources.
+          var curSources = [];
 
-          // Set the 'ontunerchanged' event handler.
-          navigator.mozTV.ontunerchanged = function ontunerchanged(event) {
+          // Set the 'onsourcechanged' event handler.
+          navigator.mozTV.onsourcechanged = function onsourcechanged(event) {
             var operation = event.operation;
-            var changedTuner = event.tuner;
+            var changedSource = event.source;
 
             switch (operation) {
               case "added":
-                curTuners.push(changedTuner);
+                curSources.push(changedSource);
                 break;
               case "removed":
-                curTuners.some(function findTuner(tuner, index) {
-                  if (tuner.id == changedTuner.id) {
-                    curTuners.splice(index, 1);
+                curSources.some(function findSource(source, index) {
+                  if (source.id == changedSource.id) {
+                    curSources.splice(index, 1);
                     return true;
                   }
                   return false;
                 });
                 break;
               case "updated":
-                curTuners.some(function findTuner(tuner, index) {
-                  if (tuner.id == changedTuner.id) {
-                    curTuners[index] = changedTuner;
+                curSources.some(function findSource(source, index) {
+                  if (source.id == changedSource.id) {
+                    curSources[index] = changedSource;
                     return true;
                   }
                   return false;
@@ -207,9 +206,9 @@ Style guide to contributors:
             }
           };
 
-          // Retrieve all the currently available TV tuners.
-          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
-            curTuners = tuners;
+          // Retrieve all the currently available TV sources.
+          navigator.mozTV.getSources().then(function onsuccess(sources) {
+            curSources = sources;
           }, function onerror(error) {
             alert(error);
           });
@@ -217,14 +216,14 @@ Style guide to contributors:
 
         <p>
           The following example shows how to get all the TV channels that are
-          currently available in a TV tuner and how to listen to the events for
+          currently available in a TV source and how to listen to the events for
           the TV channel changes.
         </p>
 
         <pre class="example highlight">
-          // A matrix which maps the TV tuner to its corresponding array of TV channels.
-          // E.g., { "tunerId1": [...], "tunerId2": [...] }.
-          var curChannelsOfTuners = {};
+          // A matrix which maps the TV source to its corresponding array of TV channels.
+          // E.g., { "sourceId1": [...], "sourceId2": [...] }.
+          var curChannelsOfSources = {};
 
           // Set the 'onchannelchanged' event handler.
           navigator.mozTV.onchannelchanged = function onchannelchanged(event) {
@@ -238,13 +237,13 @@ Style guide to contributors:
 
             switch (operation) {
               case "added":
-                var channels = curChannelsOfTuners[changedChannel.tuner.id];
+                var channels = curChannelsOfSources[changedChannel.source.id];
                 if (channels) {
                   channels.push(changedChannel);
                 }
                 break;
               case "removed":
-                var channels = curChannelsOfTuners[changedChannel.tuner.id];
+                var channels = curChannelsOfSources[changedChannel.source.id];
                 if (channels) {
                   channels.some(function findChannel(channel, index) {
                     // A simple way to composite the key for the TV channel.
@@ -261,7 +260,7 @@ Style guide to contributors:
                 }
                 break;
               case "updated":
-                var channels = curChannelsOfTuners[changedChannel.tuner.id];
+                var channels = curChannelsOfSources[changedChannel.source.id];
                 if (channels) {
                   channels.some(function findChannel(channel, index) {
                     // A simple way to composite the key for the TV channel.
@@ -282,16 +281,16 @@ Style guide to contributors:
             }
           };
 
-          // Retrieve all the currently available TV tuners first.
-          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
-            tuners.forEach(function getChannelsByTuner(tuner) {
-              var tunerId = tuner.id;
+          // Retrieve all the currently available TV sources first.
+          navigator.mozTV.getSources().then(function onsuccess(sources) {
+            sources.forEach(function getChannelsBySource(source) {
+              var sourceId = source.id;
 
-              // Retrieve all the currently available TV channels in a TV tuner.
+              // Retrieve all the currently available TV channels in a TV source.
               navigator.mozTV.getChannels({
-                tunerId: tunerId;
+                sourceId: sourceId;
               }).then(function onsuccess(channels) {
-                curChannelsOfTuners[tunerId] = channels;
+                curChannelsOfSources[sourceId] = channels;
               }, function onerror(error) {
                 alert(error);
               });
@@ -387,7 +386,7 @@ Style guide to contributors:
 
         <p>
           The following example shows how to play the <code>MediaStream</code>
-          of a TV tuner by assigning the <code>MediaStream</code> to a
+          of a TV source by assigning the <code>MediaStream</code> to a
           <code>HTMLMediaElement</code>.
         </p>
 
@@ -396,17 +395,17 @@ Style guide to contributors:
           &lt;html&gt;
             &lt;head&gt;
               &lt;script&gt;
-                // Retrieve all the currently available TV tuners first.
-                navigator.mozTV.getTuners().then(function onsuccess(tuners) {
-                  if (tuners.length == 0) {
+                // Retrieve all the currently available TV sources first.
+                navigator.mozTV.getSources().then(function onsuccess(sources) {
+                  if (sources.length == 0) {
                     return;
                   }
 
-                  // Just use the first TV tuner.
-                  var tuner = tuners[0];
+                  // Just use the first TV source.
+                  var source = sources[0];
 
                   var video = document.getElementById("video-player");
-                  video.srcObject = tuner.stream;
+                  video.srcObject = source.stream;
                 }, function onerror(error) {
                   alert(error);
                 });
@@ -420,11 +419,11 @@ Style guide to contributors:
 
         <p>
           The following example shows how to scan and get all the TV channels
-          that are available across different TV tuners.
+          that are available across different TV sources.
         </p>
 
         <pre class="example highlight">
-          // Ask tuners to scan the TV channels.
+          // Ask TV sources to scan the TV channels.
           navigator.mozTV.scan().then(function onsuccess() {
             // Retrieve all the currently available TV channels.
             navigator.mozTV.getChannels().then(function onsuccess(channels) {
@@ -443,18 +442,18 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
-          // Retrieve all the currently available TV tuners first.
-          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
-            if (tuners.length == 0) {
+          // Retrieve all the currently available TV sources first.
+          navigator.mozTV.getSources().then(function onsuccess(sources) {
+            if (sources.length == 0) {
               return;
             }
 
-            // Just use the first TV tuner.
-            var tuner = tuners[0];
+            // Just use the first TV source.
+            var source = sources[0];
 
-            // Retrieve all the currently available TV channels in a TV tuner.
+            // Retrieve all the currently available TV channels in a TV source.
             navigator.mozTV.getChannels({
-              tunerId: tuner.id;
+              sourceId: source.id;
             }).then(function onsuccess(channels) {
               if (channels.length == 0) {
                 return;
@@ -463,7 +462,7 @@ Style guide to contributors:
               // Just use the first TV channel.
               var channel = channels[0];
 
-              // Set the TV channel base on a TV tuner.
+              // Set the TV channel base on a TV source.
               navigator.mozTV.setChannel({
                 channelId: {
                   networkId: channel.networkId,
@@ -488,17 +487,17 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
-          // Retrieve all the currently available TV tuners first.
-          navigator.mozTV.getTuners().then(function onsuccess(tuners) {
-            if (tuners.length == 0) {
+          // Retrieve all the currently available TV sources first.
+          navigator.mozTV.getSources().then(function onsuccess(sources) {
+            if (sources.length == 0) {
               return;
             }
 
-            // Just use the first TV tuner.
-            var tuner = tuners[0];
+            // Just use the first TV source.
+            var source = sources[0];
 
             // This event handler will we triggered when a TV channel is set.
-            tuner.onchannelchanged = function onchannelchanged(event) {
+            source.onchannelchanged = function onchannelchanged(event) {
               var operation = event.operation;
               var changedChannel = event.channel;
 
@@ -510,7 +509,7 @@ Style guide to contributors:
               if (navigator.mozTV.isParentalControlLocked &&
                   changedChannel.isParentalControlProtected) {
                 // If the parental control is locked and the TV channel we're
-                // setting is protected, the |tuner.stream|'s media tracks will
+                // setting is protected, the |source.stream|'s media tracks will
                 // be disabled (i.e. black screen). The UA can pop up a prompt
                 // to ask the user to enter the password to unlock it.
                 alert("Parental lock is active. Please enter the password.");
@@ -524,9 +523,9 @@ Style guide to contributors:
               }
             };
 
-            // Retrieve all the currently available TV channels in a TV tuner.
+            // Retrieve all the currently available TV channels in a TV source.
             navigator.mozTV.getChannels({
-              tunerId: tuner.id;
+              sourceId: source.id;
             }).then(function onsuccess(channels) {
               if (channels.length == 0) {
                 return;
@@ -535,7 +534,7 @@ Style guide to contributors:
               // Just use the first TV channel.
               var channel = channels[0];
 
-              // Set the TV channel base on a TV tuner.
+              // Set the TV channel base on a TV source.
               navigator.mozTV.setChannel({
                 channelId: {
                   networkId: channel.networkId,
@@ -632,29 +631,29 @@ Style guide to contributors:
       </p>
 
       <dl title="interface TVManager : EventTarget" class="idl">
-        <dt>Promise getTuners ()</dt>
+        <dt>Promise getSources ()</dt>
           <dd>
-            This method makes a request to retrieve all the TV tuners that are
+            This method makes a request to retrieve all the TV sources that are
             available in the TV device. It returns a new <code>Promise</code>
             that will be used to notify the caller about the result of the
-            operation, which is an array of <a>TVTuner</a> elements.
+            operation, which is an array of <a>TVSource</a> elements.
           </dd>
 
         <dt>Promise getChannels ()</dt>
           <dd>
             This method makes a request to retrieve all the TV channels that are
-            available in a TV tuner by the <code>options</code> parameter.
+            available in a TV source by the <code>options</code> parameter.
             It returns a new <code>Promise</code> that will be used to notify
             the caller about the result of the operation, which is an array of
-            <a>TVChannel</a> elements that belong to the TV tuner.
+            <a>TVChannel</a> elements that belong to the TV source.
             <dl class='parameters'>
               <dt>optional TVGetChannelsOptions options</dt>
                 <dd>
                   Specifies the options for retrieving the TV channels. If the
-                  the <code>options</code> parameter or the <code>tunerId</code>
+                  the <code>options</code> parameter or the <code>sourceId</code>
                   option in the <code>options</code> parameter is not passed,
                   this method will return all the TV channels that are available
-                  across different TV tuners.
+                  across different TV sources.
                 </dd>
             </dl>
           </dd>
@@ -681,12 +680,12 @@ Style guide to contributors:
         <dt>Promise scan ()</dt>
           <dd>
             This method makes a request to scan all the TV channels that are
-            available across different TV tuners by the <code>isRescanned</code>
+            available across different TV sources by the <code>isRescanned</code>
             parameter. It returns a new <code>Promise</code> that will be used
             to notify the caller about the result of the operation. Note that
             this method has to be called first so that the
             <a><code>getChannels</code></a> method can then retrieve the
-            channels that are successfully scanned by the TV tuners.
+            channels that are successfully scanned by the TV sources.
             <dl class='parameters'>
               <dt>optional boolean isRescanned</dt>
                 <dd>
@@ -735,12 +734,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler ontunerchanged
+          attribute EventHandler onsourcechanged
         </dt>
           <dd>
-            Handles the <code>ontunerchanged</code> event of type
-            <a>TVTunerChangedEvent</a>, fired when an available TV tuner
-            is added, removed or updated by the TV device.
+            Handles the <code>onsourcechanged</code> event of type
+            <a>TVSourceChangedEvent</a>, fired when an available TV source is
+            added, removed or updated by the TV device.
           </dd>
 
         <dt class="no-docs">
@@ -749,7 +748,7 @@ Style guide to contributors:
           <dd>
             Handles the <code>onchannelchanged</code> event of type
             <a>TVChannelChangedEvent</a>, fired when an available TV
-            channel is added, removed or updated by the TV tunner.
+            channel is added, removed or updated by the TV source.
           </dd>
 
         <dt class="no-docs">
@@ -787,8 +786,8 @@ Style guide to contributors:
         <h3>Steps</h3>
 
         <p>
-          The <dfn><code>getTuners</code></dfn> method when invoked
-          MUST run the following steps:
+          The <dfn><code>getSources</code></dfn> method when invoked MUST run
+          the following steps:
         </p>
         <ol>
           <li>
@@ -799,7 +798,7 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV device to retrieve all the TV tuners that
+            Make a request to the TV device to retrieve all the TV sources that
             are available in the TV device.
           </li>
           <li>
@@ -812,13 +811,13 @@ Style guide to contributors:
           </li>
           <ol>
             <li>
-              Let <var>tuners</var> be the array of the retrieved
-              <a>TVTuner</a> elements.
+              Let <var>sources</var> be the array of the retrieved
+              <a>TVSource</a> elements.
             </li>
             <li>
               Invoke <em>resolver</em>'s <a
               class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              with <em>tuners</em> as the <code>value</code> argument.
+              with <em>sources</em> as the <code>value</code> argument.
             </li>
           </ol>
         </ol>
@@ -836,13 +835,13 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuners to retrieve all the TV channels that
-            are available in a TV tuner according to the retrieving options
-            specified in the <code>options</code> parameter. If the
+            Make a request to the TV sources to retrieve all the TV channels
+            that are available in a TV source according to the retrieving
+            options specified in the <code>options</code> parameter. If the
             <code>options</code> parameter is not passed or the
-            <code>tunerId</code> option in the <code>options</code> parameter is
-            not passed, retrieve all the TV channels that are available across
-            different TV tuners.
+            <code>sourceId</code> option in the <code>options</code> parameter
+            is not passed, retrieve all the TV channels that are available
+            across different TV sources.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -878,7 +877,7 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuners to retrieve all the TV programs
+            Make a request to the TV sources to retrieve all the TV programs
             according to the retrieving options specified in the
             <code>options</code> parameter. If the <code>options</code>
             parameter is not passed or the <code>channelId</code> option in the
@@ -920,8 +919,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuners to scan all the TV channels that are
-            available across different TV tuners according to the
+            Make a request to the TV sources to scan all the TV channels that are
+            available across different TV sources according to the
             <code>isRescanned</code> parameter. If the <code>isRescanned</code>
             parameter is passed as <code>true</code> or is not passed, the
             <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
@@ -961,7 +960,7 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuners to stop scanning the TV channels.
+            Make a request to the TV sources to stop scanning the TV channels.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -993,7 +992,7 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV tuner to set the TV channel according to
+            Make a request to the TV source to set the TV channel according to
             the setting options specified in the <code>options</code> parameter.
           </li>
           <li>
@@ -1068,12 +1067,12 @@ Style guide to contributors:
           </thead>
           <tbody>
             <tr>
-              <td><strong><code>ontunerchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">tunerchanged</dfn></code></td>
-              <td><a><code>TVTunerChangedEvent</code></a></td>
+              <td><strong><code>onsourcechanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">sourcechanged</dfn></code></td>
+              <td><a><code>TVSourceChangedEvent</code></a></td>
               <td>
-                Handles the information of the available TV tuner that is added,
-                removed or updated by the TV device.
+                Handles the information of the available TV source that is
+                added, removed or updated by the TV device.
               </td>
             </tr>
 
@@ -1083,7 +1082,7 @@ Style guide to contributors:
               <td><a><code>TVChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV channel that is
-                added, removed or updated by the TV tuner.
+                added, removed or updated by the TV source.
               </td>
             </tr>
 
@@ -1122,39 +1121,39 @@ Style guide to contributors:
 
     </section>
 
-<!-- - - - - - - - - - - - Interface TVTuner  - - - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVSource  - - - - - - - - - - - - -->
     <section>
-      <h2><a>TVTuner</a> Interface</h2>
+      <h2><a>TVSource</a> Interface</h2>
       <p>
-        The <a>TVTuner</a> interface represents a bunch of properties and
-        a set of operations related to the TV tuner.
+        The <a>TVSource</a> interface represents a bunch of properties and
+        a set of operations related to the TV source.
       </p>
-      <dl title="interface TVTuner : EventTarget" class="idl">
+      <dl title="interface TVSource : EventTarget" class="idl">
         <dt>readonly attribute DOMString id</dt>
           <dd>
-            MUST return the ID of the TV tuner.
+            MUST return the ID of the TV source.
           </dd>
 
-        <dt>readonly attribute TVTunerType type</dt>
+        <dt>readonly attribute TVSourceType type</dt>
           <dd>
-            MUST return the type of the TV tuner.
+            MUST return the type of the TV source.
           </dd>
 
         <dt>readonly attribute MediaStream? stream</dt>
           <dd>
             MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
-            object that is currently streamed by the TV tuner, which can be
+            object that is currently streamed by the TV source, which can be
             played by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
             element by assigning the <code>MediaStream</code> to the
             <code>HTMLMediaElement</code> (<a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastreams-as-media-elements">details</a>) and can be recorded by the
             <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST return <em>null</em>
-            if the TV tuner is not streaming.
+            if the TV source is not streaming.
           </dd>
 
         <dt>readonly attribute TVChannel? <a>channel</a></dt>
           <dd>
             MUST return the TV channel that is currently streamed by the TV
-            tuner. MUST return <em>null</em> if the TV tuner is not streaming.
+            source. MUST return <em>null</em> if the TV source is not streaming.
           </dd>
 
         <dt class="no-docs">
@@ -1163,7 +1162,7 @@ Style guide to contributors:
           <dd>
             Handles the <code>onchannelchanged</code> event of type
             <a>TVChannelChangedEvent</a>, fired when the currently streamed TV
-            channel is updated by the TV tuner.
+            channel is updated by the TV source.
           </dd>
       </dl>
 
@@ -1172,7 +1171,7 @@ Style guide to contributors:
         <p>The following are the <a class="internalDFN"
         href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
         class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
-        supported as attributes by the <a>TVTuner</a> object.
+        supported as attributes by the <a>TVSource</a> object.
         
         <table class="simple">
           <thead>
@@ -1190,7 +1189,7 @@ Style guide to contributors:
               <td><a><code>TVChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently streamed TV channel
-                that is updated by the TV tuner.
+                that is updated by the TV source.
               </td>
             </tr>
           </tbody>
@@ -1231,9 +1230,9 @@ Style guide to contributors:
             capacity of the underlying physical channel.
           </dd>
 
-        <dt>readonly attribute TVTuner tuner</dt>
+        <dt>readonly attribute TVSource source</dt>
           <dd>
-            MUST return the TV tuner which the TV channel belongs to.
+            MUST return the TV source which the TV channel belongs to.
           </dd>
 
         <dt>readonly attribute DOMString number</dt>
@@ -1270,7 +1269,7 @@ Style guide to contributors:
           <dd>
             MUST return the TV program that is currently broadcasted in the TV
             channel. MUST return <em>null</em> if the TV channel is not
-            currently streamed by the TV tuner.
+            currently streamed by the TV source.
           </dd>
 
         <dt class="no-docs">
@@ -1410,9 +1409,9 @@ Style guide to contributors:
         retrieving the TV channels.
       </p>
       <dl title="dictionary TVGetChannelsOptions" class="idl">
-        <dt>DOMString tunerId</dt>
+        <dt>DOMString sourceId</dt>
           <dd>
-            Identifies the TV tuner that is requested to retrieve the TV
+            Identifies the TV source that is requested to retrieve the TV
             channels.
           </dd>
       </dl>
@@ -1473,22 +1472,22 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVTunerChangedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVSourceChangedEvent - - - - - - - - - - -->
     <section>
-      <h2><a>TVTunerChangedEvent</a> Interface</h2>
+      <h2><a>TVSourceChangedEvent</a> Interface</h2>
       <p>
-        The <a>TVTunerChangedEvent</a> interface represents the event
-        related to the TV tuner changed by the TV device.
+        The <a>TVSourceChangedEvent</a> interface represents the event
+        related to the TV source changed by the TV device.
       </p>
-      <dl title="interface TVTunerChangedEvent : Event" class="idl">
+      <dl title="interface TVSourceChangedEvent : Event" class="idl">
         <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
           <dd>
-            MUST return the type of operation that changes the TV tuner.
+            MUST return the type of operation that changes the TV source.
           </dd>
 
-        <dt>readonly attribute TVTuner tuner</dt>
+        <dt>readonly attribute TVSource source</dt>
           <dd>
-            MUST return the TV tuner that is changed by the TV device.
+            MUST return the TV source that is changed by the TV device.
           </dd>
       </dl>
     </section>
@@ -1498,7 +1497,7 @@ Style guide to contributors:
       <h2><a>TVChannelChangedEvent</a> Interface</h2>
       <p>
         The <a>TVChannelChangedEvent</a> interface represents the event
-        related to the TV channel changed by the TV tuner.
+        related to the TV channel changed by the TV source.
       </p>
       <dl title="interface TVChannelChangedEvent : Event" class="idl">
         <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
@@ -1508,7 +1507,7 @@ Style guide to contributors:
 
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
-            MUST return the TV channel that is changed by the TV tuner.
+            MUST return the TV channel that is changed by the TV source.
           </dd>
       </dl>
     </section>
@@ -1568,23 +1567,23 @@ Style guide to contributors:
     <section>
       <h2>Enumerations</h2>
       <p>
-        The attribute <code>type</code> in a <a>TVTuner</a> can have the
+        The attribute <code>type</code> in a <a>TVSource</a> can have the
         following values:
       </p>
-      <dl title="enum TVTunerType" class="idl">
+      <dl title="enum TVSourceType" class="idl">
         <dt>dvb-t</dt>
         <dd>
-          The TV tuner works for Digital Video Broadcasting - Terrestrial.
+          The TV source works for Digital Video Broadcasting - Terrestrial.
         </dd>
 
         <dt>dvb-c</dt>
         <dd>
-          The TV tuner works for Digital Video Broadcasting - Cable.
+          The TV source works for Digital Video Broadcasting - Cable.
         </dd>
 
         <dt>dvb-s</dt>
         <dd>
-          The TV tuner works for Digital Video Broadcasting - Satellite.
+          The TV source works for Digital Video Broadcasting - Satellite.
         </dd>
       </dl>
 
@@ -1605,7 +1604,7 @@ Style guide to contributors:
       </dl>
 
       <p>
-        The attribute <code>operation</code> in the <a>TVTunerChangedEvent</a>,
+        The attribute <code>operation</code> in the <a>TVSourceChangedEvent</a>,
         the <a>TVChannelChangedEvent</a> or the <a>TVProgramChangedEvent</a> can
         have the following values:
       </p>
