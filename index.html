@@ -752,12 +752,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onprogramchanged
+          attribute EventHandler oneitbroadcast
         </dt>
           <dd>
-            Handles the <code>onprogramchanged</code> event of type
-            <a>TVProgramChangedEvent</a>, fired when an available TV
-            program is added, removed or updated in the TV channel.
+            Handles the <code>oneitbroadcast</code> event of type
+            <a>TVEITBroadcastEvent</a>, fired when the Event Information Table
+            (EIT) is broadcast by the TV source.
           </dd>
 
         <dt class="no-docs">
@@ -1087,12 +1087,12 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>onprogramchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">programchanged</dfn></code></td>
-              <td><a><code>TVProgramChangedEvent</code></a></td>
+              <td><strong><code>oneitbroadcast</code></strong></td>
+              <td><code><dfn id="dfn-change-event">eitchanged</dfn></code></td>
+              <td><a><code>TVEITBroadcastEvent</code></a></td>
               <td>
-                Handles the information of the available TV program that is
-                added, removed or updated in the TV channel.
+                Handles the information of the available TV programs in the EIT
+                broadcast by the TV source.
               </td>
             </tr>
 
@@ -1570,6 +1570,22 @@ Style guide to contributors:
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
             MUST return the TV channel that is changed by the TV source.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVEITBroadcastEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>TVEITBroadcastEvent</a> Interface</h2>
+      <p>
+        The <a>TVEITBroadcastEvent</a> interface represents the event related to
+        the available TV programs in the EIT broadcast by the TV source.
+      </p>
+      <dl title="interface TVEITBroadcastEvent : Event" class="idl">
+        <dt>readonly attribute TVProgram[] programs</dt>
+          <dd>
+            MUST return the available TV programs in the EIT broadcast by the TV
+            source.
           </dd>
       </dl>
     </section>
