@@ -642,7 +642,7 @@ Style guide to contributors:
         <dt>Promise getChannels ()</dt>
           <dd>
             This method makes a request to retrieve all the TV channels that are
-            available in a TV source by the <code>options</code> parameter.
+            available in the TV source(s) by the <code>options</code> parameter.
             It returns a new <code>Promise</code> that will be used to notify
             the caller about the result of the operation, which is an array of
             <a>TVChannel</a> elements that belong to the TV source.
@@ -660,10 +660,10 @@ Style guide to contributors:
         <dt>Promise getPrograms ()</dt>
           <dd>
             This method makes a request to retrieve all the TV programs that are
-            available in a TV channel by the <code>options</code> parameter. It
-            returns a new <code>Promise</code> that will be used to notify the
-            caller about the result of the operation, which is an array of
-            <a>TVProgram</a> elements that belong to the TV channel.
+            available in the TV channel(s) by the <code>options</code>
+            parameter. It returns a new <code>Promise</code> that will be used
+            to notify the caller about the result of the operation, which is an
+            array of <a>TVProgram</a> elements that belong to the TV channel.
             <dl class='parameters'>
               <dt>optional TVGetProgramsOptions options</dt>
                 <dd>
@@ -675,29 +675,33 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>Promise scan ()</dt>
+        <dt>Promise startScan ()</dt>
           <dd>
             This method makes a request to scan all the TV channels that are
-            available across different TV sources by the <code>isRescanned</code>
-            parameter. It returns a new <code>Promise</code> that will be used
-            to notify the caller about the result of the operation. Note that
-            this method has to be called first so that the
-            <a><code>getChannels</code></a> method can then retrieve the
-            channels that are successfully scanned by the TV sources.
+            available in the TV source(s) by the <code>options</code> parameter.
+            It returns a new <code>Promise</code> that will be used to notify
+            the caller about the result of the operation. Note that this method
+            has to be called first so that the <a><code>getChannels</code></a>
+            method can then retrieve the channels that are successfully scanned
+            by the TV sources.
             <dl class='parameters'>
-              <dt>optional boolean isRescanned</dt>
+              <dt>optional TVStartScanOptions options</dt>
                 <dd>
-                  Specifies whether or not the process of scanning the TV
-                  channels has to clear the currently scanned TV channels and
-                  rescan all of them. If the the <code>isRescanned</code>
-                  parameter is not passed, this method will just rescan all the
-                  TV channels as if the <code>isRescanned</code> is passed as
-                  <code>true</code>.
+                  Specifies the options for scanning the TV channels. The
+                  <code>sourceId</code> option in the <code>options</code>
+                  specifies which TV source does the scan. If it is not passed,
+                  this method will scan all the TV channels that are available
+                  across different TV sources. The <code>isRescanned</code>
+                  option in the <code>options</code> parameter specifies whether
+                  or not the process of scanning the TV channels has to clear
+                  the currently scanned TV channels and do the rescan. If it is
+                  not passed, this method will just rescan all the TV channels
+                  as if it is passed as <code>true</code>.
                 </dd>
             </dl>
           </dd>
 
-        <dt>Promise stopScanning ()</dt>
+        <dt>Promise stopScan ()</dt>
           <dd>
             This method makes a request to stop scanning the TV channels. It
             returns a new <code>Promise</code> that will be used to notify the
@@ -756,8 +760,8 @@ Style guide to contributors:
             Handles the <code>onscanstatechanged</code> event of type
             <a>TVScanStateChangedEvent</a>, fired when the state of the process
             of scanning the TV channels is changed. E.g., it can be fired when
-            the method <a><code>scan</code></a> or the method
-            <a><code>stopScanning</code></a> completes or stops the process of
+            the method <a><code>startScan</code></a> or the method
+            <a><code>stopScan</code></a> completes or stops the process of
             scanning the TV channels.
           </dd>
 
@@ -894,7 +898,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>scan</code></dfn> method when invoked MUST run
+          The <dfn><code>startScan</code></dfn> method when invoked MUST run
           the following steps:
         </p>
         <ol>
@@ -906,14 +910,16 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV sources to scan all the TV channels that are
-            available across different TV sources according to the
-            <code>isRescanned</code> parameter. If the <code>isRescanned</code>
-            parameter is passed as <code>true</code> or is not passed, the
+            Make a request to the TV source(s) to scan all the TV channels
+            according to the scanning options specified in the
+            <code>options</code> parameter. If the <code>sourceId</code> option
+            in the <code>options</code> parameter is not passed, scan all the TV
+            channels that are available across different TV sources. If the
+            <code>isRescanned</code> option in the <code>options</code>
+            parameter is not passed or it is passed as <code>true</code>, the
             <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
-            clear the currenly scanned TV channels first and rescan all of them.
-            If <code>isRescanned</code> parameter is passed as
-            <code>false</code>, the
+            clear the currenly scanned TV channels first and rescan all of them;
+            if it is passed as <code>false</code>, the
             <a class="internalDFN" href="#dfn-user-agent">user agent</a> will
             simply scan additional TV channels which haven't been scanned yet.
           </li>
@@ -935,7 +941,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>stopScanning</code></dfn> method when invoked
+          The <dfn><code>stopScan</code></dfn> method when invoked
           MUST run the following steps:
         </p>
         <ol>
@@ -1075,7 +1081,7 @@ Style guide to contributors:
 
             <tr>
               <td><strong><code>onscanstatechanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">channelsscanned</dfn></code></td>
+              <td><code><dfn id="dfn-change-event">scanstatechanged</dfn></code></td>
               <td><a><code>TVScanStateChangedEvent</code></a></td>
               <td>
                 Handles the information of the changed state of the process of
@@ -1490,6 +1496,27 @@ Style guide to contributors:
       </dl>
     </section>
 
+<!-- - - - - - - - - - - - Dictionary TVStartScanOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>TVStartScanOptions</a> Dictionary</h2>
+      <p>
+        The <a>TVStartScanOptions</a> dictionary contains the information for
+        scanning the TV channels.
+      </p>
+      <dl title="dictionary TVStartScanOptions" class="idl">
+        <dt>DOMString sourceId</dt>
+          <dd>
+            Identifies the TV source that is requested to scan the TV channels.
+          </dd>
+
+        <dt>boolean isRescanned</dt>
+          <dd>
+            Specifies whether or not the process of scanning the TV channels has
+            to clear the currently scanned TV channels and rescan all of them.
+          </dd>
+      </dl>
+    </section>
+
 <!-- - - - - - - - - - - - Dictionary SetChannelOptions   - - - - - - - - - -->
     <section>
       <h2><a>SetChannelOptions</a> Dictionary</h2>
@@ -1591,6 +1618,13 @@ Style guide to contributors:
             MUST return the type of operation that changes the process of
             scanning the TV channels.
           </dd>
+
+        <dt>readonly attribute TVChannel? channel</dt>
+           <dd>
+            MUST return the TV channel that is scanned by the TV source. MUST
+            return <em>null</em> if the <code>operation</code> is not specified
+            as <code>"scanned"</code>.
+           </dd>
       </dl>
     </section>
 
@@ -1680,9 +1714,15 @@ Style guide to contributors:
         <a>TVScanStateChangedEvent</a> can have the following values:
       </p>
       <dl title="enum TVScanStateChangedEventOperation" class="idl">
-        <dt>scanning</dt>
+        <dt>started</dt>
           <dd>
-            The process of scanning the TV channels is running.
+            The process of scanning the TV channels is started.
+          </dd>
+
+        <dt>scanned</dt>
+          <dd>
+            The process of scanning the TV channels is scanned, which means a TV
+            channel is successfully scanned by the TV source.
           </dd>
 
         <dt>completed</dt>
