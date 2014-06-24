@@ -1165,19 +1165,19 @@ Style guide to contributors:
             if the TV source is not streaming.
           </dd>
 
-        <dt>readonly attribute TVChannel? <a>channel</a></dt>
+        <dt>readonly attribute TVChannel? currentChannel</dt>
           <dd>
             MUST return the TV channel that is currently streamed by the TV
             source. MUST return <em>null</em> if the TV source is not streaming.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onchannelchanged
+          attribute EventHandler oncurrentchannelchanged
         </dt>
           <dd>
-            Handles the <code>onchannelchanged</code> event of type
-            <a>TVChannelChangedEvent</a>, fired when the currently streamed TV
-            channel is updated by the TV source.
+            Handles the <code>oncurrentchannelchanged</code> event of type
+            <a>TVCurrentChannelChangedEvent</a>, fired when the currently
+            streamed TV channel is changed by the TV source.
           </dd>
       </dl>
 
@@ -1237,12 +1237,12 @@ Style guide to contributors:
           </thead>
           <tbody>
             <tr>
-              <td><strong><code>onchannelchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">channelchanged</dfn></code></td>
-              <td><a><code>TVChannelChangedEvent</code></a></td>
+              <td><strong><code>oncurrentchannelchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">currentchannelchanged</dfn></code></td>
+              <td><a><code>TVCurrentChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently streamed TV channel
-                that is updated by the TV source.
+                that is changed by the TV source.
               </td>
             </tr>
           </tbody>
@@ -1323,7 +1323,7 @@ Style guide to contributors:
             MUST indicate whether the TV channel is free to watch.
           </dd>
 
-        <dt>readonly attribute TVProgram? program</dt>
+        <dt>readonly attribute TVProgram? currentProgram</dt>
           <dd>
             MUST return the TV program that is currently broadcasted by the TV
             channel. MUST return <em>null</em> if the TV channel is not
@@ -1331,12 +1331,12 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onprogramchanged
+          attribute EventHandler oncurrentprogramchanged
         </dt>
           <dd>
-            Handles the <code>onprogramchanged</code> event of type
-            <a>TVProgramChangedEvent</a>, fired when the currently broadcasted
-            TV program is updated by the TV channel.
+            Handles the <code>oncurrentprogramchanged</code> event of type
+            <a>TVCurrentProgramChangedEvent</a>, fired when the currently
+            broadcasted TV program is changed by the TV channel.
           </dd>
 
       </dl>
@@ -1359,12 +1359,12 @@ Style guide to contributors:
           </thead>
           <tbody>
             <tr>
-              <td><strong><code>onprogramchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">programchanged</dfn></code></td>
-              <td><a><code>TVProgramChangedEvent</code></a></td>
+              <td><strong><code>oncurrentprogramchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">currentprogramchanged</dfn></code></td>
+              <td><a><code>TVCurrentProgramChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently broadcasted TV program
-                that is updated by the TV channel.
+                that is changed by the TV channel.
               </td>
             </tr>
           </tbody>
@@ -1570,22 +1570,37 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVProgramChangedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVCurrentChannelChangedEvent - - - - - - - - - - -->
     <section>
-      <h2><a>TVProgramChangedEvent</a> Interface</h2>
+      <h2><a>TVCurrentChannelChangedEvent</a> Interface</h2>
       <p>
-        The <a>TVProgramChangedEvent</a> interface represents the event
-        related to the TV program changed by the TV channel.
+        The <a>TVCurrentChannelChangedEvent</a> interface represents the event
+        related to the currently streamed TV channel that is changed by the TV
+        source.
       </p>
-      <dl title="interface TVProgramChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
+      <dl title="interface TVCurrentChannelChangedEvent : Event" class="idl">
+        <dt>readonly attribute TVChannel? currentChannel</dt>
           <dd>
-            MUST return the type of operation that changes the TV program.
+            MUST return the TV channel that is currently streamed by the TV
+            source. MUST return <em>null</em> if the TV source is not streaming.
           </dd>
+      </dl>
+    </section>
 
-        <dt>readonly attribute TVProgram program</dt>
+<!-- - - - - - - - - - - - Interface TVCurrentProgramChangedEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>TVCurrentProgramChangedEvent</a> Interface</h2>
+      <p>
+        The <a>TVCurrentProgramChangedEvent</a> interface represents the event
+        related to the currently broadcasted TV program that is changed by the
+        TV channel.
+      </p>
+      <dl title="interface TVCurrentProgramChangedEvent : Event" class="idl">
+        <dt>readonly attribute TVProgram? currentProgram</dt>
           <dd>
-            MUST return the TV program that is changed by the TV channel.
+            MUST return the TV program that is currently broadcasted by the TV
+            channel. MUST return <em>null</em> if the TV channel is not
+            currently streamed by the TV source.
           </dd>
       </dl>
     </section>
@@ -1684,9 +1699,8 @@ Style guide to contributors:
       </dl>
 
       <p>
-        The attribute <code>operation</code> in the <a>TVSourceChangedEvent</a>,
-        the <a>TVChannelChangedEvent</a> or the <a>TVProgramChangedEvent</a> can
-        have the following values:
+        The attribute <code>operation</code> in the <a>TVSourceChangedEvent</a>
+        or the <a>TVChannelChangedEvent</a> can have the following values:
       </p>
       <dl title="enum TVObjectChangedEventOperation" class="idl">
         <dt>added</dt>
