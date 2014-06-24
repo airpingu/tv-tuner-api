@@ -741,15 +741,6 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onchannelchanged
-        </dt>
-          <dd>
-            Handles the <code>onchannelchanged</code> event of type
-            <a>TVChannelChangedEvent</a>, fired when an available TV
-            channel is added, removed or updated by the TV source.
-          </dd>
-
-        <dt class="no-docs">
           attribute EventHandler oneitbroadcasted
         </dt>
           <dd>
@@ -1069,16 +1060,6 @@ Style guide to contributors:
               <td>
                 Handles the information of the available TV source that is
                 added, removed or updated by the TV device.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onchannelchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">channelchanged</dfn></code></td>
-              <td><a><code>TVChannelChangedEvent</code></a></td>
-              <td>
-                Handles the information of the available TV channel that is
-                added, removed or updated by the TV source.
               </td>
             </tr>
 
@@ -1551,26 +1532,6 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVChannelChangedEvent - - - - - - - - - - -->
-    <section>
-      <h2><a>TVChannelChangedEvent</a> Interface</h2>
-      <p>
-        The <a>TVChannelChangedEvent</a> interface represents the event
-        related to the TV channel that is changed by the TV source.
-      </p>
-      <dl title="interface TVChannelChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
-          <dd>
-            MUST return the type of operation that changes the TV channel.
-          </dd>
-
-        <dt>readonly attribute TVChannel channel</dt>
-          <dd>
-            MUST return the TV channel that is changed by the TV source.
-          </dd>
-      </dl>
-    </section>
-
 <!-- - - - - - - - - - - - Interface TVCurrentChannelChangedEvent - - - - - - - - - - -->
     <section>
       <h2><a>TVCurrentChannelChangedEvent</a> Interface</h2>
@@ -1717,27 +1678,6 @@ Style guide to contributors:
         <dt>updated</dt>
           <dd>
             A TV source is updated.
-          </dd>
-      </dl>
-
-      <p>
-        The attribute <code>operation</code> in the <a>TVChannelChangedEvent</a>
-        can have the following values:
-      </p>
-      <dl title="enum TVObjectChangedEventOperation" class="idl">
-        <dt>added</dt>
-          <dd>
-            A TV object is added.
-          </dd>
-
-        <dt>removed</dt>
-          <dd>
-            A TV object is removed.
-          </dd>
-
-        <dt>updated</dt>
-          <dd>
-            A TV object is updated.
           </dd>
       </dl>
 
