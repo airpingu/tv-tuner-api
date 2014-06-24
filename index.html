@@ -1534,13 +1534,14 @@ Style guide to contributors:
     <section>
       <h2><a>TVSourceChangedEvent</a> Interface</h2>
       <p>
-        The <a>TVSourceChangedEvent</a> interface represents the event
-        related to the TV source changed by the TV device.
+        The <a>TVSourceChangedEvent</a> interface represents the event related
+        to the TV source that is changed by the TV device.
       </p>
       <dl title="interface TVSourceChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
+        <dt>readonly attribute TVSourceChangedEventOperation operation</dt>
           <dd>
-            MUST return the type of operation that changes the TV source.
+            MUST return the type of operation that changes the currently
+            available TV sources.
           </dd>
 
         <dt>readonly attribute TVSource source</dt>
@@ -1555,7 +1556,7 @@ Style guide to contributors:
       <h2><a>TVChannelChangedEvent</a> Interface</h2>
       <p>
         The <a>TVChannelChangedEvent</a> interface represents the event
-        related to the TV channel changed by the TV source.
+        related to the TV channel that is changed by the TV source.
       </p>
       <dl title="interface TVChannelChangedEvent : Event" class="idl">
         <dt>readonly attribute TVObjectChangedEventOperation operation</dt>
@@ -1700,7 +1701,28 @@ Style guide to contributors:
 
       <p>
         The attribute <code>operation</code> in the <a>TVSourceChangedEvent</a>
-        or the <a>TVChannelChangedEvent</a> can have the following values:
+        can have the following values:
+      </p>
+      <dl title="enum TVSourceChangedEventOperation" class="idl">
+        <dt>added</dt>
+          <dd>
+            A TV source is added.
+          </dd>
+
+        <dt>removed</dt>
+          <dd>
+            A TV source is removed.
+          </dd>
+
+        <dt>updated</dt>
+          <dd>
+            A TV source is updated.
+          </dd>
+      </dl>
+
+      <p>
+        The attribute <code>operation</code> in the <a>TVChannelChangedEvent</a>
+        can have the following values:
       </p>
       <dl title="enum TVObjectChangedEventOperation" class="idl">
         <dt>added</dt>
