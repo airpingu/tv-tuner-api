@@ -1605,7 +1605,7 @@ Style guide to contributors:
         source.
       </p>
       <dl title="interface TVCurrentChannelChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVChannel? currentChannel</dt>
+        <dt>readonly attribute TVChannel? channel</dt>
           <dd>
             MUST return the TV channel that is currently streamed by the TV
             source. MUST return <em>null</em> if the TV source is not streaming.
@@ -1622,7 +1622,7 @@ Style guide to contributors:
         TV channel.
       </p>
       <dl title="interface TVCurrentProgramChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVProgram? currentProgram</dt>
+        <dt>readonly attribute TVProgram? program</dt>
           <dd>
             MUST return the TV program that is currently broadcasted by the TV
             channel. MUST return <em>null</em> if the TV channel is not
