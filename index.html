@@ -639,6 +639,20 @@ Style guide to contributors:
             operation, which is an array of <a>TVSource</a> elements.
           </dd>
 
+        <dt>Promise setSourceType ()</dt>
+          <dd>
+            This method makes a request to set the type of the TV source by the
+            <code>type</code> parameter. It returns a new <code>Promise</code>
+            that will be used to notify the caller about the result of the
+            operation.
+            <dl class='parameters'>
+              <dt>TVSourceType type</dt>
+                <dd>
+                  Specifies the type for setting the type of the TV source.
+                </dd>
+            </dl>
+          </dd>
+
         <dt>Promise getChannels ()</dt>
           <dd>
             This method makes a request to retrieve all the TV channels that are
@@ -823,6 +837,39 @@ Style guide to contributors:
               Invoke <em>resolver</em>'s <a
               class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
               with <em>sources</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>setSourceType</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV source to set the type of the TV source
+            according to the <code>type</code> parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
             </li>
           </ol>
         </ol>
@@ -1133,20 +1180,6 @@ Style guide to contributors:
         a set of operations related to the TV source.
       </p>
       <dl title="interface TVSource : EventTarget" class="idl">
-        <dt>Promise setType ()</dt>
-          <dd>
-            This method makes a request to set the type of the TV source by the
-            <code>type</code> parameter. It returns a new <code>Promise</code>
-            that will be used to notify the caller about the result of the
-            operation.
-            <dl class='parameters'>
-              <dt>TVSourceType type</dt>
-                <dd>
-                  Specifies the type for setting the type of the TV source.
-                </dd>
-            </dl>
-          </dd>
-
         <dt>readonly attribute DOMString id</dt>
           <dd>
             MUST return the ID of the TV source.
@@ -1193,44 +1226,6 @@ Style guide to contributors:
             streamed TV channel is changed by the TV source.
           </dd>
       </dl>
-
-      <section>
-        <h3>Steps</h3>
-
-        <p>
-          The <dfn><code>setType</code></dfn> method when invoked MUST run
-          the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV source to set the type of the TV source
-            according to the <code>type</code> parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              without assigning a value to the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
-
-      </section>
 
       <section>
         <h2>Event handlers</h2>
