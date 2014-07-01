@@ -192,7 +192,7 @@ Style guide to contributors:
                   return false;
                 });
                 break;
-              case "updated":
+              case "set":
                 curSources.some(function findSource(source, index) {
                   if (source.id == changedSource.id) {
                     curSources[index] = changedSource;
@@ -225,59 +225,54 @@ Style guide to contributors:
           // E.g., { "sourceId1": [...], "sourceId2": [...] }.
           var curChannelsOfSources = {};
 
-          // Set the 'onchannelchanged' event handler.
-          navigator.mozTV.onchannelchanged = function onchannelchanged(event) {
-            var operation = event.operation;
-            var changedChannel = event.channel;
+          // Set the 'onscanningstatechanged' event handler.
+          navigator.mozTV.onscanningstatechanged = function onscanningstatechanged(event) {
+            var state = event.state;
+            var sourceId = event.sourceId;
+            var scannedChannel = event.channel;
 
-            // A simple way to composite the key for the TV channel.
-            var changedChannelId = changedChannel.networkId +
-                                   changedChannel.transportStreamId +
-                                   changedChannel.serviceId;
-
-            switch (operation) {
-              case "added":
-                var channels = curChannelsOfSources[changedChannel.source.id];
-                if (channels) {
-                  channels.push(changedChannel);
+            switch (state) {
+              case "cleared":
+                if (sourceId && curChannelsOfSources[sourceId]) {
+                  delete curChannelsOfSources[sourceId];
                 }
                 break;
-              case "removed":
-                var channels = curChannelsOfSources[changedChannel.source.id];
+              case "scanned":
+                var channels = curChannelsOfSources[sourceId];
                 if (channels) {
-                  channels.some(function findChannel(channel, index) {
-                    // A simple way to composite the key for the TV channel.
-                    var channelId = channel.networkId +
-                                    channel.transportStreamId +
-                                    channel.serviceId;
-
-                    if (channelId == changedChannelId) {
-                      channels.splice(index, 1);
-                      return true;
-                    }
-                    return false;
-                  });
-                }
-                break;
-              case "updated":
-                var channels = curChannelsOfSources[changedChannel.source.id];
-                if (channels) {
-                  channels.some(function findChannel(channel, index) {
-                    // A simple way to composite the key for the TV channel.
-                    var channelId = channel.networkId +
-                                    channel.transportStreamId +
-                                    channel.serviceId;
-
-                    if (channelId == changedChannelId) {
-                      channels[index] = changedChannel;
-                      return true;
-                    }
-                    return false;
-                  });
+                  channels.push(scannedChannel);
+                } else {
+                  curChannelsOfSources[sourceId] = [scannedChannel];
                 }
                 break;
               default:
                 break;
+            }
+          };
+
+          // Set the 'onchannelset' event handler.
+          navigator.mozTV.onchannelset = function onchannelset(event) {
+            var setChannel = event.channel;
+
+            // A simple way to composite the key for the TV channel.
+            var setChannelId = setChannel.networkId +
+                               setChannel.transportStreamId +
+                               setChannel.serviceId;
+
+            var channels = curChannelsOfSources[setChannel.source.id];
+            if (channels) {
+              channels.some(function findChannel(channel, index) {
+                // A simple way to composite the key for the TV channel.
+                var channelId = channel.networkId +
+                                channel.transportStreamId +
+                                channel.serviceId;
+
+                if (channelId == setChannelId) {
+                  channels[index] = setChannel;
+                  return true;
+                }
+                return false;
+              });
             }
           };
 
@@ -307,55 +302,32 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
-          // A matrix which maps the TV channel to its corresponding array of TV programs.
+          // A matrix which maps the TV channel to its corresponding array of TV programs (i.e., EPG).
           // E.g., { "channelId1": [...], "channelId2": [...] }.
           var curProgramsOfChannels = {};
 
-          // Set the 'onprogramchanged' event handler.
-          navigator.mozTV.onprogramchanged = function onprogramchanged(event) {
-            var operation = event.operation;
-            var changedProgram = event.program;
-            var channel = changedProgram.channel;
+          // Set the 'oneitbroadcasted' event handler.
+          navigator.mozTV.oneitbroadcasted = function oneitbroadcasted(event) {
+            var newPrograms = event.programs;
 
-            // A simple way to composite the key for the TV channel.
-            var channelId = channel.networkId +
-                            channel.transportStreamId +
-                            channel.serviceId;
+            // Flush the EPG because a new EIT is available from the TV broadcaster.
+            curProgramsOfChannels = {};
 
-            switch (operation) {
-              case "added":
-                var programs = curProgramsOfChannels[channelId];
-                if (programs) {
-                  programs.push(changedProgram);
-                }
-                break;
-              case "removed":
-                var programs = curProgramsOfChannels[channelId];
-                if (programs) {
-                  programs.some(function findProgram(program, index) {
-                    if (program.eventId == changedProgram.eventId) {
-                      programs.splice(index, 1);
-                      return true;
-                    }
-                    return false;
-                  });
-                }
-                break;
-              case "updated":
-                var programs = curProgramsOfChannels[channelId];
-                if (programs) {
-                  programs.some(function findProgram(program, index) {
-                    if (program.eventId == changedProgram.eventId) {
-                      programs[index] = changedProgram;
-                      return true;
-                    }
-                    return false;
-                  });
-                }
-                break;
-              default:
-                break;
-            }
+            newPrograms.forEach(function addProgram(program) {
+              var channel = program.channel;
+
+              // A simple way to composite the key for the TV channel.
+              var channelId = channel.networkId +
+                              channel.transportStreamId +
+                              channel.serviceId;
+
+              var programs = curProgramsOfChannels[channelId];
+              if (programs) {
+                programs.push(program);
+              } else {
+                curProgramsOfChannels[channelId] = [program];
+              }
+            });
           };
 
           // Retrieve all the currently available TV channels first.
@@ -423,8 +395,37 @@ Style guide to contributors:
         </p>
 
         <pre class="example highlight">
+          // Set the 'onscanningstatechanged' event handler.
+          navigator.mozTV.onscanningstatechanged = function onscanningstatechanged(event) {
+            var state = event.state;
+            var sourceId = event.sourceId;
+            var scannedChannel = event.channel;
+
+            switch (state) {
+              case "cleared":
+                alert("All the TV channels are cleared for rescanning.");
+                break;
+              case "scanning":
+                alert("The scanning process is going on.");
+                break;
+              case "scanned":
+                alert("A new TV channel is scanned: " + scannedChannel.name);
+                break;
+              case "completed":
+                alert("The scanning process is completed.");
+                break;
+              case "stopped":
+                alert("The scanning process is stopped.");
+                break;
+              default:
+                break;
+            }
+          };
+
           // Ask TV sources to scan the TV channels.
-          navigator.mozTV.scan().then(function onsuccess() {
+          navigator.mozTV.startScanning({
+            isRescanned: true
+          }).then(function onsuccess() {
             // Retrieve all the currently available TV channels.
             navigator.mozTV.getChannels().then(function onsuccess(channels) {
               alert("Succeeded to scan and get all the TV channels.");
@@ -496,27 +497,21 @@ Style guide to contributors:
             // Just use the first TV source.
             var source = sources[0];
 
-            // This event handler will we triggered when a TV channel is set.
-            source.onchannelchanged = function onchannelchanged(event) {
-              var operation = event.operation;
-              var changedChannel = event.channel;
-
-              if (operation != "updated") {
-                alert("The operation type must be 'updated'.");
-                return;
-              }
+            // This event handler will be triggered when the TV channel is tuned.
+            source.oncurrentchannelchanged = function oncurrentchannelchanged(event) {
+              var changedCurrentChannel = event.channel;
 
               if (navigator.mozTV.isParentalControlLocked &&
-                  changedChannel.isParentalControlProtected) {
-                // If the parental control is locked and the TV channel we're
-                // setting is protected, the |source.stream|'s media tracks will
+                  changedCurrentChannel.isParentalControlProtected) {
+                // If the parental control is locked and the currently tuned TV
+                // channel is protected, the |source.stream|'s media tracks will
                 // be disabled (i.e. black screen). The UA can pop up a prompt
                 // to ask the user to enter the password to unlock it.
-                alert("Parental lock is active. Please enter the password.");
+                alert("Parental control is locked. Please enter the password.");
 
                 // Unlock the parental control which will be applied system-wisely.
                 navigator.mozTV.unlockParentalControl().then(function onsuccess() {
-                  alert("The parental control is unlocked until the reboot.");
+                  alert("Parental control is unlocked until the next reboot.");
                 }, function onerror(error) {
                   alert(error);
                 });
@@ -772,7 +767,7 @@ Style guide to contributors:
             MUST return the current lock state of the TV parental control,
             which is system-widely applied to the TV device (i.e., once
             unlocked, all the protected TV channels/programs will be unlocked
-            until the reboot).
+            until the next reboot).
           </dd>
 
         <dt class="no-docs">
@@ -1004,7 +999,7 @@ Style guide to contributors:
             <code>options</code> parameter is not passed or it is passed as
             <code>true</code>, the
             <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
-            clear the currenly scanned TV channels before scanning; if it is
+            clear the currently scanned TV channels before scanning; if it is
             passed as <code>false</code>, the
             <a class="internalDFN" href="#dfn-user-agent">user agent</a> will
             simply scan additional TV channels which haven't been scanned yet.
@@ -1728,7 +1723,7 @@ Style guide to contributors:
       <dl title="interface TVCurrentChannelChangedEvent : Event" class="idl">
         <dt>readonly attribute TVChannel? channel</dt>
           <dd>
-            MUST return the TV channel that is currently streamed by the TV
+            MUST return the TV channel that is currently stramed by the TV
             source. MUST return <em>null</em> if the TV source is not streaming.
           </dd>
       </dl>
@@ -1780,6 +1775,11 @@ Style guide to contributors:
         <dt>readonly attribute TVScanningState state</dt>
           <dd>
             MUST return the changed state of scanning the TV channels.
+          </dd>
+
+        <dt>readonly attribute DOMString sourceId</dt>
+          <dd>
+            Identifies the TV source that is scanning the TV channels.
           </dd>
 
         <dt>readonly attribute TVChannel? channel</dt>
