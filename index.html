@@ -639,16 +639,16 @@ Style guide to contributors:
             operation, which is an array of <a>TVSource</a> elements.
           </dd>
 
-        <dt>Promise setSourceType ()</dt>
+        <dt>Promise setSource ()</dt>
           <dd>
-            This method makes a request to set the type of the TV source by the
-            <code>type</code> parameter. It returns a new <code>Promise</code>
-            that will be used to notify the caller about the result of the
-            operation.
+            This method makes a request to set the TV source by the
+            <code>options</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
             <dl class='parameters'>
-              <dt>TVSourceType type</dt>
+              <dt>TVSetSourceOptions options</dt>
                 <dd>
-                  Specifies the type for setting the type of the TV source.
+                  Specifies the options for setting the TV source.
                 </dd>
             </dl>
           </dd>
@@ -739,9 +739,23 @@ Style guide to contributors:
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
-              <dt>TuneChannelOptions options</dt>
+              <dt>TVTuneChannelOptions options</dt>
                 <dd>
                   Specifies the options for tuning the TV channel.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise setChannel ()</dt>
+          <dd>
+            This method makes a request to set the TV channel by the
+            <code>options</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
+            <dl class='parameters'>
+              <dt>TVSetChannelOptions options</dt>
+                <dd>
+                  Specifies the options for setting the TV channel.
                 </dd>
             </dl>
           </dd>
@@ -767,7 +781,16 @@ Style guide to contributors:
           <dd>
             Handles the <code>onsourcechanged</code> event of type
             <a>TVSourceChangedEvent</a>, fired when an available TV source is
-            added, removed or updated by the TV device.
+            added, removed or set by the TV device.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onchannelset
+        </dt>
+          <dd>
+            Handles the <code>onchannelset</code> event of type
+            <a>TVChannelSetEvent</a>, fired when an available TV channel is
+            set by the TV device.
           </dd>
 
         <dt class="no-docs">
@@ -842,8 +865,8 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>setSourceType</code></dfn> method when invoked MUST run
-          the following steps:
+          The <dfn><code>setSource</code></dfn> method when invoked MUST run the
+          following steps:
         </p>
         <ol>
           <li>
@@ -854,8 +877,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV source to set the type of the TV source
-            according to the <code>type</code> parameter.
+            Make a request to the TV device to set the TV source according to
+            the setting options specified in the <code>options</code> parameter.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1054,6 +1077,39 @@ Style guide to contributors:
           </li>
           <li>
             Make a request to the TV source to tune the TV channel according to
+            the tuning options specified in the <code>options</code> parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>setChannel</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV device to set the TV channel according to
             the setting options specified in the <code>options</code> parameter.
           </li>
           <li>
@@ -1133,7 +1189,17 @@ Style guide to contributors:
               <td><a><code>TVSourceChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV source that is
-                added, removed or updated by the TV device.
+                added, removed or set by the TV device.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onchannelset</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channelset</dfn></code></td>
+              <td><a><code>TVChannelSetEvent</code></a></td>
+              <td>
+                Handles the information of the available TV channel that is
+                set by the TV device.
               </td>
             </tr>
 
@@ -1307,12 +1373,18 @@ Style guide to contributors:
             <code>"NHK"</code>... etc.
           </dd>
 
+        <dt>readonly attribute DOMString number</dt>
+          <dd>
+            MUST return the Logical Channel Number (LCN) of the TV channel.
+            E.g., <code>"12-1"</code>, <code>"12-2"</code>,
+            <code>"12-2"</code>... etc.
+          </dd>
+
         <dt>readonly attribute boolean isParentalControlProtected</dt>
           <dd>
             MUST return the current protection state of the TV parental control
-            on the TV channel. The value is hooked up to the system settings
-            to decide whether or not the TV channel is protected from being
-            watched by the children.
+            on the TV channel, which decides whether or not the TV channel is
+            protected from being watched by the children.
           </dd>
 
         <dt>readonly attribute boolean isEmergency</dt>
@@ -1422,14 +1494,6 @@ Style guide to contributors:
           <dd>
             MUST return the rating of the TV program.
           </dd>
-
-        <dt>readonly attribute boolean isParentalControlProtected</dt>
-          <dd>
-            MUST return the current protection state of the TV parental control
-            on the TV program. The value is hooked up to the system settings to
-            decide whether or not the TV program is protected from being watched
-            by the children.
-          </dd>
       </dl>
     </section>
 
@@ -1457,6 +1521,26 @@ Style guide to contributors:
           <dd>
             See the definition of <code>serviceId</code> in the
             <a>TVChannel</a>.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary TVSetSourceOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>TVSetSourceOptions</a> Dictionary</h2>
+      <p>
+        The <a>TVSetSourceOptions</a> dictionary contains the information for
+        setting the TV source.
+      </p>
+      <dl title="dictionary TVSetSourceOptions" class="idl">
+        <dt>DOMString sourceId</dt>
+          <dd>
+            Identifies the TV source that is requested to be set.
+          </dd>
+
+        <dt>TVSourceType type</dt>
+          <dd>
+            Specifies the type of the TV source.
           </dd>
       </dl>
     </section>
@@ -1555,18 +1639,45 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TuneChannelOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TVTuneChannelOptions   - - - - - - - - - -->
     <section>
-      <h2><a>TuneChannelOptions</a> Dictionary</h2>
+      <h2><a>TVTuneChannelOptions</a> Dictionary</h2>
       <p>
-        The <a>TuneChannelOptions</a> dictionary contains the information for
-        setting the TV channel.
+        The <a>TVTuneChannelOptions</a> dictionary contains the information for
+        tuning the TV channel.
       </p>
-      <dl title="dictionary TuneChannelOptions" class="idl">
+      <dl title="dictionary TVTuneChannelOptions" class="idl">
         <dt>TVChannelId channelId</dt>
           <dd>
             Identifies the TV channel that is requested to be tuned.
           </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Dictionary TVSetChannelOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>TVSetChannelOptions</a> Dictionary</h2>
+      <p>
+        The <a>TVSetChannelOptions</a> dictionary contains the information for
+        setting the TV channel.
+      </p>
+      <dl title="dictionary TVSetChannelOptions" class="idl">
+        <dt>TVChannelId channelId</dt>
+          <dd>
+            Identifies the TV channel that is requested to be set.
+          </dd>
+
+        <dt>DOMString number</dt>
+          <dd>
+            Specifies the LCN of the TV channel.
+          </dd>
+
+        <dt>boolean isParentalControlProtected</dt>
+          <dd>
+            Specifies whether or not the TV channel is protected from being
+            watched by the children.
+          </dd>
+
       </dl>
     </section>
 
@@ -1587,6 +1698,21 @@ Style guide to contributors:
         <dt>readonly attribute TVSource source</dt>
           <dd>
             MUST return the TV source that is changed by the TV device.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVChannelSetEvent - - - - - - - - - - -->
+    <section>
+      <h2><a>TVChannelSetEvent</a> Interface</h2>
+      <p>
+        The <a>TVChannelSetEvent</a> interface represents the event related to
+        the TV channel that is set by the TV device.
+      </p>
+      <dl title="interface TVChannelSetEvent : Event" class="idl">
+        <dt>readonly attribute TVChannel channel</dt>
+          <dd>
+            MUST return the TV channel that is set by the TV device.
           </dd>
       </dl>
     </section>
@@ -1741,9 +1867,9 @@ Style guide to contributors:
             A TV source is removed.
           </dd>
 
-        <dt>updated</dt>
+        <dt>set</dt>
           <dd>
-            A TV source is updated.
+            A TV source is set.
           </dd>
       </dl>
 
