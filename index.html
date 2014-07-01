@@ -437,7 +437,7 @@ Style guide to contributors:
         </pre>
 
         <p>
-          The following example shows how to set the TV channel by the TV
+          The following example shows how to tune the TV channel by the TV
           channel ID.
         </p>
 
@@ -462,15 +462,15 @@ Style guide to contributors:
               // Just use the first TV channel.
               var channel = channels[0];
 
-              // Set the TV channel base on a TV source.
-              navigator.mozTV.setChannel({
+              // Tune the TV channel base on a TV source.
+              navigator.mozTV.tuneChannel({
                 channelId: {
                   networkId: channel.networkId,
                   transportStreamId: channel.transportStreamId,
                   serviceId: channel.serviceId
                 }
               }).then(function onsuccess() {
-                alert("Succeeded to set the TV channel.");
+                alert("Succeeded to tune the TV channel.");
               }, function onerror(error) {
                 alert(error);
               });
@@ -534,15 +534,15 @@ Style guide to contributors:
               // Just use the first TV channel.
               var channel = channels[0];
 
-              // Set the TV channel base on a TV source.
-              navigator.mozTV.setChannel({
+              // Tune the TV channel base on a TV source.
+              navigator.mozTV.tuneChannel({
                 channelId: {
                   networkId: channel.networkId,
                   transportStreamId: channel.transportStreamId,
                   serviceId: channel.serviceId
                 }
               }).then(function onsuccess() {
-                alert("Succeeded to set the TV channel.");
+                alert("Succeeded to tune the TV channel.");
               }, function onerror(error) {
                 alert(error);
               });
@@ -718,16 +718,16 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>Promise setChannel ()</dt>
+        <dt>Promise tuneChannel ()</dt>
           <dd>
-            This method makes a request to set the TV channel by the
+            This method makes a request to tune the TV channel by the
             <code>options</code> parameter. It returns a new
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
-              <dt>SetChannelOptions options</dt>
+              <dt>TuneChannelOptions options</dt>
                 <dd>
-                  Specifies the options for setting the TV channel.
+                  Specifies the options for tuning the TV channel.
                 </dd>
             </dl>
           </dd>
@@ -994,7 +994,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>setChannel</code></dfn> method when invoked MUST run
+          The <dfn><code>tuneChannel</code></dfn> method when invoked MUST run
           the following steps:
         </p>
         <ol>
@@ -1006,7 +1006,7 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV source to set the TV channel according to
+            Make a request to the TV source to tune the TV channel according to
             the setting options specified in the <code>options</code> parameter.
           </li>
           <li>
@@ -1560,17 +1560,17 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary SetChannelOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TuneChannelOptions   - - - - - - - - - -->
     <section>
-      <h2><a>SetChannelOptions</a> Dictionary</h2>
+      <h2><a>TuneChannelOptions</a> Dictionary</h2>
       <p>
-        The <a>SetChannelOptions</a> dictionary contains the information for
+        The <a>TuneChannelOptions</a> dictionary contains the information for
         setting the TV channel.
       </p>
-      <dl title="dictionary SetChannelOptions" class="idl">
+      <dl title="dictionary TuneChannelOptions" class="idl">
         <dt>TVChannelId channelId</dt>
           <dd>
-            Identifies the TV channel that is requested to be set.
+            Identifies the TV channel that is requested to be tuned.
           </dd>
       </dl>
     </section>
