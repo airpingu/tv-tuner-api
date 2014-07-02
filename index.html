@@ -191,7 +191,7 @@ Style guide to contributors:
                   return false;
                 });
                 break;
-              case "updated":
+              case "configured":
                 curSources.some(function findSource(source, index) {
                   if (source.id == changedSource.id) {
                     curSources[index] = changedSource;
@@ -249,16 +249,16 @@ Style guide to contributors:
             }
           };
 
-          // Set the 'onchannelupdated' event handler.
-          navigator.mozTV.onchannelupdated = function onchannelupdated(event) {
-            var updatedChannel = event.channel;
+          // Set the 'onchannelconfigured' event handler.
+          navigator.mozTV.onchannelconfigured = function onchannelconfigured(event) {
+            var configuredChannel = event.channel;
 
             // A simple way to composite the key for the TV channel.
-            var updatedChannelId = updatedChannel.networkId +
-                                   updatedChannel.transportStreamId +
-                                   updatedChannel.serviceId;
+            var configuredChannelId = configuredChannel.networkId +
+                                      configuredChannel.transportStreamId +
+                                      configuredChannel.serviceId;
 
-            var channels = curChannelsOfSources[updatedChannel.source.id];
+            var channels = curChannelsOfSources[configuredChannel.source.id];
             if (channels) {
               channels.some(function findChannel(channel, index) {
                 // A simple way to composite the key for the TV channel.
@@ -266,8 +266,8 @@ Style guide to contributors:
                                 channel.transportStreamId +
                                 channel.serviceId;
 
-                if (channelId == updatedChannelId) {
-                  channels[index] = updatedChannel;
+                if (channelId == configuredChannelId) {
+                  channels[index] = configuredChannel;
                   return true;
                 }
                 return false;
@@ -633,17 +633,17 @@ Style guide to contributors:
             operation, which is an array of <a>TVSource</a> elements.
           </dd>
 
-        <dt>Promise setSource ()</dt>
+        <dt>Promise configureSource ()</dt>
           <dd>
-            This method makes a request to set the attribute(s) of the TV source
-            by the <code>options</code> parameter. It returns a new
+            This method makes a request to configure the attribute(s) of the TV
+            source by the <code>options</code> parameter. It returns a new
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
-              <dt>TVSetSourceOptions options</dt>
+              <dt>TVConfigureSourceOptions options</dt>
                 <dd>
-                  Specifies the options for setting the attribute(s) of the TV
-                  source.
+                  Specifies the options for configuring the attribute(s) of the
+                  TV source.
                 </dd>
             </dl>
           </dd>
@@ -666,17 +666,17 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>Promise setChannel ()</dt>
+        <dt>Promise configureChannel ()</dt>
           <dd>
-            This method makes a request to set the attribute(s) of the TV
+            This method makes a request to configure the attribute(s) of the TV
             channel by the <code>options</code> parameter. It returns a new
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
-              <dt>TVSetChannelOptions options</dt>
+              <dt>TVConfigureChannelOptions options</dt>
                 <dd>
-                  Specifies the options for setting the attribute(s) of the TV
-                  channel.
+                  Specifies the options for configuring the attribute(s) of the
+                  TV channel.
                 </dd>
             </dl>
           </dd>
@@ -779,22 +779,22 @@ Style guide to contributors:
           <dd>
             Handles the <code>onsourcechanged</code> event of type
             <a>TVSourceChangedEvent</a>, fired when a TV source is added/removed
-            by the TV device or updated by the Web application, where the former
-            is fired when the TV device detects a TV source is added/removed and
-            the latter only happens when the method
-            <a><code>setSource</code></a> is invoked to set the attribute(s) of
-            the TV source.
+            by the TV device or configured by the Web application, where the
+            former is fired when the TV device detects a TV source is
+            added/removed and the latter only happens when the method
+            <a><code>configureSource</code></a> is invoked to configure the
+            attribute(s) of the TV source.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onchannelupdated
+          attribute EventHandler onchannelconfigured
         </dt>
           <dd>
-            Handles the <code>onchannelupdated</code> event of type
-            <a>TVChannelUpdatedEvent</a>, fired when a TV channel is updated by
-            the Web application, which only happens when the method
-            <a><code>setChannel</code></a> is invoked to set the attribute(s) of
-            the TV channel.
+            Handles the <code>onchannelconfigured</code> event of type
+            <a>TVChannelConfiguredEvent</a>, fired when a TV channel is
+            configured by the Web application, which only happens when the
+            method <a><code>configureChannel</code></a> is invoked to configure
+            the attribute(s) of the TV channel.
           </dd>
 
         <dt class="no-docs">
@@ -871,8 +871,8 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>setSource</code></dfn> method when invoked MUST run the
-          following steps:
+          The <dfn><code>configureSource</code></dfn> method when invoked MUST
+          run the following steps:
         </p>
         <ol>
           <li>
@@ -883,8 +883,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV device to set the attribute(s) of the TV
-            source according to the setting options specified in the
+            Make a request to the TV device to configure the attribute(s) of the
+            TV source according to the configuring options specified in the
             <code>options</code> parameter.
           </li>
           <li>
@@ -946,8 +946,8 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>setChannel</code></dfn> method when invoked MUST run
-          the following steps:
+          The <dfn><code>configureChannel</code></dfn> method when invoked MUST
+          run the following steps:
         </p>
         <ol>
           <li>
@@ -958,8 +958,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV device to set the attribute(s) of the TV
-            channel according to the setting options specified in the
+            Make a request to the TV device to configure the attribute(s) of the
+            TV channel according to the configuring options specified in the
             <code>options</code> parameter.
           </li>
           <li>
@@ -1197,17 +1197,17 @@ Style guide to contributors:
               <td><a><code>TVSourceChangedEvent</code></a></td>
               <td>
                 Handles the information of the TV source that is added/removed
-                by the TV device or updated by the Web application.
+                by the TV device or configured by the Web application.
               </td>
             </tr>
 
             <tr>
-              <td><strong><code>onchannelupdated</code></strong></td>
-              <td><code><dfn id="dfn-change-event">channelupdated</dfn></code></td>
-              <td><a><code>TVChannelUpdatedEvent</code></a></td>
+              <td><strong><code>onchannelconfigured</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channelconfigured</dfn></code></td>
+              <td><a><code>TVChannelConfiguredEvent</code></a></td>
               <td>
-                Handles the information of the TV channel that is updated by the
-                Web application.
+                Handles the information of the TV channel that is configured by
+                the Web application.
               </td>
             </tr>
 
@@ -1533,17 +1533,17 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVSetSourceOptions   - - - - - - - - - -->
+<!-- - - - - - - - Dictionary TVConfigureSourceOptions   - - - - - - - - - -->
     <section>
-      <h2><a>TVSetSourceOptions</a> Dictionary</h2>
+      <h2><a>TVConfigureSourceOptions</a> Dictionary</h2>
       <p>
-        The <a>TVSetSourceOptions</a> dictionary contains the information for
-        setting the attribute(s) of the TV source.
+        The <a>TVConfigureSourceOptions</a> dictionary contains the information
+        for configuring the attribute(s) of the TV source.
       </p>
-      <dl title="dictionary TVSetSourceOptions" class="idl">
+      <dl title="dictionary TVConfigureSourceOptions" class="idl">
         <dt>DOMString sourceId</dt>
           <dd>
-            Identifies the TV source that is requested to be set.
+            Identifies the TV source that is requested to be configured.
           </dd>
 
         <dt>TVSourceType type</dt>
@@ -1569,17 +1569,17 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - Dictionary TVSetChannelOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - Dictionary TVConfigureChannelOptions   - - - - - - - - - -->
     <section>
-      <h2><a>TVSetChannelOptions</a> Dictionary</h2>
+      <h2><a>TVConfigureChannelOptions</a> Dictionary</h2>
       <p>
-        The <a>TVSetChannelOptions</a> dictionary contains the information for
-        setting the attribute(s) of the TV channel.
+        The <a>TVConfigureChannelOptions</a> dictionary contains the information
+        for configuring the attribute(s) of the TV channel.
       </p>
-      <dl title="dictionary TVSetChannelOptions" class="idl">
+      <dl title="dictionary TVConfigureChannelOptions" class="idl">
         <dt>TVChannelId channelId</dt>
           <dd>
-            Identifies the TV channel that is requested to be set.
+            Identifies the TV channel that is requested to be configured.
           </dd>
 
         <dt>DOMString number</dt>
@@ -1694,7 +1694,7 @@ Style guide to contributors:
       <h2><a>TVSourceChangedEvent</a> Interface</h2>
       <p>
         The <a>TVSourceChangedEvent</a> interface represents the event related
-        to the TV source that is added/removed by the TV device or updated by
+        to the TV source that is added/removed by the TV device or configured by
         the Web application.
       </p>
       <dl title="interface TVSourceChangedEvent : Event" class="idl">
@@ -1706,22 +1706,23 @@ Style guide to contributors:
         <dt>readonly attribute TVSource source</dt>
           <dd>
             MUST return the TV source that is added/removed by the TV device or
-            updated by the Web application.
+            configured by the Web application.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVChannelUpdatedEvent - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVChannelConfiguredEvent - - - - - - - - -->
     <section>
-      <h2><a>TVChannelUpdatedEvent</a> Interface</h2>
+      <h2><a>TVChannelConfiguredEvent</a> Interface</h2>
       <p>
-        The <a>TVChannelUpdatedEvent</a> interface represents the event related
-        to the TV channel that is updated by the Web application.
+        The <a>TVChannelConfiguredEvent</a> interface represents the event
+        related to the TV channel that is configured by the Web application.
       </p>
-      <dl title="interface TVChannelUpdatedEvent : Event" class="idl">
+      <dl title="interface TVChannelConfiguredEvent : Event" class="idl">
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
-            MUST return the TV channel that is updated by the Web application.
+            MUST return the TV channel that is configured by the Web
+            application.
           </dd>
       </dl>
     </section>
@@ -1881,9 +1882,9 @@ Style guide to contributors:
             A TV source is removed.
           </dd>
 
-        <dt>updated</dt>
+        <dt>configured</dt>
           <dd>
-            A TV source is updated.
+            A TV source is configured.
           </dd>
       </dl>
 
