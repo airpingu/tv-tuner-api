@@ -78,9 +78,9 @@ Style guide to contributors:
       <h2>Introduction</h2>
       <p>
         The TV Manager API interfaces provide a bunch of properties and a set of
-        operations to allow applications to acquire the information of TV
-        sources, TV channels and TV programs as well as to control and manage
-        the native TV hardwares (i.e., TV tuners) or the TV Web services.
+        operations to allow Web applications to acquire the information of TV
+        sources, TV channels and TV programs as well as to control the native TV
+        hardwares (i.e., TV tuners) or the TV Web services.
       </p>
 
       <section>
@@ -233,7 +233,7 @@ Style guide to contributors:
 
             switch (state) {
               case "cleared":
-                if (sourceId && curChannelsOfSources[sourceId]) {
+                if (curChannelsOfSources[sourceId]) {
                   delete curChannelsOfSources[sourceId];
                 }
                 break;
@@ -690,9 +690,9 @@ Style guide to contributors:
             that are available in the TV source(s) by the <code>options</code>
             parameter. It returns a new <code>Promise</code> that will be used
             to notify the caller about the result of the operation. Note that
-            this method has to be called first so that the
-            <a><code>getChannels</code></a> method can retrieve the channels
-            that have successfully been scanned by the TV source(s).
+            this method has to be called first so that the method
+            <a><code>getChannels</code></a> can retrieve the channels that have
+            successfully been scanned by the TV source(s).
             <dl class='parameters'>
               <dt>optional TVStartScanningOptions options</dt>
                 <dd>
@@ -757,9 +757,11 @@ Style guide to contributors:
 
         <dt>Promise unlockParentalControl ()</dt>
           <dd>
-            This method makes a request to unlock the parental control. It
-            returns a new <code>Promise</code> that will be used to notify the
-            caller about the result of the operation.
+            This method makes a request to unlock the parental control by
+            popping up a prompt to ask the user to input the correct password.
+            Once the parental contol has been unlocked, it won't be cancelled
+            until the next reboot. It returns a new <code>Promise</code> that
+            will be used to notify the caller about the result of the operation.
           </dd>
 
         <dt>readonly attribute boolean isParentalControlLocked</dt>
@@ -776,7 +778,7 @@ Style guide to contributors:
           <dd>
             Handles the <code>onsourcechanged</code> event of type
             <a>TVSourceChangedEvent</a>, fired when an available TV source is
-            added, removed or set by the TV device.
+            added/removed by the TV device or set by the Web application.
           </dd>
 
         <dt class="no-docs">
@@ -785,7 +787,7 @@ Style guide to contributors:
           <dd>
             Handles the <code>onchannelset</code> event of type
             <a>TVChannelSetEvent</a>, fired when an available TV channel is
-            set by the TV device.
+            set by the Web application.
           </dd>
 
         <dt class="no-docs">
@@ -1139,7 +1141,7 @@ Style guide to contributors:
           <li>
             Make a request to the TV device to unlock the parental control. The
             <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
-            pop up a prompt to ask users to input the password to unlock the
+            pop up a prompt to ask the user to input the password to unlock the
             parental control.
           </li>
           <li>
@@ -1184,7 +1186,7 @@ Style guide to contributors:
               <td><a><code>TVSourceChangedEvent</code></a></td>
               <td>
                 Handles the information of the available TV source that is
-                added, removed or set by the TV device.
+                added/removed by the TV device or set by the Web application.
               </td>
             </tr>
 
@@ -1194,7 +1196,7 @@ Style guide to contributors:
               <td><a><code>TVChannelSetEvent</code></a></td>
               <td>
                 Handles the information of the available TV channel that is
-                set by the TV device.
+                set by the Web application.
               </td>
             </tr>
 
@@ -1669,8 +1671,8 @@ Style guide to contributors:
 
         <dt>boolean isParentalControlProtected</dt>
           <dd>
-            Specifies whether or not the TV channel is protected from being
-            watched by the children.
+            Specifies whether or not the TV channel should be protected from
+            being watched by the children.
           </dd>
 
       </dl>
@@ -1681,7 +1683,8 @@ Style guide to contributors:
       <h2><a>TVSourceChangedEvent</a> Interface</h2>
       <p>
         The <a>TVSourceChangedEvent</a> interface represents the event related
-        to the TV source that is changed by the TV device.
+        to the TV source that is added/removed by the TV device or set by the
+        Web application.
       </p>
       <dl title="interface TVSourceChangedEvent : Event" class="idl">
         <dt>readonly attribute TVSourceChangedEventOperation operation</dt>
@@ -1692,7 +1695,8 @@ Style guide to contributors:
 
         <dt>readonly attribute TVSource source</dt>
           <dd>
-            MUST return the TV source that is changed by the TV device.
+            MUST return the TV source that is added/removed by the TV device or
+            set by the Web application.
           </dd>
       </dl>
     </section>
@@ -1702,12 +1706,12 @@ Style guide to contributors:
       <h2><a>TVChannelSetEvent</a> Interface</h2>
       <p>
         The <a>TVChannelSetEvent</a> interface represents the event related to
-        the TV channel that is set by the TV device.
+        the TV channel that is set by the Web application.
       </p>
       <dl title="interface TVChannelSetEvent : Event" class="idl">
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
-            MUST return the TV channel that is set by the TV device.
+            MUST return the TV channel that is set by the Web application.
           </dd>
       </dl>
     </section>
