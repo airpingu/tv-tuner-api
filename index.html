@@ -65,8 +65,7 @@ Style guide to contributors:
 
 <!-- - - - - - - - - - - - - - - Abstract  - - - - - - - - - - - - - - - - - -->    
     <section id="abstract">
-      The TV Manager API allows an application to control and manage the TV
-      device.
+      The TV Manager API allows an application to manage the TV device.
     </section>
 
 <!-- - - - - - - - - - - - - - - Status of this document - - - - - - - - - - -->   
@@ -79,7 +78,7 @@ Style guide to contributors:
       <p>
         The TV Manager API interfaces provide a bunch of properties and a set of
         operations to allow Web applications to acquire the information of TV
-        sources, TV channels and TV programs as well as to control the native TV
+        sources, TV channels and TV programs as well as to manage the native TV
         hardwares (i.e., TV tuners) or the TV Web services.
       </p>
 
@@ -161,7 +160,7 @@ Style guide to contributors:
         <p>
           If an application has the privilege to use the TV Manager API, it can
           use a bunch of basic methods defined in the <a>TVManager</a> to
-          control the TV device.
+          manage the TV device.
         </p>
 
         <p>
@@ -192,7 +191,7 @@ Style guide to contributors:
                   return false;
                 });
                 break;
-              case "set":
+              case "updated":
                 curSources.some(function findSource(source, index) {
                   if (source.id == changedSource.id) {
                     curSources[index] = changedSource;
@@ -250,16 +249,16 @@ Style guide to contributors:
             }
           };
 
-          // Set the 'onchannelset' event handler.
-          navigator.mozTV.onchannelset = function onchannelset(event) {
-            var setChannel = event.channel;
+          // Set the 'onchannelupdated' event handler.
+          navigator.mozTV.onchannelupdated = function onchannelupdated(event) {
+            var updatedChannel = event.channel;
 
             // A simple way to composite the key for the TV channel.
-            var setChannelId = setChannel.networkId +
-                               setChannel.transportStreamId +
-                               setChannel.serviceId;
+            var updatedChannelId = updatedChannel.networkId +
+                                   updatedChannel.transportStreamId +
+                                   updatedChannel.serviceId;
 
-            var channels = curChannelsOfSources[setChannel.source.id];
+            var channels = curChannelsOfSources[updatedChannel.source.id];
             if (channels) {
               channels.some(function findChannel(channel, index) {
                 // A simple way to composite the key for the TV channel.
@@ -267,8 +266,8 @@ Style guide to contributors:
                                 channel.transportStreamId +
                                 channel.serviceId;
 
-                if (channelId == setChannelId) {
-                  channels[index] = setChannel;
+                if (channelId == updatedChannelId) {
+                  channels[index] = updatedChannel;
                   return true;
                 }
                 return false;
@@ -622,7 +621,7 @@ Style guide to contributors:
       <h2><a>TVManager</a> Interface</h2>
       <p>
         The <a>TVManager</a> interface represents a bunch of properties and
-        a set of operations that can be used to control the TV device.
+        a set of operations that can be used to manage the TV device.
       </p>
 
       <dl title="interface TVManager : EventTarget" class="idl">
@@ -662,6 +661,20 @@ Style guide to contributors:
                   <code>sourceId</code> option in the <code>options</code>
                   parameter is not passed, this method will return all the TV
                   channels that are available across different TV sources.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise setChannel ()</dt>
+          <dd>
+            This method makes a request to set the TV channel by the
+            <code>options</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
+            <dl class='parameters'>
+              <dt>TVSetChannelOptions options</dt>
+                <dd>
+                  Specifies the options for setting the TV channel.
                 </dd>
             </dl>
           </dd>
@@ -741,35 +754,21 @@ Style guide to contributors:
             </dl>
           </dd>
 
-        <dt>Promise setChannel ()</dt>
-          <dd>
-            This method makes a request to set the TV channel by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>TVSetChannelOptions options</dt>
-                <dd>
-                  Specifies the options for setting the TV channel.
-                </dd>
-            </dl>
-          </dd>
-
         <dt>Promise unlockParentalControl ()</dt>
           <dd>
             This method makes a request to unlock the parental control by
             popping up a prompt to ask the user to input the correct password.
-            Once the parental contol has been unlocked, it won't be cancelled
-            until the next reboot. It returns a new <code>Promise</code> that
-            will be used to notify the caller about the result of the operation.
+            Once the parental control is unlocked, it won't be cancelled until
+            the next reboot. It returns a new <code>Promise</code> that will be
+            used to notify the caller about the result of the operation.
           </dd>
 
         <dt>readonly attribute boolean isParentalControlLocked</dt>
           <dd>
             MUST return the current lock state of the TV parental control,
-            which is system-widely applied to the TV device (i.e., once
-            unlocked, all the protected TV channels/programs will be unlocked
-            until the next reboot).
+            which is system-widely applied to the TV device (i.e., once the
+            parental control is unlocked, all the protected TV channels/programs
+            will be unlocked until the next reboot).
           </dd>
 
         <dt class="no-docs">
@@ -777,17 +776,21 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onsourcechanged</code> event of type
-            <a>TVSourceChangedEvent</a>, fired when an available TV source is
-            added/removed by the TV device or set by the Web application.
+            <a>TVSourceChangedEvent</a>, fired when a TV source is added/removed
+            by the TV device or updated by the Web application, where the former
+            is fired when the TV device detects a TV source is added/removed and
+            the latter only happens when the method
+            <a><code>setSource</code></a> is invoked.
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onchannelset
+          attribute EventHandler onchannelupdated
         </dt>
           <dd>
-            Handles the <code>onchannelset</code> event of type
-            <a>TVChannelSetEvent</a>, fired when an available TV channel is
-            set by the Web application.
+            Handles the <code>onchannelupdated</code> event of type
+            <a>TVChannelUpdatedEvent</a>, fired when a TV channel is updated by
+            the Web application, which only happens when the method
+            <a><code>setChannel</code></a> is invoked.
           </dd>
 
         <dt class="no-docs">
@@ -931,6 +934,39 @@ Style guide to contributors:
               Invoke <em>resolver</em>'s <a
               class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
               with <em>channels</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>setChannel</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV device to set the TV channel according to
+            the setting options specified in the <code>options</code> parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
             </li>
           </ol>
         </ol>
@@ -1094,39 +1130,6 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>setChannel</code></dfn> method when invoked MUST run
-          the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV device to set the TV channel according to
-            the setting options specified in the <code>options</code> parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              without assigning a value to the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
-
-        <p>
           The <dfn><code>unlockParentalControl</code></dfn> method when invoked
           MUST run the following steps:
         </p>
@@ -1185,18 +1188,18 @@ Style guide to contributors:
               <td><code><dfn id="dfn-change-event">sourcechanged</dfn></code></td>
               <td><a><code>TVSourceChangedEvent</code></a></td>
               <td>
-                Handles the information of the available TV source that is
-                added/removed by the TV device or set by the Web application.
+                Handles the information of the TV source that is added/removed
+                by the TV device or updated by the Web application.
               </td>
             </tr>
 
             <tr>
-              <td><strong><code>onchannelset</code></strong></td>
-              <td><code><dfn id="dfn-change-event">channelset</dfn></code></td>
-              <td><a><code>TVChannelSetEvent</code></a></td>
+              <td><strong><code>onchannelupdated</code></strong></td>
+              <td><code><dfn id="dfn-change-event">channelupdated</dfn></code></td>
+              <td><a><code>TVChannelUpdatedEvent</code></a></td>
               <td>
-                Handles the information of the available TV channel that is
-                set by the Web application.
+                Handles the information of the TV channel that is updated by the
+                Web application.
               </td>
             </tr>
 
@@ -1558,6 +1561,33 @@ Style guide to contributors:
       </dl>
     </section>
 
+<!-- - - - - - - - - - Dictionary TVSetChannelOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>TVSetChannelOptions</a> Dictionary</h2>
+      <p>
+        The <a>TVSetChannelOptions</a> dictionary contains the information for
+        setting the TV channel.
+      </p>
+      <dl title="dictionary TVSetChannelOptions" class="idl">
+        <dt>TVChannelId channelId</dt>
+          <dd>
+            Identifies the TV channel that is requested to be set.
+          </dd>
+
+        <dt>DOMString number</dt>
+          <dd>
+            Specifies the LCN of the TV channel.
+          </dd>
+
+        <dt>boolean isParentalControlProtected</dt>
+          <dd>
+            Specifies whether or not the TV channel should be protected from
+            being watched by the children.
+          </dd>
+
+      </dl>
+    </section>
+
 <!-- - - - - - - - - - - - Dictionary TVGetProgramsOptions   - - - - - - - - - -->
     <section>
       <h2><a>TVGetProgramsOptions</a> Dictionary</h2>
@@ -1651,107 +1681,44 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVSetChannelOptions   - - - - - - - - - -->
-    <section>
-      <h2><a>TVSetChannelOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVSetChannelOptions</a> dictionary contains the information for
-        setting the TV channel.
-      </p>
-      <dl title="dictionary TVSetChannelOptions" class="idl">
-        <dt>TVChannelId channelId</dt>
-          <dd>
-            Identifies the TV channel that is requested to be set.
-          </dd>
-
-        <dt>DOMString number</dt>
-          <dd>
-            Specifies the LCN of the TV channel.
-          </dd>
-
-        <dt>boolean isParentalControlProtected</dt>
-          <dd>
-            Specifies whether or not the TV channel should be protected from
-            being watched by the children.
-          </dd>
-
-      </dl>
-    </section>
-
 <!-- - - - - - - - - - - - Interface TVSourceChangedEvent - - - - - - - - - - -->
     <section>
       <h2><a>TVSourceChangedEvent</a> Interface</h2>
       <p>
         The <a>TVSourceChangedEvent</a> interface represents the event related
-        to the TV source that is added/removed by the TV device or set by the
-        Web application.
+        to the TV source that is added/removed by the TV device or updated by
+        the Web application.
       </p>
       <dl title="interface TVSourceChangedEvent : Event" class="idl">
         <dt>readonly attribute TVSourceChangedEventOperation operation</dt>
           <dd>
-            MUST return the type of operation that changes the currently
-            available TV sources.
+            MUST return the type of operation that changes the TV source.
           </dd>
 
         <dt>readonly attribute TVSource source</dt>
           <dd>
             MUST return the TV source that is added/removed by the TV device or
-            set by the Web application.
+            updated by the Web application.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVChannelSetEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVChannelUpdatedEvent - - - - - - - - -->
     <section>
-      <h2><a>TVChannelSetEvent</a> Interface</h2>
+      <h2><a>TVChannelUpdatedEvent</a> Interface</h2>
       <p>
-        The <a>TVChannelSetEvent</a> interface represents the event related to
-        the TV channel that is set by the Web application.
+        The <a>TVChannelUpdatedEvent</a> interface represents the event related
+        to the TV channel that is updated by the Web application.
       </p>
-      <dl title="interface TVChannelSetEvent : Event" class="idl">
+      <dl title="interface TVChannelUpdatedEvent : Event" class="idl">
         <dt>readonly attribute TVChannel channel</dt>
           <dd>
-            MUST return the TV channel that is set by the Web application.
+            MUST return the TV channel that is updated by the Web application.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVCurrentChannelChangedEvent - - - - - - - - - - -->
-    <section>
-      <h2><a>TVCurrentChannelChangedEvent</a> Interface</h2>
-      <p>
-        The <a>TVCurrentChannelChangedEvent</a> interface represents the event
-        related to the currently streamed TV channel that is changed by the TV
-        source.
-      </p>
-      <dl title="interface TVCurrentChannelChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVChannel? channel</dt>
-          <dd>
-            MUST return the TV channel that is currently stramed by the TV
-            source. MUST return <em>null</em> if the TV source is not streaming.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Interface TVCurrentProgramChangedEvent - - - - - - - - - - -->
-    <section>
-      <h2><a>TVCurrentProgramChangedEvent</a> Interface</h2>
-      <p>
-        The <a>TVCurrentProgramChangedEvent</a> interface represents the event
-        related to the currently broadcasted TV program that is changed by the
-        TV channel.
-      </p>
-      <dl title="interface TVCurrentProgramChangedEvent : Event" class="idl">
-        <dt>readonly attribute TVProgram? program</dt>
-          <dd>
-            MUST return the TV program that is currently broadcasted by the TV
-            channel. MUST return <em>null</em> if the TV channel is not
-            currently streamed by the TV source.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Interface TVEITBroadcastedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVEITBroadcastedEvent - - - - - - - - -->
     <section>
       <h2><a>TVEITBroadcastedEvent</a> Interface</h2>
       <p>
@@ -1806,6 +1773,41 @@ Style guide to contributors:
         <dt>readonly attribute boolean isParentalControlLocked</dt>
           <dd>
             MUST return the changed lock state of the TV parental control.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - Interface TVCurrentChannelChangedEvent - - - - - - - - - -->
+    <section>
+      <h2><a>TVCurrentChannelChangedEvent</a> Interface</h2>
+      <p>
+        The <a>TVCurrentChannelChangedEvent</a> interface represents the event
+        related to the currently streamed TV channel that is changed by the TV
+        source.
+      </p>
+      <dl title="interface TVCurrentChannelChangedEvent : Event" class="idl">
+        <dt>readonly attribute TVChannel? channel</dt>
+          <dd>
+            MUST return the TV channel that is currently stramed by the TV
+            source. MUST return <em>null</em> if the TV source is not streaming.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - Interface TVCurrentProgramChangedEvent - - - - - - - - - -->
+    <section>
+      <h2><a>TVCurrentProgramChangedEvent</a> Interface</h2>
+      <p>
+        The <a>TVCurrentProgramChangedEvent</a> interface represents the event
+        related to the currently broadcasted TV program that is changed by the
+        TV channel.
+      </p>
+      <dl title="interface TVCurrentProgramChangedEvent : Event" class="idl">
+        <dt>readonly attribute TVProgram? program</dt>
+          <dd>
+            MUST return the TV program that is currently broadcasted by the TV
+            channel. MUST return <em>null</em> if the TV channel is not
+            currently streamed by the TV source.
           </dd>
       </dl>
     </section>
@@ -1871,9 +1873,9 @@ Style guide to contributors:
             A TV source is removed.
           </dd>
 
-        <dt>set</dt>
+        <dt>updated</dt>
           <dd>
-            A TV source is set.
+            A TV source is updated.
           </dd>
       </dl>
 
