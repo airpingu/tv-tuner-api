@@ -997,7 +997,7 @@ Style guide to contributors:
             options specified in the <code>options</code> parameter. If the
             <code>channelId</code> option in the <code>options</code> parameter
             is not passed, retrieve all the TV programs that are available
-            across different TV channels. Needs to add more descriptions about
+            across different TV channels. Needs to add more descriptions for
             other options...
           </li>
           <li>
@@ -1282,7 +1282,9 @@ Style guide to contributors:
             element by assigning the <code>MediaStream</code> to the
             <code>HTMLMediaElement</code> (<a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastreams-as-media-elements">details</a>) and can be recorded by the
             <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST return <em>null</em>
-            if the TV source is not streaming.
+            if the TV source is not streaming, which happens when the streaming
+            signal is broken or due to any other reasons that the TV source
+            fails to stream the data.
           </dd>
 
         <dt>readonly attribute TVChannel? currentChannel</dt>
@@ -1602,7 +1604,8 @@ Style guide to contributors:
         <dt>TVChannelId channelId</dt>
           <dd>
             Identifies the TV channel that is requested to retrieve the TV
-            programs.
+            programs. If this attribute is not passed, it will return all the TV
+            programs that are available across different TV channels.
           </dd>
         <dt>unsigned long numberOfPrograms</dt>
           <dd>
