@@ -309,7 +309,7 @@ Style guide to contributors:
           navigator.mozTV.oneitbroadcasted = function oneitbroadcasted(event) {
             var newPrograms = event.programs;
 
-            // Flush the EPG because a new EIT is available from the TV broadcaster.
+            // Flush the EPG because a new EIT is broadcasted from the TV broadcaster.
             curProgramsOfChannels = {};
 
             newPrograms.forEach(function addProgram(program) {
@@ -801,7 +801,7 @@ Style guide to contributors:
           <dd>
             Handles the <code>oneitbroadcasted</code> event of type
             <a>TVEITBroadcastedEvent</a>, fired when the Event Information Table
-            (EIT) is broadcasted by the TV source.
+            (EIT) is broadcasted from the TV broadcaster.
           </dd>
 
         <dt class="no-docs">
@@ -822,7 +822,8 @@ Style guide to contributors:
           <dd>
             Handles the <code>onparentalcontrolchanged</code> event of type
             <a>TVParentalControlChangedEvent</a>, fired when the state of the TV
-            parental control is changed.
+            parental control is changed, which only happens when the method
+            <a><code>unlockParentalControl</code></a> is invoked.
           </dd>
       </dl>
 
@@ -1213,7 +1214,7 @@ Style guide to contributors:
               <td><a><code>TVEITBroadcastedEvent</code></a></td>
               <td>
                 Handles the information of the available TV programs in the EIT
-                that is broadcasted by the TV source.
+                that is broadcasted from the TV broadcaster.
               </td>
             </tr>
 
@@ -1727,14 +1728,14 @@ Style guide to contributors:
       <h2><a>TVEITBroadcastedEvent</a> Interface</h2>
       <p>
         The <a>TVEITBroadcastedEvent</a> interface represents the event related
-        to the available TV programs in the EIT that is broadcasted by the TV
-        source.
+        to the available TV programs in the EIT that is broadcasted from the TV
+        broadcaster.
       </p>
       <dl title="interface TVEITBroadcastedEvent : Event" class="idl">
         <dt>readonly attribute TVProgram[] programs</dt>
           <dd>
             MUST return the available TV programs in the EIT that is broadcasted
-            by the TV source.
+            from the TV broadcaster.
           </dd>
       </dl>
     </section>
