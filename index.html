@@ -635,14 +635,15 @@ Style guide to contributors:
 
         <dt>Promise setSource ()</dt>
           <dd>
-            This method makes a request to set the TV source by the
-            <code>options</code> parameter. It returns a new
+            This method makes a request to set the attribute(s) of the TV source
+            by the <code>options</code> parameter. It returns a new
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
               <dt>TVSetSourceOptions options</dt>
                 <dd>
-                  Specifies the options for setting the TV source.
+                  Specifies the options for setting the attribute(s) of the TV
+                  source.
                 </dd>
             </dl>
           </dd>
@@ -667,14 +668,15 @@ Style guide to contributors:
 
         <dt>Promise setChannel ()</dt>
           <dd>
-            This method makes a request to set the TV channel by the
-            <code>options</code> parameter. It returns a new
+            This method makes a request to set the attribute(s) of the TV
+            channel by the <code>options</code> parameter. It returns a new
             <code>Promise</code> that will be used to notify the caller about
             the result of the operation.
             <dl class='parameters'>
               <dt>TVSetChannelOptions options</dt>
                 <dd>
-                  Specifies the options for setting the TV channel.
+                  Specifies the options for setting the attribute(s) of the TV
+                  channel.
                 </dd>
             </dl>
           </dd>
@@ -877,8 +879,9 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV device to set the TV source according to
-            the setting options specified in the <code>options</code> parameter.
+            Make a request to the TV device to set the attribute(s) of the TV
+            source according to the setting options specified in the
+            <code>options</code> parameter.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -951,8 +954,9 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV device to set the TV channel according to
-            the setting options specified in the <code>options</code> parameter.
+            Make a request to the TV device to set the attribute(s) of the TV
+            channel according to the setting options specified in the
+            <code>options</code> parameter.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1530,7 +1534,7 @@ Style guide to contributors:
       <h2><a>TVSetSourceOptions</a> Dictionary</h2>
       <p>
         The <a>TVSetSourceOptions</a> dictionary contains the information for
-        setting the TV source.
+        setting the attribute(s) of the TV source.
       </p>
       <dl title="dictionary TVSetSourceOptions" class="idl">
         <dt>DOMString sourceId</dt>
@@ -1540,12 +1544,12 @@ Style guide to contributors:
 
         <dt>TVSourceType type</dt>
           <dd>
-            Specifies the type of the TV source.
+            Specifies the new type of the TV source.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVGetChannelsOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TVGetChannelsOptions   - - - - - - - -->
     <section>
       <h2><a>TVGetChannelsOptions</a> Dictionary</h2>
       <p>
@@ -1566,7 +1570,7 @@ Style guide to contributors:
       <h2><a>TVSetChannelOptions</a> Dictionary</h2>
       <p>
         The <a>TVSetChannelOptions</a> dictionary contains the information for
-        setting the TV channel.
+        setting the attribute(s) of the TV channel.
       </p>
       <dl title="dictionary TVSetChannelOptions" class="idl">
         <dt>TVChannelId channelId</dt>
@@ -1576,19 +1580,19 @@ Style guide to contributors:
 
         <dt>DOMString number</dt>
           <dd>
-            Specifies the LCN of the TV channel.
+            Specifies the new LCN of the TV channel.
           </dd>
 
         <dt>boolean isParentalControlProtected</dt>
           <dd>
-            Specifies whether or not the TV channel should be protected from
-            being watched by the children.
+            Specifies the new value of whether or not the TV channel is
+            protected from being watched by the children.
           </dd>
 
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVGetProgramsOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - Dictionary TVGetProgramsOptions   - - - - - - - - - -->
     <section>
       <h2><a>TVGetProgramsOptions</a> Dictionary</h2>
       <p>
@@ -1629,7 +1633,7 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVStartScanningOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TVStartScanningOptions   - - - - - - - -->
     <section>
       <h2><a>TVStartScanningOptions</a> Dictionary</h2>
       <p>
@@ -1650,7 +1654,7 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVStopScanningOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TVStopScanningOptions   - - - - - - - -->
     <section>
       <h2><a>TVStopScanningOptions</a> Dictionary</h2>
       <p>
@@ -1666,7 +1670,7 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVTuneChannelOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TVTuneChannelOptions   - - - - - - - -->
     <section>
       <h2><a>TVTuneChannelOptions</a> Dictionary</h2>
       <p>
@@ -1681,7 +1685,7 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVSourceChangedEvent - - - - - - - - - - -->
+<!-- - - - - - - - - - Interface TVSourceChangedEvent - - - - - - - - - - -->
     <section>
       <h2><a>TVSourceChangedEvent</a> Interface</h2>
       <p>
@@ -1735,7 +1739,7 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVScanningStateChangedEvent - - - - - - - - -->
+<!-- - - - - - - - - - Interface TVScanningStateChangedEvent - - - - - - - - -->
     <section>
       <h2><a>TVScanningStateChangedEvent</a> Interface</h2>
       <p>
