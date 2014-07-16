@@ -221,7 +221,7 @@ Style guide to contributors:
 
         <pre class="example highlight">
           // A matrix which maps the TV tuner to its corresponding array of TV
-          // channels in the currenly configured TV source.
+          // channels based on the currenly configured TV source.
           // E.g., { "tunerId1": [...], "tunerId2": [...] }.
           var curChannelsOfTuners = {};
 
@@ -322,7 +322,7 @@ Style guide to contributors:
             currentSource.oneitbroadcasted = function oneitbroadcasted(event) {
               var newPrograms = event.programs;
 
-              // Flush the EPG because a new EIT is broadcasted by TV source.
+              // Flush the EPG because a new EIT is broadcasted by the TV source.
               curProgramsOfChannels = {};
 
               newPrograms.forEach(function addProgram(program) {
@@ -1294,15 +1294,14 @@ Style guide to contributors:
         <dt>readonly attribute MediaStream? stream</dt>
           <dd>
             MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
-            object that is currently streamed by the TV source, which can be
+            object that is currently streamed by the TV tuner, which can be
             played by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
             element by assigning the <code>MediaStream</code> to the
-            <code>HTMLMediaElement</code> (<a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastreams-as-media-elements">
-            details</a>) and can be recorded by the
+            <code>HTMLMediaElement</code> (<a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastreams-as-media-elements">details</a>) and can be recorded by the
             <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST
-            return <em>null</em> if the TV tuner is not streaming any TV
-            channel, which happens when the streaming signal is broken or due to
-            any other reasons that the TV tuner fails to stream the TV channel.
+            return <em>null</em> if the TV tuner is not streaming any data,
+            which happens when the streaming signal is broken or due to
+            any other reasons that the TV tuner fails to stream the data.
           </dd>
       </dl>
     </section>
@@ -1340,7 +1339,7 @@ Style guide to contributors:
           <dd>
             MUST return the TV channel that is currently streamed by the TV
             tuner which owns the TV source. MUST return <em>null</em> if the TV
-            tuner is not streaming any TV channel.
+            tuner is not streaming any data.
           </dd>
 
         <dt class="no-docs">
@@ -1444,10 +1443,10 @@ Style guide to contributors:
         <dt>readonly attribute DOMString networkId</dt>
           <dd>
             MUST return the identification of a broadcast transmission network.
-            On satellite and IP broadband, typically one <code>network_id</code>
+            On satellite and IP broadband, typically one <code>networkId</code>
             corresponds to an operator. On cable and terrestrial, where
             different radio frequencies might be used in different regions,
-            operators typically use one <code>network_id</code> per such region.
+            operators typically use one <code>networkId</code> per such region.
           </dd>
 
         <dt>readonly attribute DOMString transportStreamId</dt>
@@ -1509,7 +1508,7 @@ Style guide to contributors:
           <dd>
             MUST return the TV program that is currently broadcasted by the TV
             channel. MUST return <em>null</em> if the TV tuner is not streaming
-            any TV channel.
+            any data.
           </dd>
 
         <dt class="no-docs">
@@ -1616,7 +1615,7 @@ Style guide to contributors:
         <dt>DOMString tunerId</dt>
           <dd>
             Identifies the TV tuner that is requested to retrieve the TV
-            sources. This option is mandatory.
+            sources. This option MUST be mandatory.
           </dd>
       </dl>
     </section>
@@ -1632,7 +1631,7 @@ Style guide to contributors:
         <dt>DOMString sourceId</dt>
           <dd>
             Identifies the TV source that is requested to retrieve the TV
-            channels. This option is mandatory.
+            channels. This option MUST be mandatory.
           </dd>
       </dl>
     </section>
@@ -1648,7 +1647,7 @@ Style guide to contributors:
         <dt>DOMString channelId</dt>
           <dd>
             Identifies the TV channel that is requested to retrieve the TV
-            programs. This option is mandatory.
+            programs. This option MUST be mandatory.
           </dd>
         <dt>unsigned long numberOfPrograms</dt>
           <dd>
@@ -1686,7 +1685,7 @@ Style guide to contributors:
         <dt>DOMString tunerId</dt>
           <dd>
             Identifies the TV tuner that is requested to be configured. This
-            option is mandatory.
+            option MUST be mandatory.
           </dd>
 
         <dt>TVSourceType sourceType</dt>
@@ -1708,7 +1707,7 @@ Style guide to contributors:
         <dt>DOMString channelId</dt>
           <dd>
             Identifies the TV channel that is requested to be configured. This
-            option is mandatory.
+            option MUST be mandatory.
           </dd>
 
         <dt>boolean isParentalControlProtected</dt>
@@ -1731,7 +1730,7 @@ Style guide to contributors:
         <dt>DOMString sourceId</dt>
           <dd>
             Identifies the TV source that is requested to scan the TV channels.
-            This option is mandatory.
+            This option MUST be mandatory.
           </dd>
 
         <dt>boolean isRescanned</dt>
@@ -1753,7 +1752,7 @@ Style guide to contributors:
         <dt>DOMString sourceId</dt>
           <dd>
             Identifies the TV source that is requested to stop scanning the TV
-            channels. This option is mandatory.
+            channels. This option MUST be mandatory.
           </dd>
       </dl>
     </section>
@@ -1769,7 +1768,7 @@ Style guide to contributors:
         <dt>DOMString channelId</dt>
           <dd>
             Identifies the TV channel that is requested to be tuned. This option
-            is mandatory.
+            MUST be mandatory.
           </dd>
       </dl>
     </section>
@@ -1881,7 +1880,7 @@ Style guide to contributors:
           <dd>
             MUST return the TV channel that is currently streamed by the TV
             tuner. MUST return <em>null</em> if the TV tuner is not streaming
-            any TV channel.
+            any data.
           </dd>
       </dl>
     </section>
