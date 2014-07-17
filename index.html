@@ -191,15 +191,6 @@ Style guide to contributors:
                   return false;
                 });
                 break;
-              case "configured":
-                curTuners.some(function findTuner(tuner, index) {
-                  if (tuner.id == changedTuner.id) {
-                    curTuners[index] = changedTuner;
-                    return true;
-                  }
-                  return false;
-                });
-                break;
               default:
                 break;
             }
@@ -208,6 +199,17 @@ Style guide to contributors:
           // Retrieve all the currently available TV tuners.
           navigator.mozTV.getTuners().then(function onsuccess(tuners) {
             curTuners = tuners;
+
+            tuners.forEach(function setOnConfiguredEventHandler(tuner) {
+              // Set the 'onconfigured' event handler.
+              tuner.onconfigured = function onconfigured(event) {
+                event.attributes.forEach(function showConfiguredAttr(attr) {
+                  alert("TV tuner: " + tuner.id +
+                        " is configured on the attribute: " + attr +
+                        " assigned by a new value: " + tuner[attr]);
+                });
+              };
+            });
           }, function onerror(error) {
             alert(error);
           });
@@ -224,24 +226,6 @@ Style guide to contributors:
           // channels based on the currenly configured TV source.
           // E.g., { "tunerId1": [...], "tunerId2": [...] }.
           var curChannelsOfTuners = {};
-
-          // Set the 'onchannelconfigured' event handler.
-          navigator.mozTV.onchannelconfigured = function onchannelconfigured(event) {
-            var configuredChannel = event.channel;
-
-            var channels = curChannelsOfTuners[configuredChannel.source.tuner.id];
-            if (channels) {
-              channels.some(function findChannel(channel, index) {
-                var channelId = channel.id;
-
-                if (channelId == configuredChannel.id) {
-                  channels[index] = configuredChannel;
-                  return true;
-                }
-                return false;
-              });
-            }
-          };
 
           // Retrieve all the currently available TV tuners in the TV device.
           navigator.mozTV.getTuners().then(function onsuccess(tuners) {
@@ -280,10 +264,19 @@ Style guide to contributors:
               // Retrieve all the currently available TV channels that are
               // currently available in the currently configured TV source of
               // the TV tuner.
-              navigator.mozTV.getChannels({
-                sourceId: currentSource.id
-              }).then(function onsuccess(channels) {
+              currentSource.getChannels().then(function onsuccess(channels) {
                 curChannelsOfTuners[tunerId] = channels;
+
+                channels.forEach(function setOnConfiguredEventHandler(channel) {
+                  // Set the 'onconfigured' event handler.
+                  channel.onconfigured = function onconfigured(event) {
+                    event.attributes.forEach(function showConfiguredAttr(attr) {
+                      alert("TV channel: " + channel.number +
+                            " is configured on the attribute: " + attr
+                            " assigned by a new value: " + channel[attr]);
+                    });
+                  };
+                });
               }, function onerror(error) {
                 alert(error);
               });
@@ -301,7 +294,7 @@ Style guide to contributors:
 
         <pre class="example highlight">
           // A matrix which maps the TV channel to its corresponding array of TV
-          // programs (i.e., EPG). E.g., { "channelId1": [...], "channelId2": [...] }.
+          // programs. E.g., { "channelNumber1": [...], "channelNumber2": [...] }.
           var curProgramsOfChannels = {};
 
           // Retrieve all the currently available TV tuners in the TV device.
@@ -326,31 +319,27 @@ Style guide to contributors:
               curProgramsOfChannels = {};
 
               newPrograms.forEach(function addProgram(program) {
-                var channelId = program.channel.id;
+                var channelNumber = program.channel.number;
 
-                var programs = curProgramsOfChannels[channelId];
+                var programs = curProgramsOfChannels[channelNumber];
                 if (programs) {
                   programs.push(program);
                 } else {
-                  curProgramsOfChannels[channelId] = [program];
+                  curProgramsOfChannels[channelNumber] = [program];
                 }
               });
             };
 
             // Retrieve all the currently available TV channels in the currently
             // configured TV source of the TV tuner.
-            navigator.mozTV.getChannels({
-              sourceId: currentSource.id
-            }).then(function onsuccess(channels) {
+            currentSource.getChannels().then(function onsuccess(channels) {
               channels.forEach(function getProgramsByChannel(channel) {
-                var channelId = channel.id;
+                var channelNumber = channel.number;
 
                 // Retrieve all the currently available TV programs in the TV
                 // channel.
-                navigator.mozTV.getPrograms({
-                  channelId: channelId
-                }).then(function onsuccess(programs) {
-                  curProgramsOfChannels[channelId] = programs;
+                channel.getPrograms().then(function onsuccess(programs) {
+                  curProgramsOfChannels[channelNumber] = programs;
                 }, function onerror(error) {
                   alert(error);
                 });
@@ -442,18 +431,13 @@ Style guide to contributors:
               return;
             }
 
-            var currentSourceId = currentSource.id;
-
             // Ask the currently configured TV source to scan the TV channels.
-            navigator.mozTV.startScanning({
-              sourceId: currentSourceId,
+            currentSource.startScanning({
               isRescanned: true
             }).then(function onsuccess() {
               // Retrieve all the currently available TV channels in the
               // currently configured TV source of the TV tuner.
-              navigator.mozTV.getChannels({
-                sourceId: currentSourceId,
-              }).then(function onsuccess(channels) {
+              currentSource.getChannels().then(function onsuccess(channels) {
                 alert("Succeeded to scan and get all the TV channels.");
               }, function onerror(error) {
                 alert(error);
@@ -486,20 +470,17 @@ Style guide to contributors:
 
             // Retrieve all the currently available TV channels in the currently
             // configured TV source of the TV tuner.
-            navigator.mozTV.getChannels({
-              sourceId: currentSource.id;
-            }).then(function onsuccess(channels) {
+            currentSource.getChannels().then(function onsuccess(channels) {
               if (channels.length == 0) {
                 return;
               }
 
               // Just use the first TV channel.
               var channel = channels[0];
+              var channelNumber = channel.number.
 
-              // Tune the TV channel based on the TV channel ID.
-              navigator.mozTV.tuneChannel({
-                channelId: channel.id
-              }).then(function onsuccess() {
+              // Tune the TV channel based on the TV channel number.
+              currentSource.tuneChannel(channelNumber).then(function onsuccess() {
                 alert("Succeeded to tune the TV channel.");
               }, function onerror(error) {
                 alert(error);
@@ -554,20 +535,17 @@ Style guide to contributors:
 
             // Retrieve all the currently available TV channels in the currently
             // configured TV source of the TV tuner.
-            navigator.mozTV.getChannels({
-              sourceId: currentSource.id;
-            }).then(function onsuccess(channels) {
+            currentSource.getChannels().then(function onsuccess(channels) {
               if (channels.length == 0) {
                 return;
               }
 
               // Just use the first TV channel.
               var channel = channels[0];
+              var channelNumber = channel.number;
 
-              // Tune the TV channel based on the TV channel ID.
-              navigator.mozTV.tuneChannel({
-                channelId: channel.id
-              }).then(function onsuccess() {
+              // Tune the TV channel based on the TV channel number.
+              currentSource.tuneChannel(channelNumber).then(function onsuccess() {
                 alert("Succeeded to tune the TV channel.");
               }, function onerror(error) {
                 alert(error);
@@ -665,133 +643,6 @@ Style guide to contributors:
             operation, which is an array of <a>TVTuner</a> elements.
           </dd>
 
-        <dt>Promise getSources ()</dt>
-          <dd>
-            This method makes a request to retrieve all the TV sources that are
-            available in the TV tuner by the <code>options</code> parameter. It
-            returns a new <code>Promise</code> that will be used to notify the
-            caller about the result of the operation, which is an array of
-            <a>TVSource</a> elements that belong to the TV tuner.
-            <dl class='parameters'>
-              <dt>TVGetSourcesOptions options</dt>
-                <dd>
-                  Specifies the options for retrieving the TV sources.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise getChannels ()</dt>
-          <dd>
-            This method makes a request to retrieve all the TV channels that are
-            available in the TV source by the <code>options</code> parameter. It
-            returns a new <code>Promise</code> that will be used to notify the
-            caller about the result of the operation, which is an array of
-            <a>TVChannel</a> elements that belong to the TV source.
-            <dl class='parameters'>
-              <dt>TVGetChannelsOptions options</dt>
-                <dd>
-                  Specifies the options for retrieving the TV channels.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise getPrograms ()</dt>
-          <dd>
-            This method makes a request to retrieve all the TV programs that are
-            available in the TV channel by the <code>options</code> parameter.
-            It returns a new <code>Promise</code> that will be used to notify
-            the caller about the result of the operation, which is an array of
-            <a>TVProgram</a> elements that belong to the TV channel.
-            <dl class='parameters'>
-              <dt>TVGetProgramsOptions options</dt>
-                <dd>
-                  Specifies the options for retrieving the TV programs.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise configureTuner ()</dt>
-          <dd>
-            This method makes a request to configure the TV tuner by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>TVConfigureTunerOptions options</dt>
-                <dd>
-                  Specifies the options for configuring the TV tuner.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise configureChannel ()</dt>
-          <dd>
-            This method makes a request to configure the TV channel by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>TVConfigureChannelOptions options</dt>
-                <dd>
-                  Specifies the options for configuring the TV channel.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise startScanning ()</dt>
-          <dd>
-            This method makes a request to start scanning all the TV channels
-            that are available in the TV source by the <code>options</code>
-            parameter. It returns a new <code>Promise</code> that will be used
-            to notify the caller about the result of the operation. Note that
-            this method has to be called first so that the method
-            <a><code>getChannels</code></a> can retrieve the channels that have
-            successfully been scanned by the TV source.
-            <dl class='parameters'>
-              <dt>TVStartScanningOptions options</dt>
-                <dd>
-                  Specifies the options for scanning the TV channels. The
-                  <code>sourceId</code> option in the <code>options</code>
-                  specifies how the TV source starts scanning. The
-                  <code>isRescanned</code> option in the <code>options</code>
-                  parameter specifies whether or not the process of scanning the
-                  TV channels has to clear the currently scanned TV channels
-                  before scanning; if it is not passed, this method will rescan
-                  all the TV channels as if it is passed as <code>true</code>.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise stopScanning ()</dt>
-          <dd>
-            This method makes a request to stop scanning the TV channels for the
-            TV source by the <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>TVStopScanningOptions options</dt>
-                <dd>
-                  Specifies the options for stopping scanning the TV channels.
-                  The <code>sourceId</code> option in the <code>options</code>
-                  specifies which TV source stops scanning.
-                </dd>
-            </dl>
-          </dd>
-
-        <dt>Promise tuneChannel ()</dt>
-          <dd>
-            This method makes a request to tune the TV channel by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>TVTuneChannelOptions options</dt>
-                <dd>
-                  Specifies the options for tuning the TV channel.
-                </dd>
-            </dl>
-          </dd>
-
         <dt>Promise unlockParentalControl ()</dt>
           <dd>
             This method makes a request to unlock the parental control by
@@ -810,30 +661,6 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler ontunerchanged
-        </dt>
-          <dd>
-            Handles the <code>ontunerchanged</code> event of type
-            <a>TVTunerChangedEvent</a>, fired when a TV tuner is added/removed
-            by the TV device or configured by the Web application, where the
-            former is fired when the TV device detects a TV tuner is
-            added/removed and the latter only happens when the method
-            <a><code>configureTuner</code></a> is invoked to configure the TV
-            tuner.
-          </dd>
-
-        <dt class="no-docs">
-          attribute EventHandler onchannelconfigured
-        </dt>
-          <dd>
-            Handles the <code>onchannelconfigured</code> event of type
-            <a>TVChannelConfiguredEvent</a>, fired when a TV channel is
-            configured by the Web application, which only happens when the
-            method <a><code>configureChannel</code></a> is invoked to configure
-            the TV channel.
-          </dd>
-
-        <dt class="no-docs">
           attribute EventHandler onparentalcontrolchanged
         </dt>
           <dd>
@@ -843,6 +670,16 @@ Style guide to contributors:
             <a><code>unlockParentalControl</code></a> is invoked to unlock the
             parental control.
           </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler ontunerchanged
+        </dt>
+          <dd>
+            Handles the <code>ontunerchanged</code> event of type
+            <a>TVTunerChangedEvent</a>, fired when the TV device detects a TV
+            tuner is added/removed.
+          </dd>
+
       </dl>
 
       <section>
@@ -886,83 +723,7 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>getSources</code></dfn> method when invoked MUST run
-          the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV tuner to retrieve all the TV sources that
-            are available in the TV tuner according to the retrieving options
-            specified in the <code>options</code> parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Let <var>sources</var> be the array of the retrieved
-              <a>TVSource</a> elements.
-            </li>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              with <em>channels</em> as the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
-
-        <p>
-          The <dfn><code>getChannels</code></dfn> method when invoked MUST run
-          the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV source to retrieve all the TV channels that
-            are available in the TV source according to the retrieving options
-            specified in the <code>options</code> parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Let <var>channels</var> be the array of the retrieved
-              <a>TVChannel</a> elements.
-            </li>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              with <em>channels</em> as the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
-
-        <p>
-          The <dfn><code>getPrograms</code></dfn> method when invoked
+          The <dfn><code>unlockParentalControl</code></dfn> method when invoked
           MUST run the following steps:
         </p>
         <ol>
@@ -974,9 +735,10 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV channel to retrieve all the TV programs
-            that are available in the TV channel according to the retrieving
-            options specified in the <code>options</code> parameter.
+            Make a request to the TV device to unlock the parental control. The
+            <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
+            pop up a prompt to ask the user to input the password to unlock the
+            parental control.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -988,19 +750,132 @@ Style guide to contributors:
           </li>
           <ol>
             <li>
-              Let <var>programs</var> be the array of the retrieved
-              <a>TVProgram</a> elements.
-            </li>
-            <li>
               Invoke <em>resolver</em>'s <a
               class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              with <em>programs</em> as the <code>value</code> argument.
+              without assigning a value to the <code>value</code> argument.
             </li>
           </ol>
         </ol>
 
+      </section>
+
+      <section>
+        <h2>Event handlers</h2>
+        <p>The following are the <a class="internalDFN"
+        href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
+        class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
+        supported as attributes by the <a>TVManager</a> object.
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Event handler</th>
+              <th>Event name</th>
+              <th>Event type</th>
+              <th>Short description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>ontunerchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">tunerchanged</dfn></code></td>
+              <td><a><code>TVTunerChangedEvent</code></a></td>
+              <td>
+                Handles the information of the TV tuner that is added/removed
+                by the TV device.
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onparentalcontrolchanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">parentalcontrolchanged</dfn></code></td>
+              <td><a><code>TVParentalControlChangedEvent</code></a></td>
+              <td>
+                Handles the information of the changed state of the TV parental
+                control.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVTuner  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVTuner</a> Interface</h2>
+      <p>
+        The <a>TVTuner</a> interface represents a bunch of properties and
+        a set of operations related to the TV tuner.
+      </p>
+      <dl title="interface TVTuner : EventTarget" class="idl">
+        <dt>Promise configure ()</dt>
+          <dd>
+            This method makes a request to configure the TV tuner by the
+            <code>options</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
+            <dl class='parameters'>
+              <dt>optional TVConfigureTunerOptions options</dt>
+                <dd>
+                  Specifies the options for configuring the TV tuner.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise getSources ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV sources that are
+            available in the TV tuner. It returns a new <code>Promise</code>
+            that will be used to notify the caller about the result of the
+            operation, which is an array of <a>TVSource</a> elements that belong
+            to the TV tuner.
+          </dd>
+
+        <dt>readonly attribute DOMString id</dt>
+          <dd>
+            MUST return the ID of the TV tuner.
+          </dd>
+
+        <dt>readonly attribute TVSourceType[] supportedSourceTypes</dt>
+          <dd>
+            MUST return the types of the supported TV sources.
+          </dd>
+
+        <dt>readonly attribute TVSource? currentSource</dt>
+          <dd>
+            MUST return the currenly configured TV source. MUST return
+            <em>null</em> if the TV source is not yet configured.
+          </dd>
+
+        <dt>readonly attribute MediaStream? stream</dt>
+          <dd>
+            MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
+            object that is currently streamed by the TV tuner, which can be
+            played by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
+            element by assigning the <code>MediaStream</code> to the
+            <code>HTMLMediaElement</code> (<a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastreams-as-media-elements">details</a>) and can be recorded by the
+            <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST
+            return <em>null</em> if the TV tuner is not streaming any data,
+            which happens when the streaming signal is broken or due to
+            any other reasons that the TV tuner fails to stream the data.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onconfigured
+        </dt>
+          <dd>
+            Handles the <code>onconfigured</code> event of type
+            <a>TVObjectConfiguredEvent</a>, fired when the method
+            <a><code>configure</code></a> is invoked to configure the TV tuner.
+          </dd>
+      </dl>
+
+      <section>
+        <h3>Steps</h3>
+
         <p>
-          The <dfn><code>configureTuner</code></dfn> method when invoked MUST
+          The <dfn><code>configure</code></dfn> method when invoked MUST
           run the following steps:
         </p>
         <ol>
@@ -1034,8 +909,8 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>configureChannel</code></dfn> method when invoked MUST
-          run the following steps:
+          The <dfn><code>getSources</code></dfn> method when invoked MUST run
+          the following steps:
         </p>
         <ol>
           <li>
@@ -1046,9 +921,234 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV source to configure the TV channel
-            according to the configuring options specified in the
-            <code>options</code> parameter.
+            Make a request to the TV tuner to retrieve all the TV sources that
+            are available in the TV tuner.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>sources</var> be the array of the retrieved
+              <a>TVSource</a> elements.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>channels</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Event handlers</h2>
+        <p>The following are the <a class="internalDFN"
+        href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
+        class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
+        supported as attributes by the <a>TVTuner</a> object.
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Event handler</th>
+              <th>Event name</th>
+              <th>Event type</th>
+              <th>Short description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>onconfigured</code></strong></td>
+              <td><code><dfn id="dfn-change-event">configured</dfn></code></td>
+              <td><a><code>TVObjectConfiguredEvent</code></a></td>
+              <td>
+                Handles the information of the TV tuner that is configured by
+                the Web application.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </section>
+
+<!-- - - - - - - - - - - - Interface TVSource  - - - - - - - - - - - - -->
+    <section>
+      <h2><a>TVSource</a> Interface</h2>
+      <p>
+        The <a>TVSource</a> interface represents a bunch of properties and a set
+        of operations related to the TV source.
+      </p>
+      <dl title="interface TVSource : EventTarget" class="idl">
+
+        <dt>Promise getChannels ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV channels that are
+            available in the TV source. It returns a new <code>Promise</code>
+            that will be used to notify the caller about the result of the
+            operation, which is an array of <a>TVChannel</a> elements that
+            belong to the TV source.
+          </dd>
+
+        <dt>Promise tuneChannel ()</dt>
+          <dd>
+            This method makes a request to tune the TV channel by the
+            <code>channel</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
+            <dl class='parameters'>
+              <dt>DOMString channelNumber</dt>
+                <dd>
+                  Specifies the TV channel number for tuning the TV channel.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise startScanning ()</dt>
+          <dd>
+            This method makes a request to start scanning all the TV channels
+            that are available in the TV source by the <code>options</code>
+            parameter. It returns a new <code>Promise</code> that will be used
+            to notify the caller about the result of the operation. Note that
+            this method has to be called first so that the method
+            <a><code>getChannels</code></a> can retrieve the channels that have
+            successfully been scanned by the TV source.
+            <dl class='parameters'>
+              <dt>optional TVStartScanningOptions options</dt>
+                <dd>
+                  Specifies the options for scanning the TV channels. The
+                  <code>isRescanned</code> option in the <code>options</code>
+                  parameter specifies whether or not the process of scanning the
+                  TV channels has to clear the currently scanned TV channels
+                  before scanning; if it is not passed, this method will rescan
+                  all the TV channels as if it is passed as <code>true</code>.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise stopScanning ()</dt>
+          <dd>
+            This method makes a request to stop scanning the TV channels for the
+            TV source. It returns a new <code>Promise</code> that will be used
+            to notify the caller about the result of the operation.
+          </dd>
+
+        <dt>readonly attribute TVTuner tuner</dt>
+          <dd>
+            MUST return the TV tuner which the TV source belongs to.
+          </dd>
+
+        <dt>readonly attribute TVSourceType type</dt>
+          <dd>
+            MUST return the type of the TV source.
+          </dd>
+
+        <dt>readonly attribute boolean isScanning</dt>
+          <dd>
+            MUST indicate whether the TV source is scanning the TV channels or
+            not.
+          </dd>
+
+        <dt>readonly attribute TVChannel? currentChannel</dt>
+          <dd>
+            MUST return the TV channel that is currently streamed by the TV
+            tuner which owns the TV source. MUST return <em>null</em> if the TV
+            tuner is not streaming any data.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler oncurrentchannelchanged
+        </dt>
+          <dd>
+            Handles the <code>oncurrentchannelchanged</code> event of type
+            <a>TVCurrentChannelChangedEvent</a>, fired when the currently
+            streamed TV channel is changed by the TV tuner which owns the TV
+            source.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler oneitbroadcasted
+        </dt>
+          <dd>
+            Handles the <code>oneitbroadcasted</code> event of type
+            <a>TVEITBroadcastedEvent</a>, fired when the Event Information Table
+            (EIT) is broadcasted by the TV source.
+          </dd>
+
+        <dt class="no-docs">
+          attribute EventHandler onscanningstatechanged
+        </dt>
+          <dd>
+            Handles the <code>onscanningstatechanged</code> event of type
+            <a>TVScanningStateChangedEvent</a>, fired when the state of scanning
+            the TV channels is changed by the TV source. E.g., it can be fired
+            when the method <a><code>startScanning</code></a> or the method
+            <a><code>stopScanning</code></a> starts or stops scanning the TV
+            channels.
+          </dd>
+      </dl>
+
+      <section>
+        <h3>Steps</h3>
+
+        <p>
+          The <dfn><code>getChannels</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV source to retrieve all the TV channels that
+            are available in the TV source.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>channels</var> be the array of the retrieved
+              <a>TVChannel</a> elements.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>channels</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>tuneChannel</code></dfn> method when invoked MUST run
+          the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV source to tune the TV channel according to
+            the <code>channelNumber</code> parameter.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1121,80 +1221,7 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV source to stop scanning the TV channels
-            according to the stopping options specified in the
-            <code>options</code> parameter. If the <code>sourceId</code> option
-            in the <code>options</code> parameter is not passed, the
-            <a class="internalDFN" href="#dfn-user-agent">user agent</a> will
-            stop scanning all the TV channels for all the TV sources.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              without assigning a value to the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
-
-        <p>
-          The <dfn><code>tuneChannel</code></dfn> method when invoked MUST run
-          the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV source to tune the TV channel according to
-            the tuning options specified in the <code>options</code> parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              without assigning a value to the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
-
-        <p>
-          The <dfn><code>unlockParentalControl</code></dfn> method when invoked
-          MUST run the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV device to unlock the parental control. The
-            <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
-            pop up a prompt to ask the user to input the password to unlock the
-            parental control.
+            Make a request to the TV source to stop scanning the TV channels.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1214,165 +1241,6 @@ Style guide to contributors:
         </ol>
 
       </section>
-
-      <section>
-        <h2>Event handlers</h2>
-        <p>The following are the <a class="internalDFN"
-        href="#dfn-eventhandler">event handlers</a> (and their corresponding <a
-        class="internalDFN" href="#dfn-eventtypes">event types</a>) that MUST be
-        supported as attributes by the <a>TVManager</a> object.
-
-        <table class="simple">
-          <thead>
-            <tr>
-              <th>Event handler</th>
-              <th>Event name</th>
-              <th>Event type</th>
-              <th>Short description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong><code>ontunerchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">tunerchanged</dfn></code></td>
-              <td><a><code>TVTunerChangedEvent</code></a></td>
-              <td>
-                Handles the information of the TV tuner that is added/removed
-                by the TV device or configured by the Web application.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onchannelconfigured</code></strong></td>
-              <td><code><dfn id="dfn-change-event">channelconfigured</dfn></code></td>
-              <td><a><code>TVChannelConfiguredEvent</code></a></td>
-              <td>
-                Handles the information of the TV channel that is configured by
-                the Web application.
-              </td>
-            </tr>
-
-            <tr>
-              <td><strong><code>onparentalcontrolchanged</code></strong></td>
-              <td><code><dfn id="dfn-change-event">parentalcontrolchanged</dfn></code></td>
-              <td><a><code>TVParentalControlChangedEvent</code></a></td>
-              <td>
-                Handles the information of the changed state of the TV parental
-                control.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-    </section>
-
-<!-- - - - - - - - - - - - Interface TVTuner  - - - - - - - - - - - - -->
-    <section>
-      <h2><a>TVTuner</a> Interface</h2>
-      <p>
-        The <a>TVTuner</a> interface represents a bunch of properties and
-        a set of operations related to the TV tuner.
-      </p>
-      <dl title="interface TVTuner" class="idl">
-        <dt>readonly attribute DOMString id</dt>
-          <dd>
-            MUST return the ID of the TV tuner.
-          </dd>
-
-        <dt>readonly attribute TVSourceType[] supportedSourceTypes</dt>
-          <dd>
-            MUST return the types of the supported TV sources.
-          </dd>
-
-        <dt>readonly attribute TVSource? currentSource</dt>
-          <dd>
-            MUST return the currenly configured TV source. MUST return
-            <em>null</em> if the TV source is not yet configured.
-          </dd>
-
-        <dt>readonly attribute MediaStream? stream</dt>
-          <dd>
-            MUST return a <a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastream">MediaStream</a>
-            object that is currently streamed by the TV tuner, which can be
-            played by the <a href="http://dev.w3.org/html5/spec-preview/the-video-element.html#the-video-element">video</a>
-            element by assigning the <code>MediaStream</code> to the
-            <code>HTMLMediaElement</code> (<a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html#mediastreams-as-media-elements">details</a>) and can be recorded by the
-            <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html#MediaRecorderAPI">MediaRecorder</a>. MUST
-            return <em>null</em> if the TV tuner is not streaming any data,
-            which happens when the streaming signal is broken or due to
-            any other reasons that the TV tuner fails to stream the data.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Interface TVSource  - - - - - - - - - - - - -->
-    <section>
-      <h2><a>TVSource</a> Interface</h2>
-      <p>
-        The <a>TVSource</a> interface represents a bunch of properties and a set
-        of operations related to the TV source.
-      </p>
-      <dl title="interface TVSource : EventTarget" class="idl">
-        <dt>readonly attribute DOMString id</dt>
-          <dd>
-            MUST return the ID of the TV source.
-          </dd>
-
-        <dt>readonly attribute TVTuner tuner</dt>
-          <dd>
-            MUST return the TV tuner which the TV source belongs to.
-          </dd>
-
-        <dt>readonly attribute TVSourceType type</dt>
-          <dd>
-            MUST return the type of the TV source.
-          </dd>
-
-        <dt>readonly attribute boolean isScanning</dt>
-          <dd>
-            MUST indicate whether the TV source is scanning the TV channels or
-            not.
-          </dd>
-
-        <dt>readonly attribute TVChannel? currentChannel</dt>
-          <dd>
-            MUST return the TV channel that is currently streamed by the TV
-            tuner which owns the TV source. MUST return <em>null</em> if the TV
-            tuner is not streaming any data.
-          </dd>
-
-        <dt class="no-docs">
-          attribute EventHandler oncurrentchannelchanged
-        </dt>
-          <dd>
-            Handles the <code>oncurrentchannelchanged</code> event of type
-            <a>TVCurrentChannelChangedEvent</a>, fired when the currently
-            streamed TV channel is changed by the TV tuner which owns the TV
-            source.
-          </dd>
-
-        <dt class="no-docs">
-          attribute EventHandler oneitbroadcasted
-        </dt>
-          <dd>
-            Handles the <code>oneitbroadcasted</code> event of type
-            <a>TVEITBroadcastedEvent</a>, fired when the Event Information Table
-            (EIT) is broadcasted by the TV source.
-          </dd>
-
-        <dt class="no-docs">
-          attribute EventHandler onscanningstatechanged
-        </dt>
-          <dd>
-            Handles the <code>onscanningstatechanged</code> event of type
-            <a>TVScanningStateChangedEvent</a>, fired when the state of scanning
-            the TV channels is changed by the TV source. E.g., it can be fired
-            when the method <a><code>startScanning</code></a> or the method
-            <a><code>stopScanning</code></a> starts or stops scanning the TV
-            channels.
-          </dd>
-      </dl>
 
       <section>
         <h2>Event handlers</h2>
@@ -1435,9 +1303,36 @@ Style guide to contributors:
         a set of operations related to the TV channel.
       </p>
       <dl title="interface TVChannel : EventTarget" class="idl">
-        <dt>readonly attribute DOMString id</dt>
+
+        <dt>Promise configure ()</dt>
           <dd>
-            MUST return the ID of the TV channel.
+            This method makes a request to configure the TV channel by the
+            <code>options</code> parameter. It returns a new
+            <code>Promise</code> that will be used to notify the caller about
+            the result of the operation.
+            <dl class='parameters'>
+              <dt>optional TVConfigureChannelOptions options</dt>
+                <dd>
+                  Specifies the options for configuring the TV channel.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise getPrograms ()</dt>
+          <dd>
+            This method makes a request to retrieve all the TV programs that are
+            available in the TV channel by the <code>options</code> parameter.
+            It returns a new <code>Promise</code> that will be used to notify
+            the caller about the result of the operation, which is an array of
+            <a>TVProgram</a> elements that belong to the TV channel.
+            <dl class='parameters'>
+              <dt>optional TVGetProgramsOptions options</dt>
+                <dd>
+                  Specifies the options for retrieving the TV programs. If this
+                  parameter is not passed, this method will retuen all the
+                  available TV programs.
+                </dd>
+            </dl>
           </dd>
 
         <dt>readonly attribute DOMString networkId</dt>
@@ -1520,7 +1415,94 @@ Style guide to contributors:
             broadcasted TV program is changed by the TV channel.
           </dd>
 
+        <dt class="no-docs">
+          attribute EventHandler onconfigured
+        </dt>
+          <dd>
+            Handles the <code>onconfigured</code> event of type
+            <a>TVObjectConfiguredEvent</a>, fired when the method
+            <a><code>configure</code></a> is invoked to configure the TV
+            channel.
+          </dd>
+
       </dl>
+
+      <section>
+        <h3>Steps</h3>
+
+        <p>
+          The <dfn><code>configure</code></dfn> method when invoked MUST
+          run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV source to configure the TV channel
+            according to the configuring options specified in the
+            <code>options</code> parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+        <p>
+          The <dfn><code>getPrograms</code></dfn> method when invoked
+          MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV channel to retrieve all the TV programs
+            that are available in the TV channel according to the retrieving
+            options specified in the <code>options</code> parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Let <var>programs</var> be the array of the retrieved
+              <a>TVProgram</a> elements.
+            </li>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              with <em>programs</em> as the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
+      </section>
 
       <section>
         <h2>Event handlers</h2>
@@ -1548,6 +1530,17 @@ Style guide to contributors:
                 that is changed by the TV channel.
               </td>
             </tr>
+
+            <tr>
+              <td><strong><code>onconfigured</code></strong></td>
+              <td><code><dfn id="dfn-change-event">configured</dfn></code></td>
+              <td><a><code>TVObjectConfiguredEvent</code></a></td>
+              <td>
+                Handles the information of the TV channel that is configured by
+                the Web application.
+              </td>
+            </tr>
+
           </tbody>
         </table>
       </section>
@@ -1604,35 +1597,52 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVGetSourcesOptions   - - - - - - - -->
+<!-- - - - - - - - Dictionary TVConfigureTunerOptions   - - - - - - - - - -->
     <section>
-      <h2><a>TVGetSourcesOptions</a> Dictionary</h2>
+      <h2><a>TVConfigureTunerOptions</a> Dictionary</h2>
       <p>
-        The <a>TVGetSourcesOptions</a> dictionary contains the information for
-        retrieving the TV sources.
+        The <a>TVConfigureTunerOptions</a> dictionary contains the information
+        for configuring the TV tuner.
       </p>
-      <dl title="dictionary TVGetSourcesOptions" class="idl">
-        <dt>DOMString tunerId</dt>
+      <dl title="dictionary TVConfigureTunerOptions" class="idl">
+        <dt>TVSourceType sourceType</dt>
           <dd>
-            Identifies the TV tuner that is requested to retrieve the TV
-            sources. This option MUST be mandatory.
+            Specifies the new type of the TV source that is going to be
+            configured.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Dictionary TVGetChannelsOptions   - - - - - - - -->
+<!-- - - - - - - - - - - - Dictionary TVStartScanningOptions   - - - - - - - -->
     <section>
-      <h2><a>TVGetChannelsOptions</a> Dictionary</h2>
+      <h2><a>TVStartScanningOptions</a> Dictionary</h2>
       <p>
-        The <a>TVGetChannelsOptions</a> dictionary contains the information for
-        retrieving the TV channels.
+        The <a>TVStartScanningOptions</a> dictionary contains the information
+        for scanning the TV channels.
       </p>
-      <dl title="dictionary TVGetChannelsOptions" class="idl">
-        <dt>DOMString sourceId</dt>
+      <dl title="dictionary TVStartScanningOptions" class="idl">
+        <dt>boolean isRescanned</dt>
           <dd>
-            Identifies the TV source that is requested to retrieve the TV
-            channels. This option MUST be mandatory.
+            Specifies whether or not the process of scanning the TV channels has
+            to clear the currently scanned TV channels before scanning.
           </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - - - Dictionary TVConfigureChannelOptions   - - - - - - - - - -->
+    <section>
+      <h2><a>TVConfigureChannelOptions</a> Dictionary</h2>
+      <p>
+        The <a>TVConfigureChannelOptions</a> dictionary contains the information
+        for configuring the TV channel.
+      </p>
+      <dl title="dictionary TVConfigureChannelOptions" class="idl">
+        <dt>boolean isParentalControlProtected</dt>
+          <dd>
+            Specifies the new value of whether or not the TV channel is going to
+            be protected from being watched by the children.
+          </dd>
+
       </dl>
     </section>
 
@@ -1644,11 +1654,6 @@ Style guide to contributors:
         retrieving the TV programs.
       </p>
       <dl title="dictionary TVGetProgramsOptions" class="idl">
-        <dt>DOMString channelId</dt>
-          <dd>
-            Identifies the TV channel that is requested to retrieve the TV
-            programs. This option MUST be mandatory.
-          </dd>
         <dt>unsigned long numberOfPrograms</dt>
           <dd>
             Specifies how many TV programs to be retrieved from the time point
@@ -1674,101 +1679,17 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - Dictionary TVConfigureTunerOptions   - - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVParentalControlChangedEvent - - -->
     <section>
-      <h2><a>TVConfigureTunerOptions</a> Dictionary</h2>
+      <h2><a>TVParentalControlChangedEvent</a> Interface</h2>
       <p>
-        The <a>TVConfigureTunerOptions</a> dictionary contains the information
-        for configuring the TV tuner.
+        The <a>TVParentalControlChangedEvent</a> interface represents the
+        event related to the state change of the TV parental control.
       </p>
-      <dl title="dictionary TVConfigureTunerOptions" class="idl">
-        <dt>DOMString tunerId</dt>
+      <dl title="interface TVParentalControlChangedEvent : Event" class="idl">
+        <dt>readonly attribute boolean isParentalControlLocked</dt>
           <dd>
-            Identifies the TV tuner that is requested to be configured. This
-            option MUST be mandatory.
-          </dd>
-
-        <dt>TVSourceType sourceType</dt>
-          <dd>
-            Identifies the new type of the TV source that is going to be
-            configured.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - Dictionary TVConfigureChannelOptions   - - - - - - - - - -->
-    <section>
-      <h2><a>TVConfigureChannelOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVConfigureChannelOptions</a> dictionary contains the information
-        for configuring the TV channel.
-      </p>
-      <dl title="dictionary TVConfigureChannelOptions" class="idl">
-        <dt>DOMString channelId</dt>
-          <dd>
-            Identifies the TV channel that is requested to be configured. This
-            option MUST be mandatory.
-          </dd>
-
-        <dt>boolean isParentalControlProtected</dt>
-          <dd>
-            Specifies the new value of whether or not the TV channel is going to
-            be protected from being watched by the children.
-          </dd>
-
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Dictionary TVStartScanningOptions   - - - - - - - -->
-    <section>
-      <h2><a>TVStartScanningOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVStartScanningOptions</a> dictionary contains the information
-        for scanning the TV channels.
-      </p>
-      <dl title="dictionary TVStartScanningOptions" class="idl">
-        <dt>DOMString sourceId</dt>
-          <dd>
-            Identifies the TV source that is requested to scan the TV channels.
-            This option MUST be mandatory.
-          </dd>
-
-        <dt>boolean isRescanned</dt>
-          <dd>
-            Specifies whether or not the process of scanning the TV channels has
-            to clear the currently scanned TV channels before scanning.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Dictionary TVStopScanningOptions   - - - - - - - -->
-    <section>
-      <h2><a>TVStopScanningOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVStopScanningOptions</a> dictionary contains the information
-        for stopping scanning the TV channels.
-      </p>
-      <dl title="dictionary TVStopScanningOptions" class="idl">
-        <dt>DOMString sourceId</dt>
-          <dd>
-            Identifies the TV source that is requested to stop scanning the TV
-            channels. This option MUST be mandatory.
-          </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - - - Dictionary TVTuneChannelOptions   - - - - - - - -->
-    <section>
-      <h2><a>TVTuneChannelOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVTuneChannelOptions</a> dictionary contains the information for
-        tuning the TV channel.
-      </p>
-      <dl title="dictionary TVTuneChannelOptions" class="idl">
-        <dt>DOMString channelId</dt>
-          <dd>
-            Identifies the TV channel that is requested to be tuned. This option
-            MUST be mandatory.
+            MUST return the changed lock state of the TV parental control.
           </dd>
       </dl>
     </section>
@@ -1778,8 +1699,7 @@ Style guide to contributors:
       <h2><a>TVTunerChangedEvent</a> Interface</h2>
       <p>
         The <a>TVTunerChangedEvent</a> interface represents the event related
-        to the TV tuner that is added/removed by the TV device or configured by
-        the Web application.
+        to the TV tuner that is added/removed by the TV device.
       </p>
       <dl title="interface TVTunerChangedEvent : Event" class="idl">
         <dt>readonly attribute TVTunerChangedEventOperation operation</dt>
@@ -1789,24 +1709,24 @@ Style guide to contributors:
 
         <dt>readonly attribute TVTuner tuner</dt>
           <dd>
-            MUST return the TV tuner that is added/removed by the TV device or
-            configured by the Web application.
+            MUST return the TV tuner that is added/removed by the TV device.
           </dd>
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVChannelConfiguredEvent - - - - - - - - -->
+<!-- - - - - - - - - - - - Interface TVObjectConfiguredEvent - - - - - - - - -->
     <section>
-      <h2><a>TVChannelConfiguredEvent</a> Interface</h2>
+      <h2><a>TVObjectConfiguredEvent</a> Interface</h2>
       <p>
-        The <a>TVChannelConfiguredEvent</a> interface represents the event
-        related to the TV channel that is configured by the Web application.
+        The <a>TVObjectConfiguredEvent</a> interface represents the event
+        related to the <a>TVTuner</a> or the <a>TVChannel</a> that is configured
+        by the Web application.
       </p>
-      <dl title="interface TVChannelConfiguredEvent : Event" class="idl">
-        <dt>readonly attribute TVChannel channel</dt>
+      <dl title="interface TVObjectConfiguredEvent : Event" class="idl">
+        <dt>readonly attribute DOMString[] attributes</dt>
           <dd>
-            MUST return the TV channel that is configured by the Web
-            application.
+            MUST return the changed attributes in the TV object that is
+            configured by the Web application.
           </dd>
       </dl>
     </section>
@@ -1852,21 +1772,6 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVParentalControlChangedEvent - - -->
-    <section>
-      <h2><a>TVParentalControlChangedEvent</a> Interface</h2>
-      <p>
-        The <a>TVParentalControlChangedEvent</a> interface represents the
-        event related to the state change of the TV parental control.
-      </p>
-      <dl title="interface TVParentalControlChangedEvent : Event" class="idl">
-        <dt>readonly attribute boolean isParentalControlLocked</dt>
-          <dd>
-            MUST return the changed lock state of the TV parental control.
-          </dd>
-      </dl>
-    </section>
-
 <!-- - - - - - - - Interface TVCurrentChannelChangedEvent - - - - - - - - - -->
     <section>
       <h2><a>TVCurrentChannelChangedEvent</a> Interface</h2>
@@ -1898,7 +1803,7 @@ Style guide to contributors:
           <dd>
             MUST return the TV program that is currently broadcasted by the TV
             channel. MUST return <em>null</em> if the TV tuner is not streaming
-            any TV channel.
+            any data.
           </dd>
       </dl>
     </section>
@@ -1961,11 +1866,6 @@ Style guide to contributors:
         <dt>removed</dt>
           <dd>
             A TV tuner is removed.
-          </dd>
-
-        <dt>configured</dt>
-          <dd>
-            A TV tuner is configured.
           </dd>
       </dl>
 
