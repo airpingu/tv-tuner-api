@@ -200,14 +200,11 @@ Style guide to contributors:
           navigator.mozTV.getTuners().then(function onsuccess(tuners) {
             curTuners = tuners;
 
-            tuners.forEach(function setOnConfiguredEventHandler(tuner) {
-              // Set the 'onconfigured' event handler.
-              tuner.onconfigured = function onconfigured(event) {
-                event.attributes.forEach(function showConfiguredAttr(attr) {
-                  alert("TV tuner: " + tuner.id +
-                        " is configured on the attribute: " + attr +
-                        " assigned by a new value: " + tuner[attr]);
-                });
+            tuners.forEach(function setEventHandler(tuner) {
+              // Set the 'oncurrentsourcechanged' event handler.
+              tuner.oncurrentsourcechanged = function oncurrentsourcechanged(event) {
+                alert("The current TV source of TV tuner: " + tuner.id +
+                      " is configured to: " + event.source.type);
               };
             });
           }, function onerror(error) {
@@ -223,7 +220,7 @@ Style guide to contributors:
 
         <pre class="example highlight">
           // A matrix which maps the TV tuner to its corresponding array of TV
-          // channels based on the currenly configured TV source.
+          // channels based on the currently configured TV source.
           // E.g., { "tunerId1": [...], "tunerId2": [...] }.
           var curChannelsOfTuners = {};
 
@@ -261,20 +258,16 @@ Style guide to contributors:
                 }
               };
 
-              // Retrieve all the currently available TV channels that are
-              // currently available in the currently configured TV source of
-              // the TV tuner.
+              // Retrieve all the currently available TV channels in the
+              // currently configured TV source of the TV tuner.
               currentSource.getChannels().then(function onsuccess(channels) {
                 curChannelsOfTuners[tunerId] = channels;
 
-                channels.forEach(function setOnConfiguredEventHandler(channel) {
-                  // Set the 'onconfigured' event handler.
-                  channel.onconfigured = function onconfigured(event) {
-                    event.attributes.forEach(function showConfiguredAttr(attr) {
-                      alert("TV channel: " + channel.number +
-                            " is configured on the attribute: " + attr
-                            " assigned by a new value: " + channel[attr]);
-                    });
+                channels.forEach(function setEventHandler(channel) {
+                  // Set the 'onprotectionstatechanged' event handler.
+                  channel.onprotectionstatechanged = function onprotectionstatechanged(event) {
+                    alert("The current protection state of TV channel: " + channel.name +
+                          " is configured to: " + event.isProtected);
                   };
                 });
               }, function onerror(error) {
@@ -385,8 +378,7 @@ Style guide to contributors:
 
         <p>
           The following example shows how to scan and get all the TV channels
-          that are available in the currenly configured TV source of the TV
-          tuner.
+          that are available in the currently configured TV source of the TV tuner.
         </p>
 
         <pre class="example highlight">
@@ -450,7 +442,7 @@ Style guide to contributors:
 
         <p>
           The following example shows how to tune the TV channel by the TV
-          channel ID.
+          channel number.
         </p>
 
         <pre class="example highlight">
@@ -479,9 +471,10 @@ Style guide to contributors:
               var channel = channels[0];
               var channelNumber = channel.number.
 
-              // Tune the TV channel based on the TV channel number.
-              currentSource.tuneChannel(channelNumber).then(function onsuccess() {
-                alert("Succeeded to tune the TV channel.");
+              // Tune the currently streamed TV channel based on the TV channel
+              // number.
+              currentSource.setCurrentChannel(channelNumber).then(function onsuccess() {
+                alert("Succeeded to tune the currently streamed TV channel.");
               }, function onerror(error) {
                 alert(error);
               });
@@ -494,7 +487,7 @@ Style guide to contributors:
         </pre>
 
         <p>
-          The following example shows how to unlock the parental control.
+          The following example shows how to unlock the TV parental control.
         </p>
 
         <pre class="example highlight">
@@ -517,14 +510,14 @@ Style guide to contributors:
               var changedCurrentChannel = event.channel;
 
               if (navigator.mozTV.isParentalControlLocked &&
-                  changedCurrentChannel.isParentalControlProtected) {
-                // If the parental control is locked and the currently tuned TV
-                // channel is protected, the |tuner.stream|'s media tracks will
-                // be disabled (i.e. black screen). The UA can pop up a prompt
-                // to ask the user to enter the password to unlock it.
+                  changedCurrentChannel.isProtected) {
+                // If the TV parental control is locked and the currently tuned
+                // TV channel is protected, the |tuner.stream|'s media tracks
+                // will be disabled (i.e. black screen). The UA can then pop up
+                // a prompt to ask the user to enter the password to unlock it.
                 alert("Parental control is locked. Please enter the password.");
 
-                // Unlock the parental control which will be applied system-wisely.
+                // Unlock the TV parental control which will be applied system-wisely.
                 navigator.mozTV.unlockParentalControl().then(function onsuccess() {
                   alert("Parental control is unlocked until the next reboot.");
                 }, function onerror(error) {
@@ -544,9 +537,10 @@ Style guide to contributors:
               var channel = channels[0];
               var channelNumber = channel.number;
 
-              // Tune the TV channel based on the TV channel number.
-              currentSource.tuneChannel(channelNumber).then(function onsuccess() {
-                alert("Succeeded to tune the TV channel.");
+              // Tune the currently streamed TV channel based on the TV channel
+              // number.
+              currentSource.setCurrentChannel(channelNumber).then(function onsuccess() {
+                alert("Succeeded to tune the currently streamed TV channel.");
               }, function onerror(error) {
                 alert(error);
               });
@@ -645,11 +639,11 @@ Style guide to contributors:
 
         <dt>Promise unlockParentalControl ()</dt>
           <dd>
-            This method makes a request to unlock the parental control by
+            This method makes a request to unlock the TV parental control by
             popping up a prompt to ask the user to input the correct password.
-            Once the parental control is unlocked, it won't be locked until the
-            next reboot. It returns a new <code>Promise</code> that will be used
-            to notify the caller about the result of the operation.
+            Once the TV parental control is unlocked, it won't be locked until
+            the next reboot. It returns a new <code>Promise</code> that will be
+            used to notify the caller about the result of the operation.
           </dd>
 
         <dt>readonly attribute boolean isParentalControlLocked</dt>
@@ -665,10 +659,9 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>onparentalcontrolchanged</code> event of type
-            <a>TVParentalControlChangedEvent</a>, fired when the state of the TV
-            parental control is changed, which only happens when the method
+            <a>TVParentalControlChangedEvent</a>, fired when the method
             <a><code>unlockParentalControl</code></a> is invoked to unlock the
-            parental control.
+            TV parental control.
           </dd>
 
         <dt class="no-docs">
@@ -735,10 +728,10 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV device to unlock the parental control. The
-            <a class="internalDFN" href="#dfn-user-agent">user agent</a> has to
-            pop up a prompt to ask the user to input the password to unlock the
-            parental control.
+            Make a request to the TV device to unlock the TV parental control.
+            The <a class="internalDFN" href="#dfn-user-agent">user agent</a> has
+            to pop up a prompt to ask the user to input the password to unlock
+            the TV parental control.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -809,19 +802,6 @@ Style guide to contributors:
         a set of operations related to the TV tuner.
       </p>
       <dl title="interface TVTuner : EventTarget" class="idl">
-        <dt>Promise configure ()</dt>
-          <dd>
-            This method makes a request to configure the TV tuner by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>optional TVConfigureTunerOptions options</dt>
-                <dd>
-                  Specifies the options for configuring the TV tuner.
-                </dd>
-            </dl>
-          </dd>
 
         <dt>Promise getSources ()</dt>
           <dd>
@@ -830,6 +810,21 @@ Style guide to contributors:
             that will be used to notify the caller about the result of the
             operation, which is an array of <a>TVSource</a> elements that belong
             to the TV tuner.
+          </dd>
+
+        <dt>Promise setCurrentSource ()</dt>
+          <dd>
+            This method makes a request to configure the current TV source of
+            the TV tuner by the <code>sourceType</code> parameter. It returns a
+            new <code>Promise</code> that will be used to notify the caller
+            about the result of the operation.
+            <dl class='parameters'>
+              <dt>TVSourceType sourceType</dt>
+                <dd>
+                  Specifies the TV source type for configuring the current TV
+                  source.
+                </dd>
+            </dl>
           </dd>
 
         <dt>readonly attribute DOMString id</dt>
@@ -844,8 +839,8 @@ Style guide to contributors:
 
         <dt>readonly attribute TVSource? currentSource</dt>
           <dd>
-            MUST return the currenly configured TV source. MUST return
-            <em>null</em> if the TV source is not yet configured.
+            MUST return the currently configured TV source. MUST return
+            <em>null</em> if the TV source is not configured.
           </dd>
 
         <dt>readonly attribute MediaStream? stream</dt>
@@ -862,51 +857,18 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onconfigured
+          attribute EventHandler oncurrentsourcechanged
         </dt>
           <dd>
-            Handles the <code>onconfigured</code> event of type
-            <a>TVObjectConfiguredEvent</a>, fired when the method
-            <a><code>configure</code></a> is invoked to configure the TV tuner.
+            Handles the <code>oncurrentsourcechanged</code> event of type
+            <a>TVCurrentSourceChangedEvent</a>, fired when the method
+            <a><code>setCurrentSource</code></a> is invoked to configure the
+            current TV source.
           </dd>
       </dl>
 
       <section>
         <h3>Steps</h3>
-
-        <p>
-          The <dfn><code>configure</code></dfn> method when invoked MUST
-          run the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV device to configure the TV tuner according
-            to the configuring options specified in the <code>options</code>
-            parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              without assigning a value to the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
 
         <p>
           The <dfn><code>getSources</code></dfn> method when invoked MUST run
@@ -944,6 +906,39 @@ Style guide to contributors:
             </li>
           </ol>
         </ol>
+
+        <p>
+          The <dfn><code>setCurrentSource</code></dfn> method when invoked MUST
+          run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV tuner to configure the current TV source
+            according to the <code>sourceType</code> parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
       </section>
 
       <section>
@@ -964,12 +959,12 @@ Style guide to contributors:
           </thead>
           <tbody>
             <tr>
-              <td><strong><code>onconfigured</code></strong></td>
-              <td><code><dfn id="dfn-change-event">configured</dfn></code></td>
-              <td><a><code>TVObjectConfiguredEvent</code></a></td>
+              <td><strong><code>oncurrentsourcechanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">currentsourcechanged</dfn></code></td>
+              <td><a><code>TVCurrentSourceChangedEvent</code></a></td>
               <td>
-                Handles the information of the TV tuner that is configured by
-                the Web application.
+                Handles the information of the current TV source that is
+                configured by the method <a><code>setCurrentSource</code></a>.
               </td>
             </tr>
           </tbody>
@@ -996,16 +991,17 @@ Style guide to contributors:
             belong to the TV source.
           </dd>
 
-        <dt>Promise tuneChannel ()</dt>
+        <dt>Promise setCurrentChannel ()</dt>
           <dd>
-            This method makes a request to tune the TV channel by the
-            <code>channel</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
+            This method makes a request to tune the currently streamed TV
+            channel by the <code>channelNumber</code> parameter. It returns a
+            new <code>Promise</code> that will be used to notify the caller
+            about the result of the operation.
             <dl class='parameters'>
               <dt>DOMString channelNumber</dt>
                 <dd>
-                  Specifies the TV channel number for tuning the TV channel.
+                  Specifies the TV channel number for tuning the currently
+                  streamed TV channel.
                 </dd>
             </dl>
           </dd>
@@ -1067,9 +1063,9 @@ Style guide to contributors:
         </dt>
           <dd>
             Handles the <code>oncurrentchannelchanged</code> event of type
-            <a>TVCurrentChannelChangedEvent</a>, fired when the currently
-            streamed TV channel is changed by the TV tuner which owns the TV
-            source.
+            <a>TVCurrentChannelChangedEvent</a>, fired when the method
+            <a><code>setCurrentChannel</code></a> is invoked to tune the
+            currently streamed TV channel.
           </dd>
 
         <dt class="no-docs">
@@ -1135,8 +1131,8 @@ Style guide to contributors:
         </ol>
 
         <p>
-          The <dfn><code>tuneChannel</code></dfn> method when invoked MUST run
-          the following steps:
+          The <dfn><code>setCurrentChannel</code></dfn> method when invoked MUST
+          run the following steps:
         </p>
         <ol>
           <li>
@@ -1147,8 +1143,8 @@ Style guide to contributors:
             Return <var>promise</var> to the caller.
           </li>
           <li>
-            Make a request to the TV source to tune the TV channel according to
-            the <code>channelNumber</code> parameter.
+            Make a request to the TV source to tune the currently streamed TV
+            channel according to the <code>channelNumber</code> parameter.
           </li>
           <li>
             If an <var>error</var> occurs invoke <em>resolver</em>'s <a
@@ -1265,7 +1261,8 @@ Style guide to contributors:
               <td><a><code>TVCurrentChannelChangedEvent</code></a></td>
               <td>
                 Handles the information of the currently streamed TV channel
-                that is changed by the TV tuner which owns the TV source.
+                that is tuned by the method
+                <a><code>setCurrentChannel</code></a>.
               </td>
             </tr>
 
@@ -1304,20 +1301,6 @@ Style guide to contributors:
       </p>
       <dl title="interface TVChannel : EventTarget" class="idl">
 
-        <dt>Promise configure ()</dt>
-          <dd>
-            This method makes a request to configure the TV channel by the
-            <code>options</code> parameter. It returns a new
-            <code>Promise</code> that will be used to notify the caller about
-            the result of the operation.
-            <dl class='parameters'>
-              <dt>optional TVConfigureChannelOptions options</dt>
-                <dd>
-                  Specifies the options for configuring the TV channel.
-                </dd>
-            </dl>
-          </dd>
-
         <dt>Promise getPrograms ()</dt>
           <dd>
             This method makes a request to retrieve all the TV programs that are
@@ -1331,6 +1314,21 @@ Style guide to contributors:
                   Specifies the options for retrieving the TV programs. If this
                   parameter is not passed, this method will retuen all the
                   available TV programs.
+                </dd>
+            </dl>
+          </dd>
+
+        <dt>Promise setProtectionState ()</dt>
+          <dd>
+            This method makes a request to configure the current protection
+            state of the TV channel by the <code>isProtected</code> parameter.
+            It returns a new <code>Promise</code> that will be used to notify
+            the caller about the result of the operation.
+            <dl class='parameters'>
+              <dt>boolean isProtected</dt>
+                <dd>
+                  Specifies the new protection state for configuring the current
+                  protection state of the TV channel.
                 </dd>
             </dl>
           </dd>
@@ -1382,11 +1380,11 @@ Style guide to contributors:
             <code>"12-2"</code>... etc.
           </dd>
 
-        <dt>readonly attribute boolean isParentalControlProtected</dt>
+        <dt>readonly attribute boolean isProtected</dt>
           <dd>
-            MUST return the current protection state of the TV parental control
-            on the TV channel, which decides whether or not the TV channel is
-            protected from being watched by the children.
+            MUST return the current protection state of the TV channel, which
+            decides whether or not the TV channel is protected from being
+            watched by the children.
           </dd>
 
         <dt>readonly attribute boolean isEmergency</dt>
@@ -1416,53 +1414,19 @@ Style guide to contributors:
           </dd>
 
         <dt class="no-docs">
-          attribute EventHandler onconfigured
+          attribute EventHandler onprotectionstatechanged
         </dt>
           <dd>
-            Handles the <code>onconfigured</code> event of type
-            <a>TVObjectConfiguredEvent</a>, fired when the method
-            <a><code>configure</code></a> is invoked to configure the TV
-            channel.
+            Handles the <code>onprotectionstatechanged</code> event of type
+            <a>TVProtectionStateChangedEvent</a>, fired when the method
+            <a><code>setProtectionState</code></a> is invoked to configure the
+            current protection state of the TV channel.
           </dd>
 
       </dl>
 
       <section>
         <h3>Steps</h3>
-
-        <p>
-          The <dfn><code>configure</code></dfn> method when invoked MUST
-          run the following steps:
-        </p>
-        <ol>
-          <li>
-            Let <var>promise</var> be a new <code>Promise</code> object and
-            <var>resolver</var> be its associated <code>resolver</code>.
-          </li>
-          <li>
-            Return <var>promise</var> to the caller.
-          </li>
-          <li>
-            Make a request to the TV source to configure the TV channel
-            according to the configuring options specified in the
-            <code>options</code> parameter.
-          </li>
-          <li>
-            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
-            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
-            with <em>error</em> as the <code>value</code> argument.
-          </li>
-          <li>
-            When the request has been successfully completed:
-          </li>
-          <ol>
-            <li>
-              Invoke <em>resolver</em>'s <a
-              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
-              without assigning a value to the <code>value</code> argument.
-            </li>
-          </ol>
-        </ol>
 
         <p>
           The <dfn><code>getPrograms</code></dfn> method when invoked
@@ -1502,6 +1466,40 @@ Style guide to contributors:
           </ol>
         </ol>
 
+        <p>
+          The <dfn><code>setProtectionState</code></dfn> method when invoked
+          MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let <var>promise</var> be a new <code>Promise</code> object and
+            <var>resolver</var> be its associated <code>resolver</code>.
+          </li>
+          <li>
+            Return <var>promise</var> to the caller.
+          </li>
+          <li>
+            Make a request to the TV channel to configure the current protection
+            state of the TV channel according to the <code>isProtected</code>
+            parameter.
+          </li>
+          <li>
+            If an <var>error</var> occurs invoke <em>resolver</em>'s <a
+            class="internalDFN" href="#dfn-reject-algorithm">reject algorithm</a>
+            with <em>error</em> as the <code>value</code> argument.
+          </li>
+          <li>
+            When the request has been successfully completed:
+          </li>
+          <ol>
+            <li>
+              Invoke <em>resolver</em>'s <a
+              class="internalDFN" href="#dfn-fulfill-algorithm"> fulfill algorithm</a>
+              without assigning a value to the <code>value</code> argument.
+            </li>
+          </ol>
+        </ol>
+
       </section>
 
       <section>
@@ -1532,12 +1530,13 @@ Style guide to contributors:
             </tr>
 
             <tr>
-              <td><strong><code>onconfigured</code></strong></td>
-              <td><code><dfn id="dfn-change-event">configured</dfn></code></td>
-              <td><a><code>TVObjectConfiguredEvent</code></a></td>
+              <td><strong><code>onprotectionstatechanged</code></strong></td>
+              <td><code><dfn id="dfn-change-event">protectionstatechanged</dfn></code></td>
+              <td><a><code>TVProtectionStateChangedEvent</code></a></td>
               <td>
-                Handles the information of the TV channel that is configured by
-                the Web application.
+                Handles the information of the current protection state of the
+                TV channel that is configured by the method
+                <a><code>setProtectionState</code></a>.
               </td>
             </tr>
 
@@ -1597,22 +1596,6 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - Dictionary TVConfigureTunerOptions   - - - - - - - - - -->
-    <section>
-      <h2><a>TVConfigureTunerOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVConfigureTunerOptions</a> dictionary contains the information
-        for configuring the TV tuner.
-      </p>
-      <dl title="dictionary TVConfigureTunerOptions" class="idl">
-        <dt>TVSourceType sourceType</dt>
-          <dd>
-            Specifies the new type of the TV source that is going to be
-            configured.
-          </dd>
-      </dl>
-    </section>
-
 <!-- - - - - - - - - - - - Dictionary TVStartScanningOptions   - - - - - - - -->
     <section>
       <h2><a>TVStartScanningOptions</a> Dictionary</h2>
@@ -1626,23 +1609,6 @@ Style guide to contributors:
             Specifies whether or not the process of scanning the TV channels has
             to clear the currently scanned TV channels before scanning.
           </dd>
-      </dl>
-    </section>
-
-<!-- - - - - - - - - - Dictionary TVConfigureChannelOptions   - - - - - - - - - -->
-    <section>
-      <h2><a>TVConfigureChannelOptions</a> Dictionary</h2>
-      <p>
-        The <a>TVConfigureChannelOptions</a> dictionary contains the information
-        for configuring the TV channel.
-      </p>
-      <dl title="dictionary TVConfigureChannelOptions" class="idl">
-        <dt>boolean isParentalControlProtected</dt>
-          <dd>
-            Specifies the new value of whether or not the TV channel is going to
-            be protected from being watched by the children.
-          </dd>
-
       </dl>
     </section>
 
@@ -1714,19 +1680,19 @@ Style guide to contributors:
       </dl>
     </section>
 
-<!-- - - - - - - - - - - - Interface TVObjectConfiguredEvent - - - - - - - - -->
+<!-- - - - - - - - Interface TVCurrentSourceChangedEvent - - - - - - - - - -->
     <section>
-      <h2><a>TVObjectConfiguredEvent</a> Interface</h2>
+      <h2><a>TVCurrentSourceChangedEvent</a> Interface</h2>
       <p>
-        The <a>TVObjectConfiguredEvent</a> interface represents the event
-        related to the <a>TVTuner</a> or the <a>TVChannel</a> that is configured
-        by the Web application.
+        The <a>TVCurrentSourceChangedEvent</a> interface represents the event
+        related to the current TV source that is configured by the method
+        <a><code>setCurrentSource</code></a>.
       </p>
-      <dl title="interface TVObjectConfiguredEvent : Event" class="idl">
-        <dt>readonly attribute DOMString[] attributes</dt>
+      <dl title="interface TVCurrentSourceChangedEvent : Event" class="idl">
+        <dt>readonly attribute TVSource? source</dt>
           <dd>
-            MUST return the changed attributes in the TV object that is
-            configured by the Web application.
+            MUST return the TV source that is currently configured by the TV
+            tuner. MUST return <em>null</em> if the TV source is not configured.
           </dd>
       </dl>
     </section>
@@ -1777,8 +1743,8 @@ Style guide to contributors:
       <h2><a>TVCurrentChannelChangedEvent</a> Interface</h2>
       <p>
         The <a>TVCurrentChannelChangedEvent</a> interface represents the event
-        related to the currently streamed TV channel that is changed by the TV
-        tuner.
+        related to the currently streamed TV channel that is tuned by the method
+        <a><code>setCurrentChannel</code></a>.
       </p>
       <dl title="interface TVCurrentChannelChangedEvent : Event" class="idl">
         <dt>readonly attribute TVChannel? channel</dt>
@@ -1804,6 +1770,23 @@ Style guide to contributors:
             MUST return the TV program that is currently broadcasted by the TV
             channel. MUST return <em>null</em> if the TV tuner is not streaming
             any data.
+          </dd>
+      </dl>
+    </section>
+
+<!-- - - - - - - - Interface TVProtectionStateChangedEvent - - - - - - - - - -->
+    <section>
+      <h2><a>TVProtectionStateChangedEvent</a> Interface</h2>
+      <p>
+        The <a>TVProtectionStateChangedEvent</a> interface represents the event
+        related to the current protection state of the TV channel that is
+        configured by the method <a><code>setProtectionState</code></a>.
+      </p>
+      <dl title="interface TVProtectionStateChangedEvent : Event" class="idl">
+        <dt>readonly attribute boolean isProtected</dt>
+          <dd>
+            MUST return the current protection state that is configured by the
+            TV channel.
           </dd>
       </dl>
     </section>
